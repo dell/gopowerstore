@@ -1,0 +1,12 @@
+{
+  "messages": [
+    {
+      "code": "0xE0A08001000E",
+      "severity": "Error",
+      "message_l10n": "Could not find the volume with ID: f98de58e-9223-4fdc-86bd-d4ff268e20e1",
+      "arguments": [
+        "f98de58e-9223-4fdc-86bd-d4ff268e20e1"
+      ]
+    }
+  ]
+}
