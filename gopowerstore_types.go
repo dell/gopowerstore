@@ -30,6 +30,8 @@ const (
 	VolumeNameAlreadyUseErrorCode = api.VolumeNameAlreadyUseErrorCode
 	// SnapshotNameAlreadyUseErrorCode indicates non unique snapshot name
 	SnapshotNameAlreadyUseErrorCode = api.SnapshotNameAlreadyUseErrorCode
+	// FilesystemNameAlreadyUseErrorCode indicates non unique fs name
+	FilesystemNameAlreadyUseErrorCode = api.FilesystemNameAlreadyUseErrorCode
 	// InvalidInstance - instance not found
 	InvalidInstance = api.InvalidInstance
 	// HostIsNotAttachedToVolumeErrorCode - host not attached to volume
@@ -42,6 +44,10 @@ const (
 	VolumeAttachedToHost = api.VolumeAttachedToHost
 	// InstanceWasNotFound - Instance was not found on array
 	InstanceWasNotFound = api.InstanceWasNotFound
+	// HostAlreadyPresentInNFSExport - host already have an access
+	HostAlreadyPresentInNFSExport = api.HostAlreadyPresentInNFSExport
+	// HostAlreadyRemovedFromNFSExport
+	HostAlreadyRemovedFromNFSExport = api.HostAlreadyRemovedFromNFSExport
 )
 
 // RequestConfig represents options for request
@@ -99,6 +105,12 @@ func (err *APIError) SnapshotNameIsAlreadyUse() bool {
 		err.ErrorCode == SnapshotNameAlreadyUseErrorCode
 }
 
+// FSNameIsAlreadyUse returns true if API error indicate that fs name is already in use
+func (err *APIError) FSNameIsAlreadyUse() bool {
+	return (err.StatusCode == http.StatusBadRequest || err.StatusCode == http.StatusUnprocessableEntity) &&
+		err.ErrorCode == FilesystemNameAlreadyUseErrorCode
+}
+
 // HostIsNotAttachedToVolume returns true if API error indicate that host is not attached to volume
 func (err *APIError) HostIsNotAttachedToVolume() bool {
 	return err.StatusCode == http.StatusBadRequest &&
@@ -120,6 +132,18 @@ func (err *APIError) BadRange() bool {
 // volume is attached to host
 func (err *APIError) VolumeAttachedToHost() bool {
 	return err.StatusCode == http.StatusUnprocessableEntity || err.ErrorCode == VolumeAttachedToHost
+}
+
+// HostAlreadyRemovedFromNFSExport returns true if API error indicate that operation can't be complete because
+// host ip already removed from nfs export access
+func (err *APIError) HostAlreadyRemovedFromNFSExport() bool {
+	return err.StatusCode == http.StatusUnprocessableEntity || err.ErrorCode == HostAlreadyRemovedFromNFSExport
+}
+
+// HostAlreadyPresentInNFSExport returns true if API error indicate that operation can't be complete because
+// host ip already present in nfs export access
+func (err *APIError) HostAlreadyPresentInNFSExport() bool {
+	return err.StatusCode == http.StatusUnprocessableEntity || err.ErrorCode == HostAlreadyPresentInNFSExport
 }
 
 // NewVolumeIsNotExistError returns new VolumeIsNotExistError

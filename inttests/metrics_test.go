@@ -24,14 +24,6 @@ import (
 	"testing"
 )
 
-func TestGetApplianceListCMA(t *testing.T) {
-	resp, err := C.GetApplianceListCMA(context.Background())
-	checkAPIErr(t, err)
-	assert.Len(t, resp, 1)
-	assert.NotEmpty(t, resp[0].ID)
-	assert.NotEmpty(t, resp[0].Name)
-}
-
 func TestGetCapacity(t *testing.T) {
 	resp, err := C.GetCapacity(context.Background())
 	checkAPIErr(t, err)

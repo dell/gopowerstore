@@ -23,41 +23,26 @@ import (
 	"errors"
 )
 
-const applianceListCmaViewURL = "appliance_list_cma_view"
-
-// GetApplianceListCMA return a list of Appliance
-func (c *ClientIMPL) GetApplianceListCMA(ctx context.Context) (resp []Appliance, err error) {
-	client := c.APIClient()
-	var appliance Appliance
-	qp := client.QueryParams().Select(appliance.Fields()...)
-	_, err = client.Query(
-		ctx,
-		RequestConfig{
-			Method:      "GET",
-			Endpoint:    applianceListCmaViewURL,
-			QueryParams: qp},
-		&resp)
-	err = WrapErr(err)
-	if err != nil {
-		return
-	}
-	if len(resp) == 0 {
-		return resp, errors.New("can't get appliance list")
-	}
-	return
-}
+const metricsURL = "metrics"
 
 // GetCapacity return capacity of first appliance
 func (c *ClientIMPL) GetCapacity(ctx context.Context) (int64, error) {
-	var resp []Appliance
+	var resp []ApplianceMetrics
 	client := c.APIClient()
-	qp := client.QueryParams().Select("last_physical_total_space", "last_physical_used_space")
+	qp := client.QueryParams().Select("physical_total", "physical_used")
 	_, err := client.Query(
 		ctx,
 		RequestConfig{
-			Method:      "GET",
-			Endpoint:    applianceListCmaViewURL,
-			QueryParams: qp},
+			Method:      "POST",
+			Endpoint:    metricsURL,
+			Action:      "generate",
+			QueryParams: qp,
+			Body:        &MetricsRequest{
+				Entity:   "space_metrics_by_appliance",
+				EntityID: "A1",
+				Interval: "Five_Mins",
+			},
+		},
 		&resp)
 	err = WrapErr(err)
 	if err != nil {
@@ -66,7 +51,7 @@ func (c *ClientIMPL) GetCapacity(ctx context.Context) (int64, error) {
 	if len(resp) == 0 {
 		return 0, errors.New("can't get appliance list")
 	}
-	freeSpace := resp[0].LastPhysicalTotalSpace - resp[0].LastPhysicalUsedSpace
+	freeSpace := resp[0].PhysicalTotal - resp[0].PhysicalUsed
 	if freeSpace < 0 {
 		return 0, nil
 	}

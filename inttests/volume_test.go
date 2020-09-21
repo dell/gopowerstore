@@ -59,6 +59,17 @@ func createSnap(volID string, t *testing.T, volName string) gopowerstore.CreateR
 	return snap
 }
 
+func TestModifyVolume(t *testing.T) {
+	volID, _ := createVol(t)
+	defer deleteVol(t, volID)
+
+	_, err := C.ModifyVolume(context.Background(), &gopowerstore.VolumeModify{Size: DefaultVolSize * 2, Name: "rename"}, volID)
+	checkAPIErr(t, err)
+	gotVol, err := C.GetVolume(context.Background(), volID)
+	assert.Equal(t, DefaultVolSize*2, gotVol.Size)
+	assert.Equal(t, "rename", gotVol.Name)
+}
+
 func TestGetSnapshotsByVolumeID(t *testing.T) {
 	volID, volName := createVol(t)
 	defer deleteVol(t, volID)

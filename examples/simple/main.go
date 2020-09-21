@@ -20,8 +20,8 @@ package main
 
 import (
 	"context"
-	"github.com/dell/gopowerstore"
 	"fmt"
+	"github.com/dell/gopowerstore"
 	"os"
 	"sync"
 	"time"

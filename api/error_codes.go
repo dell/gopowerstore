@@ -29,12 +29,18 @@ const (
 	VolumeNameAlreadyUseErrorCode = "0xE0A080010014"
 	// SnapshotNameAlreadyUseErrorCode - snapshot already exists
 	SnapshotNameAlreadyUseErrorCode = "0xE0A060010012"
+	// FilesystemNameAlreadyUseErrorCode - fs already exists
+	FilesystemNameAlreadyUseErrorCode = "0xE08010080009"
 	// NoHostObjectFoundCode - no host object found in management db for specified ID
 	NoHostObjectFoundCode = "0xE0A010010003"
 	// BadRangeCode - invalid range was used in request
 	BadRangeCode = "0xE04040010005"
 	// VolumeAttachedToHost - volume attached to host
 	VolumeAttachedToHost = "0xE0A080020001"
+	// HostAlreadyPresentInNFSExport - host already have an access
+	HostAlreadyPresentInNFSExport = "0xE080100F0008"
+	// HostAlreadyRemovedFromNFSExport
+	HostAlreadyRemovedFromNFSExport = "0xE080100F0009"
 	// InstanceWasNotFound - Instance was not found on array
 	InstanceWasNotFound = "0xE04040020009"
 )
