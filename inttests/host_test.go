@@ -20,8 +20,8 @@ package inttests
 
 import (
 	"context"
-	"github.com/dell/gopowerstore"
 	"fmt"
+	"github.com/dell/gopowerstore"
 	"github.com/stretchr/testify/assert"
 	"strings"
 	"testing"

@@ -80,6 +80,15 @@ type VolumeCreate struct {
 	StorageType *StorageTypeEnum `json:"storage_type,omitempty"`
 }
 
+// VolumeModify modify volume request
+type VolumeModify struct {
+	// Unique identifier of the volume instance.
+	Name string `json:"name,omitempty"`
+	//  Size of the volume in bytes. Minimum volume size is 1MB. Maximum volume size is 256TB.
+	//  Size must be a multiple of 8192.
+	Size int64 `json:"size"`
+}
+
 // VolumeClone request for cloning snapshot/volume
 type VolumeClone struct {
 	// Unique name for the volume to be created.

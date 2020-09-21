@@ -331,21 +331,6 @@ func (mr *MockClientMockRecorder) GetStorageISCSITargetAddresses(ctx interface{}
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStorageISCSITargetAddresses", reflect.TypeOf((*MockClient)(nil).GetStorageISCSITargetAddresses), ctx)
 }
 
-// GetApplianceListCMA mocks base method
-func (m *MockClient) GetApplianceListCMA(ctx context.Context) ([]gopowerstore.Appliance, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetApplianceListCMA", ctx)
-	ret0, _ := ret[0].([]gopowerstore.Appliance)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetApplianceListCMA indicates an expected call of GetApplianceListCMA
-func (mr *MockClientMockRecorder) GetApplianceListCMA(ctx interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetApplianceListCMA", reflect.TypeOf((*MockClient)(nil).GetApplianceListCMA), ctx)
-}
-
 // GetCapacity mocks base method
 func (m *MockClient) GetCapacity(ctx context.Context) (int64, error) {
 	m.ctrl.T.Helper()
@@ -491,4 +476,379 @@ func (m *MockClient) CreateVolumeFromSnapshot(ctx context.Context, createParams 
 func (mr *MockClientMockRecorder) CreateVolumeFromSnapshot(ctx, createParams, snapID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateVolumeFromSnapshot", reflect.TypeOf((*MockClient)(nil).CreateVolumeFromSnapshot), ctx, createParams, snapID)
+}
+
+// GetNAS mocks base method
+func (m *MockClient) GetNAS(ctx context.Context, id string) (gopowerstore.NAS, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetNAS", ctx, id)
+	ret0, _ := ret[0].(gopowerstore.NAS)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetNAS indicates an expected call of GetNAS
+func (mr *MockClientMockRecorder) GetNAS(ctx, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetNAS", reflect.TypeOf((*MockClient)(nil).GetNAS), ctx, id)
+}
+
+// GetNASByName mocks base method
+func (m *MockClient) GetNASByName(ctx context.Context, name string) (gopowerstore.NAS, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetNASByName", ctx, name)
+	ret0, _ := ret[0].(gopowerstore.NAS)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetNASByName indicates an expected call of GetNASByName
+func (mr *MockClientMockRecorder) GetNASByName(ctx, name interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetNASByName", reflect.TypeOf((*MockClient)(nil).GetNASByName), ctx, name)
+}
+
+// GetFSByName mocks base method
+func (m *MockClient) GetFSByName(ctx context.Context, name string) (gopowerstore.FileSystem, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetFSByName", ctx, name)
+	ret0, _ := ret[0].(gopowerstore.FileSystem)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetFSByName indicates an expected call of GetFSByName
+func (mr *MockClientMockRecorder) GetFSByName(ctx, name interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFSByName", reflect.TypeOf((*MockClient)(nil).GetFSByName), ctx, name)
+}
+
+// GetFS mocks base method
+func (m *MockClient) GetFS(ctx context.Context, id string) (gopowerstore.FileSystem, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetFS", ctx, id)
+	ret0, _ := ret[0].(gopowerstore.FileSystem)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetFS indicates an expected call of GetFS
+func (mr *MockClientMockRecorder) GetFS(ctx, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFS", reflect.TypeOf((*MockClient)(nil).GetFS), ctx, id)
+}
+
+// GetFileInterface mocks base method
+func (m *MockClient) GetFileInterface(ctx context.Context, id string) (gopowerstore.FileInterface, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetFileInterface", ctx, id)
+	ret0, _ := ret[0].(gopowerstore.FileInterface)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetFileInterface indicates an expected call of GetFileInterface
+func (mr *MockClientMockRecorder) GetFileInterface(ctx, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFileInterface", reflect.TypeOf((*MockClient)(nil).GetFileInterface), ctx, id)
+}
+
+// GetNFSExportByName mocks base method
+func (m *MockClient) GetNFSExportByName(ctx context.Context, name string) (gopowerstore.NFSExport, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetNFSExportByName", ctx, name)
+	ret0, _ := ret[0].(gopowerstore.NFSExport)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetNFSExportByName indicates an expected call of GetNFSExportByName
+func (mr *MockClientMockRecorder) GetNFSExportByName(ctx, name interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetNFSExportByName", reflect.TypeOf((*MockClient)(nil).GetNFSExportByName), ctx, name)
+}
+
+// GetNFSExportByFileSystemID mocks base method
+func (m *MockClient) GetNFSExportByFileSystemID(ctx context.Context, fsID string) (gopowerstore.NFSExport, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetNFSExportByFileSystemID", ctx, fsID)
+	ret0, _ := ret[0].(gopowerstore.NFSExport)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetNFSExportByFileSystemID indicates an expected call of GetNFSExportByFileSystemID
+func (mr *MockClientMockRecorder) GetNFSExportByFileSystemID(ctx, fsID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetNFSExportByFileSystemID", reflect.TypeOf((*MockClient)(nil).GetNFSExportByFileSystemID), ctx, fsID)
+}
+
+// CreateNAS mocks base method
+func (m *MockClient) CreateNAS(ctx context.Context, createParams *gopowerstore.NASCreate) (gopowerstore.CreateResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateNAS", ctx, createParams)
+	ret0, _ := ret[0].(gopowerstore.CreateResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateNAS indicates an expected call of CreateNAS
+func (mr *MockClientMockRecorder) CreateNAS(ctx, createParams interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateNAS", reflect.TypeOf((*MockClient)(nil).CreateNAS), ctx, createParams)
+}
+
+// DeleteNAS mocks base method
+func (m *MockClient) DeleteNAS(ctx context.Context, id string) (gopowerstore.EmptyResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteNAS", ctx, id)
+	ret0, _ := ret[0].(gopowerstore.EmptyResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DeleteNAS indicates an expected call of DeleteNAS
+func (mr *MockClientMockRecorder) DeleteNAS(ctx, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteNAS", reflect.TypeOf((*MockClient)(nil).DeleteNAS), ctx, id)
+}
+
+// CreateFS mocks base method
+func (m *MockClient) CreateFS(ctx context.Context, createParams *gopowerstore.FsCreate) (gopowerstore.CreateResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateFS", ctx, createParams)
+	ret0, _ := ret[0].(gopowerstore.CreateResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateFS indicates an expected call of CreateFS
+func (mr *MockClientMockRecorder) CreateFS(ctx, createParams interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateFS", reflect.TypeOf((*MockClient)(nil).CreateFS), ctx, createParams)
+}
+
+// DeleteFS mocks base method
+func (m *MockClient) DeleteFS(ctx context.Context, id string) (gopowerstore.EmptyResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteFS", ctx, id)
+	ret0, _ := ret[0].(gopowerstore.EmptyResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DeleteFS indicates an expected call of DeleteFS
+func (mr *MockClientMockRecorder) DeleteFS(ctx, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteFS", reflect.TypeOf((*MockClient)(nil).DeleteFS), ctx, id)
+}
+
+// CreateNFSExport mocks base method
+func (m *MockClient) CreateNFSExport(ctx context.Context, createParams *gopowerstore.NFSExportCreate) (gopowerstore.CreateResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateNFSExport", ctx, createParams)
+	ret0, _ := ret[0].(gopowerstore.CreateResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateNFSExport indicates an expected call of CreateNFSExport
+func (mr *MockClientMockRecorder) CreateNFSExport(ctx, createParams interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateNFSExport", reflect.TypeOf((*MockClient)(nil).CreateNFSExport), ctx, createParams)
+}
+
+// DeleteNFSExport mocks base method
+func (m *MockClient) DeleteNFSExport(ctx context.Context, id string) (gopowerstore.EmptyResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteNFSExport", ctx, id)
+	ret0, _ := ret[0].(gopowerstore.EmptyResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DeleteNFSExport indicates an expected call of DeleteNFSExport
+func (mr *MockClientMockRecorder) DeleteNFSExport(ctx, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteNFSExport", reflect.TypeOf((*MockClient)(nil).DeleteNFSExport), ctx, id)
+}
+
+// ModifyNFSExport mocks base method
+func (m *MockClient) ModifyNFSExport(ctx context.Context, modifyParams *gopowerstore.NFSExportModify, id string) (gopowerstore.CreateResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ModifyNFSExport", ctx, modifyParams, id)
+	ret0, _ := ret[0].(gopowerstore.CreateResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ModifyNFSExport indicates an expected call of ModifyNFSExport
+func (mr *MockClientMockRecorder) ModifyNFSExport(ctx, modifyParams, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ModifyNFSExport", reflect.TypeOf((*MockClient)(nil).ModifyNFSExport), ctx, modifyParams, id)
+}
+
+// CreateNFSServer mocks base method
+func (m *MockClient) CreateNFSServer(ctx context.Context, createParams *gopowerstore.NFSServerCreate) (gopowerstore.CreateResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateNFSServer", ctx, createParams)
+	ret0, _ := ret[0].(gopowerstore.CreateResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateNFSServer indicates an expected call of CreateNFSServer
+func (mr *MockClientMockRecorder) CreateNFSServer(ctx, createParams interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateNFSServer", reflect.TypeOf((*MockClient)(nil).CreateNFSServer), ctx, createParams)
+}
+
+// CreateFsSnapshot mocks base method
+func (m *MockClient) CreateFsSnapshot(ctx context.Context, createSnapParams *gopowerstore.SnapshotFSCreate, id string) (gopowerstore.CreateResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateFsSnapshot", ctx, createSnapParams, id)
+	ret0, _ := ret[0].(gopowerstore.CreateResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateFsSnapshot indicates an expected call of CreateFsSnapshot
+func (mr *MockClientMockRecorder) CreateFsSnapshot(ctx, createSnapParams, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateFsSnapshot", reflect.TypeOf((*MockClient)(nil).CreateFsSnapshot), ctx, createSnapParams, id)
+}
+
+// DeleteFsSnapshot mocks base method
+func (m *MockClient) DeleteFsSnapshot(ctx context.Context, id string) (gopowerstore.EmptyResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteFsSnapshot", ctx, id)
+	ret0, _ := ret[0].(gopowerstore.EmptyResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DeleteFsSnapshot indicates an expected call of DeleteFsSnapshot
+func (mr *MockClientMockRecorder) DeleteFsSnapshot(ctx, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteFsSnapshot", reflect.TypeOf((*MockClient)(nil).DeleteFsSnapshot), ctx, id)
+}
+
+// GetFsSnapshotsByVolumeID mocks base method
+func (m *MockClient) GetFsSnapshotsByVolumeID(ctx context.Context, volID string) ([]gopowerstore.FileSystem, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetFsSnapshotsByVolumeID", ctx, volID)
+	ret0, _ := ret[0].([]gopowerstore.FileSystem)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetFsSnapshotsByVolumeID indicates an expected call of GetFsSnapshotsByVolumeID
+func (mr *MockClientMockRecorder) GetFsSnapshotsByVolumeID(ctx, volID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFsSnapshotsByVolumeID", reflect.TypeOf((*MockClient)(nil).GetFsSnapshotsByVolumeID), ctx, volID)
+}
+
+// GetFsSnapshots mocks base method
+func (m *MockClient) GetFsSnapshots(ctx context.Context) ([]gopowerstore.FileSystem, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetFsSnapshots", ctx)
+	ret0, _ := ret[0].([]gopowerstore.FileSystem)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetFsSnapshots indicates an expected call of GetFsSnapshots
+func (mr *MockClientMockRecorder) GetFsSnapshots(ctx interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFsSnapshots", reflect.TypeOf((*MockClient)(nil).GetFsSnapshots), ctx)
+}
+
+// GetFsSnapshot mocks base method
+func (m *MockClient) GetFsSnapshot(ctx context.Context, snapID string) (gopowerstore.FileSystem, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetFsSnapshot", ctx, snapID)
+	ret0, _ := ret[0].(gopowerstore.FileSystem)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetFsSnapshot indicates an expected call of GetFsSnapshot
+func (mr *MockClientMockRecorder) GetFsSnapshot(ctx, snapID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFsSnapshot", reflect.TypeOf((*MockClient)(nil).GetFsSnapshot), ctx, snapID)
+}
+
+// CreateFsFromSnapshot mocks base method
+func (m *MockClient) CreateFsFromSnapshot(ctx context.Context, createParams *gopowerstore.FsClone, snapID string) (gopowerstore.CreateResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateFsFromSnapshot", ctx, createParams, snapID)
+	ret0, _ := ret[0].(gopowerstore.CreateResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateFsFromSnapshot indicates an expected call of CreateFsFromSnapshot
+func (mr *MockClientMockRecorder) CreateFsFromSnapshot(ctx, createParams, snapID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateFsFromSnapshot", reflect.TypeOf((*MockClient)(nil).CreateFsFromSnapshot), ctx, createParams, snapID)
+}
+
+// CloneVolume mocks base method
+func (m *MockClient) CloneVolume(ctx context.Context, createParams *gopowerstore.VolumeClone, volID string) (gopowerstore.CreateResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CloneVolume", ctx, createParams, volID)
+	ret0, _ := ret[0].(gopowerstore.CreateResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CloneVolume indicates an expected call of CloneVolume
+func (mr *MockClientMockRecorder) CloneVolume(ctx, createParams, volID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CloneVolume", reflect.TypeOf((*MockClient)(nil).CloneVolume), ctx, createParams, volID)
+}
+
+// ModifyVolume mocks base method
+func (m *MockClient) ModifyVolume(ctx context.Context, modifyParams *gopowerstore.VolumeModify, volID string) (gopowerstore.EmptyResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ModifyVolume", ctx, modifyParams, volID)
+	ret0, _ := ret[0].(gopowerstore.EmptyResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ModifyVolume indicates an expected call of ModifyVolume
+func (mr *MockClientMockRecorder) ModifyVolume(ctx, modifyParams, volID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ModifyVolume", reflect.TypeOf((*MockClient)(nil).ModifyVolume), ctx, modifyParams, volID)
+}
+
+// ModifyFS mocks base method
+func (m *MockClient) ModifyFS(ctx context.Context, modifyParams *gopowerstore.FSModify, volID string) (gopowerstore.EmptyResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ModifyFS", ctx, modifyParams, volID)
+	ret0, _ := ret[0].(gopowerstore.EmptyResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ModifyFS indicates an expected call of ModifyFS
+func (mr *MockClientMockRecorder) ModifyFS(ctx, modifyParams, volID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ModifyFS", reflect.TypeOf((*MockClient)(nil).ModifyFS), ctx, modifyParams, volID)
+}
+
+// CloneFS mocks base method
+func (m *MockClient) CloneFS(ctx context.Context, createParams *gopowerstore.FsClone, fsID string) (gopowerstore.CreateResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CloneFS", ctx, createParams, fsID)
+	ret0, _ := ret[0].(gopowerstore.CreateResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CloneFS indicates an expected call of CloneFS
+func (mr *MockClientMockRecorder) CloneFS(ctx, createParams, fsID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CloneFS", reflect.TypeOf((*MockClient)(nil).CloneFS), ctx, createParams, fsID)
 }

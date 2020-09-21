@@ -20,8 +20,8 @@ package gopowerstore
 
 import (
 	"context"
-	"github.com/dell/gopowerstore/api"
 	"fmt"
+	"github.com/dell/gopowerstore/api"
 )
 
 const (

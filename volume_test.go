@@ -160,6 +160,23 @@ func TestClientIMPL_CreateVolumeFromSnapshot(t *testing.T) {
 	assert.Equal(t, volID2, resp.ID)
 }
 
+func TestClientIMPL_ModifyVolume(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	respData := fmt.Sprintf(``)
+	httpmock.RegisterResponder("PATCH", fmt.Sprintf("%s/%s", volumeMockURL, volID),
+		httpmock.NewStringResponder(201, respData))
+
+	modifyParams := VolumeModify{
+		Name: "newname",
+		Size: 8192 * 99,
+	}
+
+	resp, err := C.ModifyVolume(context.Background(), &modifyParams, volID)
+	assert.Nil(t, err)
+	assert.Equal(t, EmptyResponse(""), resp)
+}
+
 func TestClientIMPL_DeleteSnapshot(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()

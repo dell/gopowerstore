@@ -20,8 +20,8 @@ package gopowerstore
 
 import (
 	"context"
-	"github.com/dell/gopowerstore/api"
 	"fmt"
+	"github.com/dell/gopowerstore/api"
 )
 
 const (
@@ -172,6 +172,20 @@ func (c *ClientIMPL) CreateVolume(ctx context.Context,
 	return resp, WrapErr(err)
 }
 
+// ModifyVolume changes some volumes properties. Used for volume expansion
+func (c *ClientIMPL) ModifyVolume(ctx context.Context,
+	modifyParams *VolumeModify, volID string) (resp EmptyResponse, err error) {
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:   "PATCH",
+			Endpoint: volumeURL,
+			ID:       volID,
+			Body:     modifyParams},
+		&resp)
+	return resp, WrapErr(err)
+}
+
 // CreateVolumeFromSnapshot creates a new volume by cloning a snapshot
 func (c *ClientIMPL) CreateVolumeFromSnapshot(ctx context.Context,
 	createParams *VolumeClone, snapID string) (resp CreateResponse, err error) {
@@ -221,4 +235,20 @@ func (c *ClientIMPL) DeleteVolume(ctx context.Context,
 func (c *ClientIMPL) DeleteSnapshot(ctx context.Context,
 	deleteParams *VolumeDelete, id string) (resp EmptyResponse, err error) {
 	return c.DeleteVolume(ctx, deleteParams, id)
+}
+
+// CloneVolume creates a new volume by cloning a snapshot
+func (c *ClientIMPL) CloneVolume(ctx context.Context,
+	createParams *VolumeClone, volID string) (resp CreateResponse, err error) {
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:   "POST",
+			Endpoint: volumeURL,
+			ID:       volID,
+			Action:   "clone",
+			Body:     createParams,
+		},
+		&resp)
+	return resp, WrapErr(err)
 }
