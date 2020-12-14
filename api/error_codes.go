@@ -23,6 +23,8 @@ const (
 	UnknownVolumeErrorCode = "0xE0A08001000E"
 	// HostIsNotAttachedToVolumeErrorCode - host not attached to volume
 	HostIsNotAttachedToVolumeErrorCode = "0xE0A01001001E"
+	// HostIsNotAttachedToVolumeErrorCode - host not attached to volume
+	VolumeIsNotAttachedToHost = "0xE0A010010020"
 	// InvalidInstance - instance not found
 	InvalidInstance = "0xE04040020002"
 	// VolumeNameAlreadyUseErrorCode - volume already exists
