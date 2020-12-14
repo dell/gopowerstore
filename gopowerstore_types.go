@@ -36,6 +36,8 @@ const (
 	InvalidInstance = api.InvalidInstance
 	// HostIsNotAttachedToVolumeErrorCode - host not attached to volume
 	HostIsNotAttachedToVolumeErrorCode = api.HostIsNotAttachedToVolumeErrorCode
+	// VolumeIsNotAttachedToHost - volume is not attached to host
+	VolumeIsNotAttachedToHost = api.VolumeIsNotAttachedToHost
 	// NoHostObjectFoundCode - no host object found in management db for specified ID
 	NoHostObjectFoundCode = api.NoHostObjectFoundCode
 	// BadRangeCode - invalid range was used in request
@@ -115,6 +117,12 @@ func (err *APIError) FSNameIsAlreadyUse() bool {
 func (err *APIError) HostIsNotAttachedToVolume() bool {
 	return err.StatusCode == http.StatusBadRequest &&
 		err.ErrorCode == HostIsNotAttachedToVolumeErrorCode
+}
+
+// VolumeIsNotAttachedToHost returns true if API error indicate that volume is not attached to host
+func (err *APIError) VolumeIsNotAttachedToHost() bool {
+	return err.StatusCode == http.StatusBadRequest &&
+		err.ErrorCode == VolumeIsNotAttachedToHost
 }
 
 // HostIsNotExist returns true if API error indicate that host is not exists

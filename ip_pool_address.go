@@ -32,7 +32,7 @@ func (c *ClientIMPL) GetStorageISCSITargetAddresses(
 	var ipPoolAddress IPPoolAddress
 	client := c.APIClient()
 	qp := client.QueryParamsWithFields(&ipPoolAddress)
-	qp.RawArg("purposes", fmt.Sprintf("eq.{%s}", IPPurposeTypeEnumStorageIscsiTarget))
+	qp.RawArg("purposes", fmt.Sprintf("cs.{%s}", IPPurposeTypeEnumStorageIscsiTarget))
 	qp.Order("id")
 	_, err = client.Query(
 		ctx,
