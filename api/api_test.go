@@ -23,6 +23,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"reflect"
 	"testing"
 
 	"github.com/jarcoal/httpmock"
@@ -69,21 +70,22 @@ func TestNew(t *testing.T) {
 	password := "password"
 	insecure := false
 	timeout := uint64(120)
+	limit := uint64(1000)
 	key := "key"
 	var err error
 	var c *ClientIMPL
-	c, err = New(url, user, password, insecure, timeout, key)
+	c, err = New(url, user, password, insecure, timeout, limit, key)
 	assert.NotNil(t, c)
 	assert.Nil(t, err)
-	_, err = New(url, "", "", insecure, timeout, key)
+	_, err = New(url, "", "", insecure, timeout, limit, key)
 	assert.NotNil(t, err)
-	c, err = New(url, user, password, true, timeout, key)
+	c, err = New(url, user, password, true, timeout, limit, key)
 	assert.Nil(t, err)
 	assert.NotNil(t, c.httpClient.Transport)
 }
 
 func testClient(t *testing.T, apiURL string) *ClientIMPL {
-	c, err := New(apiURL, "admin", "password", false, uint64(10), "key")
+	c, err := New(apiURL, "admin", "password", false, uint64(10), uint64(1000), "key")
 	if err != nil {
 		t.FailNow()
 	}
@@ -231,6 +233,46 @@ func Test_replaceSensitiveHeaderInfo(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := replaceSensitiveHeaderInfo(tt.args.dump); got != tt.want {
 				t.Errorf("replaceSensitiveHeaderInfo() = %v, want %v; test name = %v", got, tt.want, tt.name)
+			}
+		})
+	}
+}
+
+type stubTypeWithMetaData struct{}
+
+func (s stubTypeWithMetaData) MetaData() http.Header {
+	h := make(http.Header)
+	h.Set("foo", "bar")
+	return h
+}
+
+func Test_addMetaData(t *testing.T) {
+	var tests = []struct {
+		name            string
+		givenRequest    *http.Request
+		expectedRequest *http.Request
+		body            interface{}
+	}{
+		{"nil request is a noop", nil, nil, nil},
+		{"nil body is a noop", nil, nil, nil},
+		{"nil header is updated", &http.Request{Header: nil}, &http.Request{Header: map[string][]string{"Foo": []string{"bar"}}}, stubTypeWithMetaData{}},
+		{"header is updated", &http.Request{Header: map[string][]string{}}, &http.Request{Header: map[string][]string{"Foo": []string{"bar"}}}, stubTypeWithMetaData{}},
+		{"header is not updated", &http.Request{Header: map[string][]string{}}, &http.Request{Header: map[string][]string{}}, struct{}{}},
+	}
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			addMetaData(tt.givenRequest, tt.body)
+
+			switch {
+			case tt.expectedRequest == nil:
+				if tt.givenRequest != nil {
+					t.Errorf("Expected givenRequest to be nil")
+				}
+			default:
+				if !reflect.DeepEqual(tt.expectedRequest.Header, tt.givenRequest.Header) {
+					t.Errorf("(%s): expected %s, actual %s", tt.body, tt.expectedRequest.Header, tt.givenRequest.Header)
+				}
 			}
 		})
 	}

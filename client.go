@@ -38,9 +38,9 @@ const (
 	paginationDefaultPageSize = 1000
 )
 
-// Client defines gopowerstore client interface
+// ApiClient defines gopowerstore client interface
 type Client interface {
-	APIClient() api.Client
+	APIClient() api.ApiClient
 	SetTraceID(ctx context.Context, value string) context.Context
 	SetCustomHTTPHeaders(headers http.Header)
 	GetVolume(ctx context.Context, id string) (Volume, error)
@@ -95,11 +95,45 @@ type Client interface {
 	ModifyVolume(ctx context.Context, modifyParams *VolumeModify, volID string) (EmptyResponse, error)
 	ModifyFS(ctx context.Context, modifyParams *FSModify, volID string) (EmptyResponse, error)
 	CloneFS(ctx context.Context, createParams *FsClone, fsID string) (CreateResponse, error)
+	PerformanceMetricsByAppliance(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]PerformanceMetricsByApplianceResponse, error)
+	PerformanceMetricsByNode(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]PerformanceMetricsByNodeResponse, error)
+	PerformanceMetricsByVolume(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]PerformanceMetricsByVolumeResponse, error)
+	PerformanceMetricsByCluster(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]PerformanceMetricsByClusterResponse, error)
+	PerformanceMetricsByVM(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]PerformanceMetricsByVMResponse, error)
+	PerformanceMetricsByVg(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]PerformanceMetricsByVgResponse, error)
+	PerformanceMetricsByFeFcPort(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]PerformanceMetricsByFeFcPortResponse, error)
+	PerformanceMetricsByFeEthPort(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]PerformanceMetricsByFeEthPortResponse, error)
+	PerformanceMetricsByFeEthNode(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]PerformanceMetricsByFeEthNodeResponse, error)
+	PerformanceMetricsByFeFcNode(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]PerformanceMetricsByFeFcNodeResponse, error)
+	PerformanceMetricsByFileSystem(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]PerformanceMetricsByFileSystemResponse, error)
+	WearMetricsByDrive(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]WearMetricsByDriveResponse, error)
+	SpaceMetricsByCluster(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]SpaceMetricsByClusterResponse, error)
+	SpaceMetricsByAppliance(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]SpaceMetricsByApplianceResponse, error)
+	SpaceMetricsByVolume(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]SpaceMetricsByVolumeResponse, error)
+	SpaceMetricsByVolumeFamily(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]SpaceMetricsByVolumeFamilyResponse, error)
+	SpaceMetricsByVM(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]SpaceMetricsByVMResponse, error)
+	SpaceMetricsByStorageContainer(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]SpaceMetricsByStorageContainerResponse, error)
+	SpaceMetricsByVolumeGroup(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]SpaceMetricsByVolumeGroupResponse, error)
+	CopyMetricsByAppliance(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]CopyMetricsByApplianceResponse, error)
+	CopyMetricsByCluster(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]CopyMetricsByClusterResponse, error)
+	CopyMetricsByVolumeGroup(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]CopyMetricsByVolumeGroupResponse, error)
+	CopyMetricsByRemoteSystem(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]CopyMetricsByRemoteSystemResponse, error)
+	CopyMetricsByVolume(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]CopyMetricsByVolumeResponse, error)
+	PerformanceMetricsSmbByNode(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]PerformanceMetricsBySmbNodeResponse, error)
+	PerformanceMetricsSmbBuiltinclientByNode(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]PerformanceMetricsBySmbClientResponse, error)
+	PerformanceMetricsSmbBranchCacheByNode(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]PerformanceMetricsBySmbCacheResponse, error)
+	PerformanceMetricsSmb1ByNode(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]PerformanceMetricsBySmbV1NodeResponse, error)
+	PerformanceMetricsSmb1BuiltinclientByNode(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]PerformanceMetricsBySmbV1BuiltinClientResponse, error)
+	PerformanceMetricsSmb2ByNode(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]PerformanceMetricsBySmbV2NodeResponse, error)
+	PerformanceMetricsSmb2BuiltinclientByNode(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]PerformanceMetricsBySmbV2BuiltinClientResponse, error)
+	PerformanceMetricsNfsByNode(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]PerformanceMetricsByNfsResponse, error)
+	PerformanceMetricsNfsv3ByNode(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]PerformanceMetricsByNfsv3Response, error)
+	PerformanceMetricsNfsv4ByNode(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]PerformanceMetricsByNfsv4Response, error)
 }
 
 // ClientIMPL provides basic API client implementation
 type ClientIMPL struct {
-	API api.Client
+	API api.ApiClient
 }
 
 // SetTraceID method allows to set tracing ID to context which will be used in log messages
@@ -121,7 +155,7 @@ func (c *ClientIMPL) SetLogger(logger Logger) {
 }
 
 // APIClient method returns powerstore API client may be useful for doing raw API requests
-func (c *ClientIMPL) APIClient() api.Client {
+func (c *ClientIMPL) APIClient() api.ApiClient {
 	return c.API
 }
 
@@ -180,7 +214,7 @@ func NewClientWithArgs(
 	apiURL string,
 	username, password string, options *ClientOptions) (Client, error) {
 	client, err := api.New(apiURL, username, password,
-		options.Insecure(), options.DefaultTimeout(), options.RequestIDKey())
+		options.Insecure(), options.DefaultTimeout(), options.RateLimit(), options.RequestIDKey())
 	if err != nil {
 		return nil, err
 	}

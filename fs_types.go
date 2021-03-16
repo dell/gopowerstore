@@ -18,6 +18,10 @@
 
 package gopowerstore
 
+import (
+	"net/http"
+)
+
 // NASServerOperationalStatusEnum NAS lifecycle state.
 type NASServerOperationalStatusEnum string
 
@@ -44,6 +48,15 @@ type FsCreate struct {
 	Name        string `json:"name"`
 	NASServerID string `json:"nas_server_id"`
 	Size        int64  `json:"size_total"`
+	MetaDataHeader
+}
+
+// MetaData returns the metadata headers.
+func (fc *FsCreate) MetaData() http.Header {
+	fc.once.Do(func() {
+		fc.metadata = make(http.Header)
+	})
+	return fc.metadata
 }
 
 // FSModify modifies existing FS
@@ -75,6 +88,15 @@ type FsClone struct {
 	// Unique name for the fs to be created.
 	Name        *string `json:"name"`
 	Description *string `json:"description,omitempty"`
+	MetaDataHeader
+}
+
+// MetaData returns the metadata headers.
+func (fc *FsClone) MetaData() http.Header {
+	fc.once.Do(func() {
+		fc.metadata = make(http.Header)
+	})
+	return fc.metadata
 }
 
 // Details about the FileSystem

@@ -18,6 +18,10 @@
 
 package gopowerstore
 
+import (
+	"net/http"
+)
+
 // VolumeStateEnum Volume life cycle states.
 type VolumeStateEnum string
 
@@ -78,6 +82,15 @@ type VolumeCreate struct {
 	Size *int64 `json:"size"`
 	// Storage type. Valid values are:
 	StorageType *StorageTypeEnum `json:"storage_type,omitempty"`
+	MetaDataHeader
+}
+
+// MetaData returns the metadata headers.
+func (vc *VolumeCreate) MetaData() http.Header {
+	vc.once.Do(func() {
+		vc.metadata = make(http.Header)
+	})
+	return vc.metadata
 }
 
 // VolumeModify modify volume request
@@ -94,6 +107,15 @@ type VolumeClone struct {
 	// Unique name for the volume to be created.
 	Name        *string `json:"name"`
 	Description *string `json:"description,omitempty"`
+	MetaDataHeader
+}
+
+// MetaData returns the metadata headers.
+func (vc *VolumeClone) MetaData() http.Header {
+	vc.once.Do(func() {
+		vc.metadata = make(http.Header)
+	})
+	return vc.metadata
 }
 
 // SnapshotCreate params for creating 'create snapshot' request
