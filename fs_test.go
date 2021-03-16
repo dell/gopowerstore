@@ -103,6 +103,25 @@ func TestClientIMPL_CreateFS(t *testing.T) {
 	assert.Equal(t, fsID, fs.ID)
 }
 
+func TestClientIMPL_CloneFS(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	respData := fmt.Sprintf(`{"id": "%s"}`, fsID)
+	cloneURL := fmt.Sprintf("%s/%s/clone", fsMockURL, fsID)
+	httpmock.RegisterResponder("POST", cloneURL,
+		httpmock.NewStringResponder(201, respData))
+	description := "some description"
+	name := "clone-fs"
+	cloneReq := FsClone{
+		Description: &description,
+		Name:        &name,
+	}
+
+	resp, err := C.CloneFS(context.Background(), &cloneReq, fsID)
+	assert.Nil(t, err)
+	assert.Equal(t, fsID, resp.ID)
+}
+
 func TestClientIMPL_DeleteFS(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()

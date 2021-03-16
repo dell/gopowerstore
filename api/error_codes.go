@@ -45,4 +45,6 @@ const (
 	HostAlreadyRemovedFromNFSExport = "0xE080100F0009"
 	// InstanceWasNotFound - Instance was not found on array
 	InstanceWasNotFound = "0xE04040020009"
+	//UnableToMatchHostVolume - Couldn't find any host volume matching volume id
+	UnableToMatchHostVolume = "0xE0A08001000F"
 )

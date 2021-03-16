@@ -27,6 +27,5 @@ import (
 func TestGetIPPoolAddress(t *testing.T) {
 	resp, err := C.GetStorageISCSITargetAddresses(context.Background())
 	checkAPIErr(t, err)
-	assert.Len(t, resp, 2)
 	assert.NotEmpty(t, resp[0].Address)
 }

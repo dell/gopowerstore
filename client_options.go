@@ -22,6 +22,7 @@ package gopowerstore
 const (
 	clientOptionsDefaultInsecure     = false
 	clientOptionsDefaultTimeout      = 120
+	clientOptionsDefaultRateLimit    = 60
 	clientOptionsDefaultRequestIDKey = "csi.requestid"
 )
 
@@ -34,6 +35,7 @@ func NewClientOptions() *ClientOptions {
 type ClientOptions struct {
 	insecure       *bool // skip https cert check
 	defaultTimeout *uint64
+	rateLimit      *uint64
 	// define field name in context which will be used for tracing
 	requestIDKey *string
 }
@@ -54,6 +56,14 @@ func (co *ClientOptions) DefaultTimeout() uint64 {
 	return *co.defaultTimeout
 }
 
+// RateLimit returns http client rate limit
+func (co *ClientOptions) RateLimit() uint64 {
+	if co.rateLimit == nil {
+		return clientOptionsDefaultRateLimit
+	}
+	return *co.rateLimit
+}
+
 // RequestIDKey returns client requestIDKey
 func (co *ClientOptions) RequestIDKey() string {
 	if co.requestIDKey == nil {
@@ -71,6 +81,12 @@ func (co *ClientOptions) SetInsecure(value bool) *ClientOptions {
 // SetDefaultTimeout sets default http client timeout value
 func (co *ClientOptions) SetDefaultTimeout(value uint64) *ClientOptions {
 	co.defaultTimeout = &value
+	return co
+}
+
+// SetRateLimit returns http client rate limit
+func (co *ClientOptions) SetRateLimit(value uint64) *ClientOptions {
+	co.rateLimit = &value
 	return co
 }
 

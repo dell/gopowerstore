@@ -90,8 +90,8 @@ type RespMeta struct {
 	Pagination PaginationInfo
 }
 
-// Client is PowerStore API client interface
-type Client interface {
+// ApiClient is PowerStore API client interface
+type ApiClient interface {
 	Traceable
 	Query(
 		ctx context.Context,
@@ -116,17 +116,19 @@ type ClientIMPL struct {
 	password          string
 	httpClient        *http.Client
 	defaultTimeout    uint64
+	rateLimit         uint64
 	requestIDKey      string
 	customHTTPHeaders http.Header
 	logger            Logger
+	apiThrottle       TimeoutSemaphoreInterface
 }
 
 // New creates and initialize API client
 func New(apiURL string, username string,
-	password string, insecure bool, defaultTimeout uint64, requestIDKey string) (*ClientIMPL, error) {
+	password string, insecure bool, defaultTimeout, rateLimit uint64, requestIDKey string) (*ClientIMPL, error) {
 	debug, _ = strconv.ParseBool(os.Getenv("GOPOWERSTORE_DEBUG"))
 	if apiURL == "" || username == "" || password == "" {
-		return nil, errors.New("API Client can't be initialized: " +
+		return nil, errors.New("API ApiClient can't be initialized: " +
 			"Missing endpoint, username, or password param")
 	}
 
@@ -144,14 +146,19 @@ func New(apiURL string, username string,
 		client = &http.Client{}
 	}
 
-	return &ClientIMPL{apiURL: apiURL,
+	throttle := NewTimeoutSemaphore(int(defaultTimeout), int(rateLimit), &defaultLogger{})
+
+	return &ClientIMPL{
+		apiURL:         apiURL,
 		insecure:       insecure,
 		username:       username,
 		password:       password,
 		httpClient:     client,
 		defaultTimeout: defaultTimeout,
 		requestIDKey:   requestIDKey,
-		logger:         &defaultLogger{}}, nil
+		logger:         &defaultLogger{},
+		apiThrottle:    throttle,
+	}, nil
 }
 
 const errorSeverity = "Error"
@@ -201,6 +208,7 @@ func (c *ClientIMPL) SetCustomHTTPHeaders(headers http.Header) {
 // SetLogger set logger for use by gopowerstore
 func (c *ClientIMPL) SetLogger(logger Logger) {
 	c.logger = logger
+	c.apiThrottle.SetLogger(logger)
 }
 
 // Query method do http request and reads response to provided struct
@@ -228,6 +236,12 @@ func (c *ClientIMPL) Query(
 	if err != nil {
 		return meta, err
 	}
+
+	if err := c.apiThrottle.Acquire(ctx); err != nil {
+		return meta, err
+	}
+	defer c.apiThrottle.Release(ctx)
+
 	r, err := c.httpClient.Do(req)
 	if err != nil {
 		return meta, err
@@ -254,6 +268,24 @@ func (c *ClientIMPL) Query(
 		return meta, buildError(r)
 	}
 
+}
+
+func addMetaData(req *http.Request, body interface{}) {
+	if req == nil || body == nil {
+		return
+	}
+	// If the body contains a MetaData method, extract the data
+	// and add as HTTP headers.
+	if vp, ok := body.(interface {
+		MetaData() http.Header
+	}); ok {
+		if req.Header == nil {
+			req.Header = http.Header{}
+		}
+		for k := range vp.MetaData() {
+			req.Header.Add(k, vp.MetaData().Get(k))
+		}
+	}
 }
 
 // QueryParams method returns QueryParamsEncoder
@@ -314,6 +346,7 @@ func (c *ClientIMPL) prepareRequest(ctx context.Context, method, requestURL, tra
 			req.Header.Add(key, elem)
 		}
 	}
+	addMetaData(req, body)
 	if debug {
 		if requestData, err := httputil.DumpRequest(req, true); err == nil {
 			c.logger.Debug(ctx, "%sREQUEST: %s", traceMsg, prepareHTTPDump(requestData))

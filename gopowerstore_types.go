@@ -50,6 +50,8 @@ const (
 	HostAlreadyPresentInNFSExport = api.HostAlreadyPresentInNFSExport
 	// HostAlreadyRemovedFromNFSExport
 	HostAlreadyRemovedFromNFSExport = api.HostAlreadyRemovedFromNFSExport
+	//UnableToMatchHostVolume - Couldn't find any host volume matching volume id
+	UnableToMatchHostVolume = api.UnableToMatchHostVolume
 )
 
 // RequestConfig represents options for request
@@ -121,8 +123,9 @@ func (err *APIError) HostIsNotAttachedToVolume() bool {
 
 // VolumeIsNotAttachedToHost returns true if API error indicate that volume is not attached to host
 func (err *APIError) VolumeIsNotAttachedToHost() bool {
-	return err.StatusCode == http.StatusBadRequest &&
-		err.ErrorCode == VolumeIsNotAttachedToHost
+	return (err.StatusCode == http.StatusBadRequest &&
+		err.ErrorCode == VolumeIsNotAttachedToHost ) || (err.StatusCode == http.StatusBadRequest &&
+		err.ErrorCode == UnableToMatchHostVolume)
 }
 
 // HostIsNotExist returns true if API error indicate that host is not exists
