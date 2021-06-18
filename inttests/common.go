@@ -31,6 +31,12 @@ func checkAPIErr(t *testing.T, err error) {
 	}
 }
 
+func skipTestOnError(t *testing.T, err error) {
+	if err != nil {
+		t.Skip("Skipping test..")
+	}
+}
+
 const letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 func randString(n int) string {

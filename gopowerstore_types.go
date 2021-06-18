@@ -124,7 +124,7 @@ func (err *APIError) HostIsNotAttachedToVolume() bool {
 // VolumeIsNotAttachedToHost returns true if API error indicate that volume is not attached to host
 func (err *APIError) VolumeIsNotAttachedToHost() bool {
 	return (err.StatusCode == http.StatusBadRequest &&
-		err.ErrorCode == VolumeIsNotAttachedToHost ) || (err.StatusCode == http.StatusBadRequest &&
+		err.ErrorCode == VolumeIsNotAttachedToHost) || (err.StatusCode == http.StatusBadRequest &&
 		err.ErrorCode == UnableToMatchHostVolume)
 }
 
@@ -184,6 +184,27 @@ func NewVolumeAttachedToHostError() APIError {
 }
 
 func notExistError() APIError {
+	apiError := APIError{&api.ErrorMsg{}}
+	apiError.ErrorCode = InvalidInstance
+	apiError.StatusCode = http.StatusNotFound
+	return apiError
+}
+
+func replicationRuleNotExists() APIError {
+	apiError := APIError{&api.ErrorMsg{}}
+	apiError.ErrorCode = InvalidInstance
+	apiError.StatusCode = http.StatusNotFound
+	return apiError
+}
+
+func protectionPolicyNotExists() APIError {
+	apiError := APIError{&api.ErrorMsg{}}
+	apiError.ErrorCode = InvalidInstance
+	apiError.StatusCode = http.StatusNotFound
+	return apiError
+}
+
+func replicationGroupNotExists() APIError {
 	apiError := APIError{&api.ErrorMsg{}}
 	apiError.ErrorCode = InvalidInstance
 	apiError.StatusCode = http.StatusNotFound

@@ -42,13 +42,39 @@ type NFSExportCreate struct {
 
 // NFSExportModify details about modification of exiting NFS export
 type NFSExportModify struct {
-	// Hosts to add to the current read_write_root_hosts list. Hosts can be entered by Hostname, IP addresses
-	AddHosts *[]string `json:"add_read_write_root_hosts,omitempty"`
 	// An optional description for the host.
 	// The description should not be more than 256 UTF-8 characters long and should not have any unprintable characters.
-	Description *string `json:"description,omitempty"`
+	Description string `json:"description,omitempty"`
+
+	// Read-Write
+	// Hosts to add to the current read_write_hosts list. Hosts can be entered by Hostname, IP addresses
+	AddRWHosts []string `json:"add_read_write_hosts,omitempty"`
+	// Hosts to remove from the current read_write_hosts list. Hosts can be entered by Hostname, IP addresses.
+	RemoveRWHosts []string `json:"remove_read_write_hosts,omitempty"`
+
+	// Read-Only
+	// Hosts to add to the current read_only_hosts list. Hosts can be entered by Hostname, IP addresses
+	AddROHosts []string `json:"add_read_only_hosts,omitempty"`
+	// Hosts to remove from the current read_only_hosts list. Hosts can be entered by Hostname, IP addresses.
+	RemoveROHosts []string `json:"remove_read_only_hosts,omitempty"`
+
+	// Read-Write, allow Root
+	// Hosts to add to the current read_write_root_hosts list. Hosts can be entered by Hostname, IP addresses
+	AddRWRootHosts []string `json:"add_read_write_root_hosts,omitempty"`
 	// Hosts to remove from the current read_write_root_hosts list. Hosts can be entered by Hostname, IP addresses.
-	RemoveHosts *[]string `json:"remove_read_write_root_hosts,omitempty"`
+	RemoveRWRootHosts []string `json:"remove_read_write_root_hosts,omitempty"`
+
+	// Read-Only, allow Roots
+	// Hosts to add to the current read_only_hosts list. Hosts can be entered by Hostname, IP addresses
+	AddRORootHosts []string `json:"add_read_only_root_hosts,omitempty"`
+	// Hosts to remove from the current read_only_hosts list. Hosts can be entered by Hostname, IP addresses.
+	RemoveRORootHosts []string `json:"remove_read_only_root_hosts,omitempty"`
+
+	// No-Access
+	// Hosts to add to the current no_access_hosts list. Hosts can be entered by Hostname, IP addresses
+	AddNoAccessHosts []string `json:"add_no_access_hosts,omitempty"`
+	// Hosts to remove from the current no_access_hosts list. Hosts can be entered by Hostname, IP addresses
+	RemoveNoAccessHosts []string `json:"remove_no_access_hosts,omitempty"`
 }
 
 // NFSServerCreate details about creation of new NFS server

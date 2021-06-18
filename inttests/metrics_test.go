@@ -37,14 +37,14 @@ func Test_PerformanceMetricsByAppliance(t *testing.T) {
 	resp, err := C.PerformanceMetricsByAppliance(context.Background(), "A1", gopowerstore.FiveMins)
 	checkAPIErr(t, err)
 	assert.NotEmpty(t, resp)
-	assert.Equal(t, "performance_metrics_by_appliance_rollup", resp[0].Entity)
+	assert.Equal(t, "performance_metrics_by_appliance", resp[0].Entity)
 }
 
 func Test_PerformanceMetricsByNode(t *testing.T) {
 	resp, err := C.PerformanceMetricsByNode(context.Background(), "N1", gopowerstore.FiveMins)
 	checkAPIErr(t, err)
 	assert.NotEmpty(t, resp)
-	assert.Equal(t, "performance_metrics_by_node_rollup", resp[0].Entity)
+	assert.Equal(t, "performance_metrics_by_node", resp[0].Entity)
 }
 
 func Test_PerformanceMetricsByVolume(t *testing.T) {
@@ -57,14 +57,14 @@ func Test_PerformanceMetricsByVolume(t *testing.T) {
 	resp, err := C.PerformanceMetricsByVolume(context.Background(), volumesResp[0].ID, gopowerstore.FiveMins)
 	checkAPIErr(t, err)
 	assert.NotEmpty(t, resp)
-	assert.Equal(t, "performance_metrics_by_volume_rollup", resp[0].Entity)
+	assert.Equal(t, "performance_metrics_by_volume", resp[0].Entity)
 }
 
 func Test_PerformanceMetricsByCluster(t *testing.T) {
 	resp, err := C.PerformanceMetricsByCluster(context.Background(), "0", gopowerstore.FiveMins)
 	checkAPIErr(t, err)
 	assert.NotEmpty(t, resp)
-	assert.Equal(t, "performance_metrics_by_cluster_rollup", resp[0].Entity)
+	assert.Equal(t, "performance_metrics_by_cluster", resp[0].Entity)
 }
 
 func Test_PerformanceMetricsByVm(t *testing.T) {
@@ -85,7 +85,7 @@ func Test_PerformanceMetricsByFEFCPort(t *testing.T) {
 	resp, err := C.PerformanceMetricsByFeFcPort(context.Background(), portsResp[0].ID, gopowerstore.FiveMins)
 	checkAPIErr(t, err)
 	assert.NotEmpty(t, resp)
-	assert.Equal(t, "performance_metrics_by_fe_fc_port_rollup", resp[0].Entity)
+	assert.Equal(t, "performance_metrics_by_fe_fc_port", resp[0].Entity)
 }
 
 func Test_PerformanceMetricsByFeEthPort(t *testing.T) {
@@ -96,14 +96,14 @@ func Test_PerformanceMetricsByFeEthNode(t *testing.T) {
 	resp, err := C.PerformanceMetricsByFeEthNode(context.Background(), "N1", gopowerstore.FiveMins)
 	checkAPIErr(t, err)
 	assert.NotEmpty(t, resp)
-	assert.Equal(t, "performance_metrics_by_fe_eth_node_rollup", resp[0].Entity)
+	assert.Equal(t, "performance_metrics_by_fe_eth_node", resp[0].Entity)
 }
 
 func Test_PerformanceMetricsByFeFcNode(t *testing.T) {
 	resp, err := C.PerformanceMetricsByFeFcNode(context.Background(), "N1", gopowerstore.FiveMins)
 	checkAPIErr(t, err)
 	assert.NotEmpty(t, resp)
-	assert.Equal(t, "performance_metrics_by_fe_fc_node_rollup", resp[0].Entity)
+	assert.Equal(t, "performance_metrics_by_fe_fc_node", resp[0].Entity)
 }
 
 func Test_PerformanceMetricsByFileSystem(t *testing.T) {
@@ -164,7 +164,7 @@ func Test_PerformanceMetricsNfsByNode(t *testing.T) {
 	resp, err := C.PerformanceMetricsNfsByNode(context.Background(), "N1", gopowerstore.FiveMins)
 	checkAPIErr(t, err)
 	assert.NotEmpty(t, resp)
-	assert.Equal(t, "performance_metrics_nfs_by_node_rollup", resp[0].Entity)
+	assert.Equal(t, "performance_metrics_nfs_by_node", resp[0].Entity)
 
 }
 
@@ -172,14 +172,14 @@ func Test_PerformanceMetricsNfsv3ByNode(t *testing.T) {
 	resp, err := C.PerformanceMetricsNfsv3ByNode(context.Background(), "N1", gopowerstore.FiveMins)
 	checkAPIErr(t, err)
 	assert.NotEmpty(t, resp)
-	assert.Equal(t, "performance_metrics_nfsv3_by_node_rollup", resp[0].Entity)
+	assert.Equal(t, "performance_metrics_nfsv3_by_node", resp[0].Entity)
 }
 
 func Test_PerformanceMetricsNfsv4ByNode(t *testing.T) {
 	resp, err := C.PerformanceMetricsNfsv4ByNode(context.Background(), "N1", gopowerstore.FiveMins)
 	checkAPIErr(t, err)
 	assert.NotEmpty(t, resp)
-	assert.Equal(t, "performance_metrics_nfsv4_by_node_rollup", resp[0].Entity)
+	assert.Equal(t, "performance_metrics_nfsv4_by_node", resp[0].Entity)
 }
 
 func Test_WearMetricsByDrive(t *testing.T) {
@@ -237,14 +237,14 @@ func Test_CopyMetricsByAppliance(t *testing.T) {
 	resp, err := C.CopyMetricsByAppliance(context.Background(), "A1", gopowerstore.OneDay)
 	checkAPIErr(t, err)
 	assert.NotEmpty(t, resp)
-	assert.Equal(t, "copy_metrics_by_appliance_rollup", resp[0].Entity)
+	assert.Equal(t, "copy_metrics_by_appliance", resp[0].Entity)
 }
 
 func Test_CopyMetricsByCluster(t *testing.T) {
 	resp, err := C.CopyMetricsByCluster(context.Background(), "0", gopowerstore.OneDay)
 	checkAPIErr(t, err)
 	assert.NotEmpty(t, resp)
-	assert.Equal(t, "copy_metrics_by_cluster_rollup", resp[0].Entity)
+	assert.Equal(t, "copy_metrics_by_cluster", resp[0].Entity)
 }
 
 func Test_CopyMetricsByVolumeGroup(t *testing.T) {

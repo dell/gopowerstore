@@ -82,6 +82,9 @@ type VolumeCreate struct {
 	Size *int64 `json:"size"`
 	// Storage type. Valid values are:
 	StorageType *StorageTypeEnum `json:"storage_type,omitempty"`
+	// Volume group to add the volume to. If not specified, the volume is not added to a volume group.
+	VolumeGroupID string `json:"volume_group_id,omitempty"`
+
 	MetaDataHeader
 }
 
@@ -99,7 +102,9 @@ type VolumeModify struct {
 	Name string `json:"name,omitempty"`
 	//  Size of the volume in bytes. Minimum volume size is 1MB. Maximum volume size is 256TB.
 	//  Size must be a multiple of 8192.
-	Size int64 `json:"size"`
+	Size int64 `json:"size,omitempty"`
+	// Unique identifier of the protection policy assigned to the volume.
+	ProtectionPolicyID string `json:"protection_policy_id"`
 }
 
 // VolumeClone request for cloning snapshot/volume

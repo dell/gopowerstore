@@ -62,7 +62,6 @@ func (ts *timeoutSemaphore) Release(ctx context.Context) {
 	ts.logger.Debug(ctx, "release a lock")
 }
 
-
 func (ts *timeoutSemaphore) SetLogger(logger Logger) TimeoutSemaphoreInterface {
 	ts.logger = logger
 	return ts
