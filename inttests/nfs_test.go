@@ -97,7 +97,7 @@ func TestModifyNFSExport(t *testing.T) {
 
 	t.Run("add host 1", func(t *testing.T) {
 		modifyParams := gopowerstore.NFSExportModify{
-			AddHosts: &[]string{"192.168.100.10"},
+			AddRWRootHosts: []string{"192.168.100.10"},
 		}
 
 		_, err = C.ModifyNFSExport(context.Background(), &modifyParams, nfsID)
@@ -106,7 +106,7 @@ func TestModifyNFSExport(t *testing.T) {
 
 	t.Run("add host 2 and 3", func(t *testing.T) {
 		modifyParams := gopowerstore.NFSExportModify{
-			AddHosts: &[]string{"192.168.100.11", "192.168.100.12"},
+			AddRWRootHosts: []string{"192.168.100.11", "192.168.100.12"},
 		}
 
 		_, err = C.ModifyNFSExport(context.Background(), &modifyParams, nfsID)
@@ -115,7 +115,7 @@ func TestModifyNFSExport(t *testing.T) {
 
 	t.Run("delete host 2", func(t *testing.T) {
 		modifyParams := gopowerstore.NFSExportModify{
-			RemoveHosts: &[]string{"192.168.100.11/255.255.255.255"},
+			RemoveRWRootHosts: []string{"192.168.100.11/255.255.255.255"},
 		}
 
 		_, err = C.ModifyNFSExport(context.Background(), &modifyParams, nfsID)

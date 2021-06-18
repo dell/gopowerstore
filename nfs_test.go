@@ -89,8 +89,9 @@ func TestClientIMPL_ModifyNFSExport(t *testing.T) {
 	httpmock.RegisterResponder("PATCH", fmt.Sprintf("%s/%s", nfsMockURL, nfsID),
 		httpmock.NewStringResponder(201, respData))
 	modifyReq := NFSExportModify{
-		AddHosts:    &[]string{"192.168.100.10", "192.168.100.11"},
-		RemoveHosts: &[]string{"192.168.100.9"},
+		AddRWRootHosts:    []string{"192.168.100.10", "192.168.100.11"},
+		RemoveRWRootHosts: []string{"192.168.100.9"},
+		AddNoAccessHosts:  []string{"127.0.0.1"},
 	}
 	resp, err := C.ModifyNFSExport(context.Background(), &modifyReq, nfsID)
 	assert.Nil(t, err)
