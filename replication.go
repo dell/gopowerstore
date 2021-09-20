@@ -5,6 +5,16 @@ import (
 	"fmt"
 )
 
+type ActionType string
+
+const (
+	RS_ACTION_FAILOVER  ActionType = "failover"
+	RS_ACTION_REPROTECT ActionType = "reprotect"
+	RS_ACTION_RESUME    ActionType = "resume"
+	RS_ACTION_PAUSE     ActionType = "pause"
+	RS_ACTION_SYNC      ActionType = "sync"
+)
+
 const (
 	replicationRuleURL    = "replication_rule"
 	policyURL             = "policy"
@@ -30,6 +40,7 @@ func (c *ClientIMPL) GetReplicationRuleByName(ctx context.Context,
 	rule := ReplicationRule{}
 	qp := c.APIClient().QueryParamsWithFields(&rule)
 	qp.RawArg("name", fmt.Sprintf("eq.%s", ruleName))
+	qp.Select("policies")
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{
@@ -66,7 +77,9 @@ func (c *ClientIMPL) GetProtectionPolicyByName(ctx context.Context,
 	var policyList []ProtectionPolicy
 	policy := ProtectionPolicy{}
 	qp := c.APIClient().QueryParamsWithFields(&policy)
+	qp.Select("name,id,replication_rules(id),volume(id,name),volume_group(id,name)")
 	qp.RawArg("name", fmt.Sprintf("eq.%s", policyName))
+	qp.RawArg("type", fmt.Sprintf("eq.%s", "Protection"))
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{
@@ -105,6 +118,25 @@ func (c *ClientIMPL) GetReplicationSessionByLocalResourceID(ctx context.Context,
 	}
 	return sessionList[0], err
 }
+func (c *ClientIMPL) GetReplicationSessionByID(ctx context.Context, id string) (resp ReplicationSession, err error) {
+	var session ReplicationSession
+	ses := ReplicationSession{}
+	qp := c.APIClient().QueryParamsWithFields(&ses)
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:      "GET",
+			Endpoint:    replicationSessionURL,
+			QueryParams: qp,
+			ID:          id},
+		&session)
+	err = WrapErr(err)
+	if err != nil {
+		return resp, err
+	}
+
+	return session, err
+}
 
 // DeleteReplicationRule deletes existing RR
 func (c *ClientIMPL) DeleteReplicationRule(ctx context.Context, id string) (resp EmptyResponse, err error) {
@@ -129,5 +161,20 @@ func (c *ClientIMPL) DeleteProtectionPolicy(ctx context.Context, id string) (res
 			ID:       id,
 		},
 		&resp)
+	return resp, WrapErr(err)
+}
+
+func (c *ClientIMPL) ExecuteActionOnReplicationSession(ctx context.Context, id string, actionType ActionType, params *FailoverParams) (resp EmptyResponse, err error) {
+	var res interface{}
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:   "POST",
+			Endpoint: replicationSessionURL,
+			ID:       id,
+			Action:   string(actionType),
+			Body:     params,
+		},
+		&res)
 	return resp, WrapErr(err)
 }

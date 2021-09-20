@@ -43,6 +43,15 @@ func (suite *ReplicationTestSuite) SetupSuite() {
 }
 
 func (suite *ReplicationTestSuite) TearDownSuite() {
+	vg, err := C.GetVolumeGroup(context.Background(), suite.vg.ID)
+	assert.NoError(suite.T(), err)
+	pp, err := C.GetProtectionPolicyByName(context.Background(), "intcsi-pptst")
+	assert.NoError(suite.T(), err)
+	rr, err := C.GetReplicationRuleByName(context.Background(), "intcsi-ruletst")
+	assert.NoError(suite.T(), err)
+	if len(rr.ProtectionPolicies) != 1 || len(pp.ReplicationRules) != 1 || len(vg.Volumes) != 1 || len(pp.VolumeGroups) != 1 {
+		suite.T().Fail()
+	}
 	C.ModifyVolumeGroup(context.Background(), &gopowerstore.VolumeGroupModify{ProtectionPolicyId: ""}, suite.vg.ID)
 	C.RemoveMembersFromVolumeGroup(context.Background(), &gopowerstore.VolumeGroupRemoveMember{VolumeIds: []string{suite.vol.ID}}, suite.vg.ID)
 	C.ModifyVolume(context.Background(), &gopowerstore.VolumeModify{ProtectionPolicyID: ""}, suite.vol.ID)
@@ -112,9 +121,7 @@ func (suite *ReplicationTestSuite) TestReplication() {
 		time.Sleep(5 * time.Second)
 		fmt.Printf("Retrying.")
 	}
-
 	assert.NoError(t, err)
-
 }
 
 func TestGetCluster(t *testing.T) {
@@ -125,3 +132,4 @@ func TestGetCluster(t *testing.T) {
 func TestReplicationSuite(t *testing.T) {
 	suite.Run(t, new(ReplicationTestSuite))
 }
+

@@ -98,6 +98,27 @@ func (_m *Client) CloneVolume(ctx context.Context, createParams *gopowerstore.Vo
 	return r0, r1
 }
 
+// ComputeDifferences provides a mock function with given fields: ctx, snapdiffParams, volID
+func (_m *Client) ComputeDifferences(ctx context.Context, snapdiffParams *gopowerstore.VolumeComputeDifferences, volID string) (gopowerstore.VolumeComputeDifferencesResponse, error) {
+	ret := _m.Called(ctx, snapdiffParams, volID)
+
+	var r0 gopowerstore.VolumeComputeDifferencesResponse
+	if rf, ok := ret.Get(0).(func(context.Context, *gopowerstore.VolumeComputeDifferences, string) gopowerstore.VolumeComputeDifferencesResponse); ok {
+		r0 = rf(ctx, snapdiffParams, volID)
+	} else {
+		r0 = ret.Get(0).(gopowerstore.VolumeComputeDifferencesResponse)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, *gopowerstore.VolumeComputeDifferences, string) error); ok {
+		r1 = rf(ctx, snapdiffParams, volID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // CopyMetricsByAppliance provides a mock function with given fields: ctx, entityID, interval
 func (_m *Client) CopyMetricsByAppliance(ctx context.Context, entityID string, interval gopowerstore.MetricsIntervalEnum) ([]gopowerstore.CopyMetricsByApplianceResponse, error) {
 	ret := _m.Called(ctx, entityID, interval)
@@ -717,6 +738,27 @@ func (_m *Client) DetachVolumeFromHost(ctx context.Context, hostID string, detac
 	return r0, r1
 }
 
+// ExecuteActionOnReplicationSession provides a mock function with given fields: ctx, id, actionType, params
+func (_m *Client) ExecuteActionOnReplicationSession(ctx context.Context, id string, actionType gopowerstore.ActionType, params *gopowerstore.FailoverParams) (gopowerstore.EmptyResponse, error) {
+	ret := _m.Called(ctx, id, actionType, params)
+
+	var r0 gopowerstore.EmptyResponse
+	if rf, ok := ret.Get(0).(func(context.Context, string, gopowerstore.ActionType, *gopowerstore.FailoverParams) gopowerstore.EmptyResponse); ok {
+		r0 = rf(ctx, id, actionType, params)
+	} else {
+		r0 = ret.Get(0).(gopowerstore.EmptyResponse)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, string, gopowerstore.ActionType, *gopowerstore.FailoverParams) error); ok {
+		r1 = rf(ctx, id, actionType, params)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // GetAllRemoteSystems provides a mock function with given fields: ctx
 func (_m *Client) GetAllRemoteSystems(ctx context.Context) ([]gopowerstore.RemoteSystem, error) {
 	ret := _m.Called(ctx)
@@ -1249,6 +1291,27 @@ func (_m *Client) GetReplicationRuleByName(ctx context.Context, name string) (go
 	var r1 error
 	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
 		r1 = rf(ctx, name)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetReplicationSessionByID provides a mock function with given fields: ctx, id
+func (_m *Client) GetReplicationSessionByID(ctx context.Context, id string) (gopowerstore.ReplicationSession, error) {
+	ret := _m.Called(ctx, id)
+
+	var r0 gopowerstore.ReplicationSession
+	if rf, ok := ret.Get(0).(func(context.Context, string) gopowerstore.ReplicationSession); ok {
+		r0 = rf(ctx, id)
+	} else {
+		r0 = ret.Get(0).(gopowerstore.ReplicationSession)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = rf(ctx, id)
 	} else {
 		r1 = ret.Error(1)
 	}

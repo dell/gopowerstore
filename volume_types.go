@@ -88,6 +88,40 @@ type VolumeCreate struct {
 	MetaDataHeader
 }
 
+// VolumeComputeDifferences compute snapshot differences in a volume request
+type VolumeComputeDifferences struct {
+	// Unique identifier of the snapshot used to determine the differences from the current snapshot.
+	// If not specified, returns all allocated extents of the current snapshot.
+	// The base snapshot must be from the same base volume as the snapshot being compared with.
+	BaseSnapshotID *string `json:"base_snapshot_id"`
+	// The position of the first logical byte to be used in the comparison.
+	// If not specified, the comparison starts at the beginning of the snapshot.
+	// The offset must be a multiple of the chunk_size. For best performance, use a multiple of 4K bytes.
+	Offset *int64 `json:"offset"`
+	// Length of the comparison scan segment in bytes. length / chunk_size is the number of chunks,
+	// with each chunk represented as a bit in the bitmap returned in the response. The number of chunks
+	// must be divisible by 8 so that the returned bitmap is a byte array. The length and chunk_size
+	// must be chosen so that there are no more than 32K chunks, resulting in a returned byte array
+	// bitmap of at most 4K bytes. The length starting from the offset must not exceed the size of
+	// the snapshot. The length must be a multiple of the chunk_size.
+	Length *int64 `json:"length"`
+	// Granularity of the chunk in bytes. Must be a power of 2 so that each bit in the returned
+	// bitmap represents a chunk sized range of bytes.
+	ChunkSize *int64 `json:"chunk_size"`
+}
+
+// VolumeComputeDifferencesResponse compute snapshot differences in a volume response
+type VolumeComputeDifferencesResponse struct {
+	// Base64-encoded bitmap with bits set for chunks that are either:
+	// Allocated and nonzero when base_snapshot_id not specified, or
+	// Unshared with the base snapshot when a base_snapshot_id is specified
+	ChunkBitmap *string `json:"chunk_bitmap"`
+	// Recommended offset to be used for the next compute_differences invocation
+	// A value of -1 will be returned if the end of the object has been reached
+	// while scanning for differences or allocations
+	NextOffset *int64 `json:"next_offset"`
+}
+
 // MetaData returns the metadata headers.
 func (vc *VolumeCreate) MetaData() http.Header {
 	vc.once.Do(func() {

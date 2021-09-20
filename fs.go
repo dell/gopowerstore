@@ -57,7 +57,7 @@ func (c *ClientIMPL) GetNASByName(ctx context.Context, name string) (resp NAS, e
 		return resp, err
 	}
 	if len(nasList) != 1 {
-		return resp, NewVolumeIsNotExistError()
+		return resp, NewNotFoundError()
 	}
 	return nasList[0], err
 }
@@ -116,7 +116,7 @@ func (c *ClientIMPL) GetFSByName(ctx context.Context, name string) (resp FileSys
 		return resp, err
 	}
 	if len(fsList) != 1 {
-		return resp, NewVolumeIsNotExistError()
+		return resp, NewNotFoundError()
 	}
 	return fsList[0], err
 }

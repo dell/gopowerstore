@@ -21,9 +21,11 @@ package api
 const (
 	// UnknownVolumeErrorCode - unknown volume error
 	UnknownVolumeErrorCode = "0xE0A08001000E"
+	// UnknownVolumeGroupErrorCode - unknown volume error
+	UnknownVolumeGroupErrorCode = "0xE0A070010001"
 	// HostIsNotAttachedToVolumeErrorCode - host not attached to volume
 	HostIsNotAttachedToVolumeErrorCode = "0xE0A01001001E"
-	// HostIsNotAttachedToVolumeErrorCode - host not attached to volume
+	// VolumeIsNotAttachedToHost - host not attached to volume
 	VolumeIsNotAttachedToHost = "0xE0A010010020"
 	// InvalidInstance - instance not found
 	InvalidInstance = "0xE04040020002"
@@ -47,4 +49,6 @@ const (
 	InstanceWasNotFound = "0xE04040020009"
 	//UnableToMatchHostVolume - Couldn't find any host volume matching volume id
 	UnableToMatchHostVolume = "0xE0A08001000F"
+	//UnableToFailoverFromDestination - Planned failover of Replication Session is supported only on source side.
+	UnableToFailoverFromDestination = "0xE0201005000B"
 )

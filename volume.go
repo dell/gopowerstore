@@ -21,6 +21,7 @@ package gopowerstore
 import (
 	"context"
 	"fmt"
+
 	"github.com/dell/gopowerstore/api"
 )
 
@@ -63,7 +64,7 @@ func (c *ClientIMPL) GetVolumeByName(ctx context.Context, name string) (resp Vol
 		return resp, err
 	}
 	if len(volList) != 1 {
-		return resp, NewVolumeIsNotExistError()
+		return resp, NewNotFoundError()
 	}
 	return volList[0], err
 }
@@ -182,6 +183,22 @@ func (c *ClientIMPL) ModifyVolume(ctx context.Context,
 			Endpoint: volumeURL,
 			ID:       volID,
 			Body:     modifyParams},
+		&resp)
+	return resp, WrapErr(err)
+}
+
+// ComputeDifferences a) finds allocated nonzero blocks or b) computes differences between
+// two snapshots from the same volume
+func (c *ClientIMPL) ComputeDifferences(ctx context.Context,
+	computeDiffParams *VolumeComputeDifferences, volID string) (resp VolumeComputeDifferencesResponse, err error) {
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:   "POST",
+			Endpoint: volumeURL,
+			ID:       volID,
+			Action:   "compute_differences",
+			Body:     computeDiffParams},
 		&resp)
 	return resp, WrapErr(err)
 }

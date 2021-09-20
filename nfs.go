@@ -57,7 +57,7 @@ func (c *ClientIMPL) GetNFSExportByName(ctx context.Context, name string) (resp 
 		return resp, err
 	}
 	if len(nfsList) != 1 {
-		return resp, NewVolumeIsNotExistError()
+		return resp, NewNotFoundError()
 	}
 	return nfsList[0], err
 }
@@ -79,7 +79,7 @@ func (c *ClientIMPL) GetNFSExportByFileSystemID(ctx context.Context, fsID string
 		return resp, err
 	}
 	if len(nfsList) != 1 {
-		return resp, NewVolumeIsNotExistError()
+		return resp, NewNotFoundError()
 	}
 	return nfsList[0], err
 }

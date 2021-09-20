@@ -20,13 +20,15 @@ package inttests
 
 import (
 	"context"
+	"testing"
+
 	"github.com/dell/gopowerstore"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 const TestVolumePrefix = "test_vol_"
 const DefaultVolSize int64 = 1048576
+const DefaultChunkSize int64 = 1048576
 
 func createVol(t *testing.T) (string, string) {
 	volName := TestVolumePrefix + randString(8)
@@ -45,11 +47,15 @@ func deleteVol(t *testing.T, id string) {
 }
 
 func createSnap(volID string, t *testing.T, volName string) gopowerstore.CreateResponse {
+	return createSnapWithSuffix(volID, t, volName, "snapshot")
+}
+
+func createSnapWithSuffix(volID string, t *testing.T, volName string, snapshotSuffix string) gopowerstore.CreateResponse {
 	volume, err := C.GetVolume(context.Background(), volID)
 	checkAPIErr(t, err)
 	assert.NotEmpty(t, volume.Name)
 	assert.Equal(t, volName, volume.Name)
-	snapName := volName + "_snapshot"
+	snapName := volName + snapshotSuffix
 	snapDesc := "just a description"
 	snap, snapCreateErr := C.CreateSnapshot(context.Background(), &gopowerstore.SnapshotCreate{
 		Name:        &snapName,
@@ -66,6 +72,7 @@ func TestModifyVolume(t *testing.T) {
 	_, err := C.ModifyVolume(context.Background(), &gopowerstore.VolumeModify{Size: DefaultVolSize * 2, Name: "rename"}, volID)
 	checkAPIErr(t, err)
 	gotVol, err := C.GetVolume(context.Background(), volID)
+	checkAPIErr(t, err)
 	assert.Equal(t, DefaultVolSize*2, gotVol.Size)
 	assert.Equal(t, "rename", gotVol.Name)
 }
@@ -109,6 +116,7 @@ func TestGetNonExistingSnapshot(t *testing.T) {
 	snap := createSnap(volID, t, volName)
 	assert.NotEmpty(t, snap.ID)
 	_, err := C.DeleteSnapshot(context.Background(), nil, snap.ID)
+	checkAPIErr(t, err)
 	assert.NotEmpty(t, snap.ID)
 
 	got, err := C.GetSnapshot(context.Background(), snap.ID)
@@ -184,7 +192,7 @@ func TestDeleteUnknownVol(t *testing.T) {
 			t.Log("Unexpected API response")
 			t.FailNow()
 		}
-		assert.True(t, apiError.VolumeIsNotExist())
+		assert.True(t, apiError.NotFound())
 	}
 }
 
@@ -214,7 +222,7 @@ func TestSnapshotAlreadyExist(t *testing.T) {
 	snap := createSnap(volID, t, volName)
 	assert.NotEmpty(t, snap.ID)
 
-	snapName := volName + "_snapshot"
+	snapName := volName + "snapshot"
 	snapDesc := "just a description"
 	snap, err := C.CreateSnapshot(context.Background(), &gopowerstore.SnapshotCreate{
 		Name:        &snapName,
@@ -229,5 +237,35 @@ func TestGetInvalidVolume(t *testing.T) {
 	_, err := C.GetVolume(context.Background(), "4961282c-c5c5-4234-935f-2742fed499d0")
 	assert.NotNil(t, err)
 	apiError := err.(gopowerstore.APIError)
-	assert.True(t, apiError.VolumeIsNotExist())
+	assert.True(t, apiError.NotFound())
+}
+
+func TestComputeDifferences(t *testing.T) {
+	// Create volume
+	volID, volName := createVol(t)
+	defer deleteVol(t, volID)
+
+	// Create snap of volume
+	snap1 := createSnapWithSuffix(volID, t, volName, "snapshot1")
+	assert.NotEmpty(t, snap1.ID)
+	// Create another snap of volume
+	snap2 := createSnapWithSuffix(volID, t, volName, "snapshot2")
+	assert.NotEmpty(t, snap2.ID)
+	// Run snap diff and validate there are no differences
+
+	base_snapshot_id := snap2.ID
+	offset := int64(0)
+	chunk_size := int64(DefaultChunkSize)
+	length := int64(DefaultVolSize)
+	snapdiffParams := gopowerstore.VolumeComputeDifferences{
+		BaseSnapshotID: &base_snapshot_id,
+		ChunkSize:      &chunk_size,
+		Length:         &length,
+		Offset:         &offset,
+	}
+	resp, err := C.ComputeDifferences(context.Background(), &snapdiffParams, snap1.ID)
+	checkAPIErr(t, err)
+	// AA== is equivalent to an empty bitmap
+	assert.Equal(t, "AA==", *resp.ChunkBitmap)
+	assert.Equal(t, int64(-1), *resp.NextOffset)
 }

@@ -18,13 +18,15 @@ func getVolumeGroupDefaultQueryParams(c Client) api.QueryParamsEncoder {
 
 // GetVolumeGroup query and return specific volume group by id
 func (c *ClientIMPL) GetVolumeGroup(ctx context.Context, id string) (resp VolumeGroup, err error) {
+	qp := getVolumeGroupDefaultQueryParams(c)
+	qp.Select("volume.volume_group_membership(id,name,protection_policy_id)")
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{
 			Method:      "GET",
 			Endpoint:    volumeGroupURL,
 			ID:          id,
-			QueryParams: getVolumeGroupDefaultQueryParams(c)},
+			QueryParams: qp},
 		&resp)
 	return resp, WrapErr(err)
 }
@@ -46,7 +48,7 @@ func (c *ClientIMPL) GetVolumeGroupByName(ctx context.Context, name string) (res
 		return resp, err
 	}
 	if len(groups) != 1 {
-		return resp, NewVolumeIsNotExistError()
+		return resp, NewNotFoundError()
 	}
 	return groups[0], err
 }
