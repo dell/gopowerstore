@@ -89,7 +89,7 @@ func TestClientIMPL_GetProtectionPolicyByName(t *testing.T) {
 	_, err = C.GetProtectionPolicyByName(context.Background(), "test")
 	assert.NotNil(t, err)
 	apiError := err.(APIError)
-	assert.True(t, apiError.VolumeIsNotExist())
+	assert.True(t, apiError.NotFound())
 }
 
 func TestClientIMPL_GetReplicationRuleByName(t *testing.T) {
@@ -109,7 +109,7 @@ func TestClientIMPL_GetReplicationRuleByName(t *testing.T) {
 	_, err = C.GetReplicationRuleByName(context.Background(), "test")
 	assert.NotNil(t, err)
 	apiError := err.(APIError)
-	assert.True(t, apiError.VolumeIsNotExist())
+	assert.True(t, apiError.NotFound())
 }
 
 func TestClientIMPL_GetReplicationSessionByLocalResourceID(t *testing.T) {

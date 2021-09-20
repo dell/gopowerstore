@@ -26,6 +26,8 @@ import (
 const (
 	// UnknownVolumeErrorCode indicates an unknown volume error
 	UnknownVolumeErrorCode = api.UnknownVolumeErrorCode
+	// UnknownVolumeGroupErrorCode indicates an unknown volume error
+	UnknownVolumeGroupErrorCode = api.UnknownVolumeGroupErrorCode
 	// VolumeNameAlreadyUseErrorCode indicates non unique volume name
 	VolumeNameAlreadyUseErrorCode = api.VolumeNameAlreadyUseErrorCode
 	// SnapshotNameAlreadyUseErrorCode indicates non unique snapshot name
@@ -52,6 +54,8 @@ const (
 	HostAlreadyRemovedFromNFSExport = api.HostAlreadyRemovedFromNFSExport
 	//UnableToMatchHostVolume - Couldn't find any host volume matching volume id
 	UnableToMatchHostVolume = api.UnableToMatchHostVolume
+	//UnableToFailoverFromDestination - Couldn't find any host volume matching volume id
+	UnableToFailoverFromDestination = api.UnableToFailoverFromDestination
 )
 
 // RequestConfig represents options for request
@@ -90,11 +94,9 @@ func WrapErr(err error) error {
 	return err
 }
 
-// VolumeIsNotExist returns true if API error indicate that volume is not exists
-func (err *APIError) VolumeIsNotExist() bool {
-	return (err.StatusCode == http.StatusNotFound || err.StatusCode == http.StatusUnprocessableEntity) &&
-		(err.ErrorCode == UnknownVolumeErrorCode || err.ErrorCode == InvalidInstance ||
-			err.ErrorCode == InstanceWasNotFound)
+// NotFound returns true if API error indicate that volume is not exists
+func (err *APIError) NotFound() bool {
+	return err.StatusCode == http.StatusNotFound
 }
 
 // VolumeNameIsAlreadyUse returns true if API error indicate that volume name is already in use
@@ -157,14 +159,20 @@ func (err *APIError) HostAlreadyPresentInNFSExport() bool {
 	return err.StatusCode == http.StatusUnprocessableEntity || err.ErrorCode == HostAlreadyPresentInNFSExport
 }
 
-// NewVolumeIsNotExistError returns new VolumeIsNotExistError
-func NewVolumeIsNotExistError() APIError {
-	return notExistError()
+// UnableToFailoverFromDestination returns true if API error indicate that operation can't be complete because
+// it is impossible to failover from Destination
+func (err *APIError) UnableToFailoverFromDestination() bool {
+	return err.StatusCode == http.StatusBadRequest && err.ErrorCode == UnableToFailoverFromDestination
+}
+
+// NewNotFoundError returns new VolumeIsNotExistError
+func NewNotFoundError() APIError {
+	return notFoundError()
 }
 
 // NewHostIsNotExistError returns new HostIsNotExistError
 func NewHostIsNotExistError() APIError {
-	return notExistError()
+	return notFoundError()
 }
 
 // NewHostIsNotAttachedToVolume returns new HostIsNotAttachedToVolume error
@@ -183,7 +191,7 @@ func NewVolumeAttachedToHostError() APIError {
 	return apiError
 }
 
-func notExistError() APIError {
+func notFoundError() APIError {
 	apiError := APIError{&api.ErrorMsg{}}
 	apiError.ErrorCode = InvalidInstance
 	apiError.StatusCode = http.StatusNotFound

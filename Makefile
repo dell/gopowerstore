@@ -2,6 +2,8 @@
 integration_tests_path=./inttests
 unit_test_paths= ./ ./api
 
+.PHONY: mocks
+
 all: unit-test int-test check gosec mocks
 
 unit-test:

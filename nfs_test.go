@@ -51,7 +51,7 @@ func TestClientIMPL_GetNFSExportByName(t *testing.T) {
 	_, err = C.GetNFSExportByName(context.Background(), "test")
 	assert.NotNil(t, err)
 	apiError := err.(APIError)
-	assert.True(t, apiError.VolumeIsNotExist())
+	assert.True(t, apiError.NotFound())
 }
 
 func TestClientIMPL_CreateNFSExport(t *testing.T) {

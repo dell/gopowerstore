@@ -34,10 +34,10 @@ func TestAPIError_VolumeNameIsAlreadyUse(t *testing.T) {
 
 func TestAPIError_VolumeIsNotExist(t *testing.T) {
 	apiError := NewAPIError()
-	assert.False(t, apiError.VolumeIsNotExist())
+	assert.False(t, apiError.NotFound())
 	apiError.StatusCode = http.StatusNotFound
 	apiError.ErrorCode = UnknownVolumeErrorCode
-	assert.True(t, apiError.VolumeIsNotExist())
+	assert.True(t, apiError.NotFound())
 }
 
 func TestAPIError_HostIsNotAttachedToVolume(t *testing.T) {

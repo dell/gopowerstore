@@ -72,6 +72,7 @@ type Client interface {
 	GetSnapshotsByVolumeID(ctx context.Context, volID string) ([]Volume, error)
 	GetSnapshots(ctx context.Context) ([]Volume, error)
 	GetSnapshot(ctx context.Context, snapID string) (Volume, error)
+	ComputeDifferences(ctx context.Context, snapdiffParams *VolumeComputeDifferences, volID string) (VolumeComputeDifferencesResponse, error)
 	CreateVolumeFromSnapshot(ctx context.Context, createParams *VolumeClone, snapID string) (CreateResponse, error)
 	GetNAS(ctx context.Context, id string) (NAS, error)
 	GetNASByName(ctx context.Context, name string) (NAS, error)
@@ -148,6 +149,8 @@ type Client interface {
 	PerformanceMetricsNfsByNode(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]PerformanceMetricsByNfsResponse, error)
 	PerformanceMetricsNfsv3ByNode(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]PerformanceMetricsByNfsv3Response, error)
 	PerformanceMetricsNfsv4ByNode(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]PerformanceMetricsByNfsv4Response, error)
+	ExecuteActionOnReplicationSession(ctx context.Context, id string, actionType ActionType, params *FailoverParams) (resp EmptyResponse, err error)
+	GetReplicationSessionByID(ctx context.Context, id string) (resp ReplicationSession, err error)
 }
 
 // ClientIMPL provides basic API client implementation

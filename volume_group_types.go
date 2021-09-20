@@ -29,7 +29,9 @@ type VolumeGroup struct {
 	// Description for the volume group.
 	Description string `json:"description,omitempty"`
 	// Unique identifier of the protection policy assigned to the volume.
-	ProtectionPolicyID string `json:"protection_policy_id,omitempty"`
+	ProtectionPolicyID string           `json:"protection_policy_id,omitempty"`
+	Volumes            []Volume         `json:"volume"`
+	ProtectionPolicy   ProtectionPolicy `json:"protection_policy"`
 }
 
 // Fields returns fields which must be requested to fill struct

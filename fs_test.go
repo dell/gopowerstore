@@ -51,7 +51,7 @@ func TestClientIMPL_GetNASByName(t *testing.T) {
 	_, err = C.GetNASByName(context.Background(), "test")
 	assert.NotNil(t, err)
 	apiError := err.(APIError)
-	assert.True(t, apiError.VolumeIsNotExist())
+	assert.True(t, apiError.NotFound())
 }
 
 func TestClientIMPL_GetFSByName(t *testing.T) {
@@ -71,7 +71,7 @@ func TestClientIMPL_GetFSByName(t *testing.T) {
 	_, err = C.GetFSByName(context.Background(), "test")
 	assert.NotNil(t, err)
 	apiError := err.(APIError)
-	assert.True(t, apiError.VolumeIsNotExist())
+	assert.True(t, apiError.NotFound())
 }
 
 func TestClientIMPL_GetFS(t *testing.T) {

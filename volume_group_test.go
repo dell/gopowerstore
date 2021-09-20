@@ -70,7 +70,7 @@ func TestClientIMPL_GetVolumeGroupByName(t *testing.T) {
 	_, err = C.GetVolumeGroupByName(context.Background(), "test")
 	assert.NotNil(t, err)
 	apiError := err.(APIError)
-	assert.True(t, apiError.VolumeIsNotExist())
+	assert.True(t, apiError.NotFound())
 }
 
 func TestClientIMPL_GetVolumeGroupsByVolumeID(t *testing.T) {

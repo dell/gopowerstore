@@ -21,9 +21,10 @@ package gopowerstore
 import (
 	"context"
 	"fmt"
+	"testing"
+
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 const (
@@ -73,7 +74,7 @@ func TestClientIMPL_GetVolumeByName(t *testing.T) {
 	_, err = C.GetVolumeByName(context.Background(), "test")
 	assert.NotNil(t, err)
 	apiError := err.(APIError)
-	assert.True(t, apiError.VolumeIsNotExist())
+	assert.True(t, apiError.NotFound())
 }
 
 func TestClientIMPL_GetSnapshotsByVolumeID(t *testing.T) {
@@ -160,10 +161,32 @@ func TestClientIMPL_CreateVolumeFromSnapshot(t *testing.T) {
 	assert.Equal(t, volID2, resp.ID)
 }
 
+func TestClientIMPL_ComputeDifferences(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	respData := `{"chunk_bitmap":"Dw==","next_offset":-1}`
+	httpmock.RegisterResponder("POST", fmt.Sprintf("%s/%s/compute_differences", volumeMockURL, volID),
+		httpmock.NewStringResponder(201, respData))
+
+	base_snapshot_id := ""
+	offset := int64(0)
+	chunk_size := int64(1048576)
+	length := int64(4194304)
+	computeDiffParams := VolumeComputeDifferences{
+		BaseSnapshotID: &base_snapshot_id,
+		ChunkSize:      &chunk_size,
+		Length:         &length,
+		Offset:         &offset,
+	}
+	resp, err := C.ComputeDifferences(context.Background(), &computeDiffParams, volID)
+	assert.Nil(t, err)
+	assert.Equal(t, "Dw==", *resp.ChunkBitmap)
+	assert.Equal(t, int64(-1), *resp.NextOffset)
+}
 func TestClientIMPL_ModifyVolume(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
-	respData := fmt.Sprintf(``)
+	respData := ""
 	httpmock.RegisterResponder("PATCH", fmt.Sprintf("%s/%s", volumeMockURL, volID),
 		httpmock.NewStringResponder(201, respData))
 
