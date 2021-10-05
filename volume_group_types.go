@@ -57,3 +57,11 @@ type VolumeGroupModify struct {
 type VolumeGroupChangePolicy struct {
 	ProtectionPolicyID string `json:"protection_policy_id"`
 }
+
+// VolumeGroupSnapshotCreate create volume group snapshot request
+type VolumeGroupSnapshotCreate struct {
+	// Unique name for the volume group.
+	Name string `json:"name"`
+	// Optional description
+	Description string `json:"description,omitempty"`
+}

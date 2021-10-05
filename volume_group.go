@@ -3,12 +3,14 @@ package gopowerstore
 import (
 	"context"
 	"fmt"
+
 	"github.com/dell/gopowerstore/api"
 	"github.com/sirupsen/logrus"
 )
 
 const (
 	volumeGroupURL = "volume_group"
+	snapshotURL    = "/snapshot"
 )
 
 func getVolumeGroupDefaultQueryParams(c Client) api.QueryParamsEncoder {
@@ -131,6 +133,19 @@ func (c *ClientIMPL) ModifyVolumeGroup(ctx context.Context,
 			Endpoint: volumeGroupURL,
 			ID:       id,
 			Body:     modifyParams},
+		&resp)
+	return resp, WrapErr(err)
+}
+
+// CreateVolumeGroupSnapshot Creates a new volume group snapshot from the existing volume group
+func (c *ClientIMPL) CreateVolumeGroupSnapshot(ctx context.Context, volumeGroupID string,
+	createParams *VolumeGroupSnapshotCreate) (resp CreateResponse, err error) {
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:   "POST",
+			Endpoint: volumeGroupURL + volumeGroupID + snapshotURL,
+			Body:     createParams},
 		&resp)
 	return resp, WrapErr(err)
 }
