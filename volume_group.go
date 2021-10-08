@@ -3,7 +3,6 @@ package gopowerstore
 import (
 	"context"
 	"fmt"
-
 	"github.com/dell/gopowerstore/api"
 	"github.com/sirupsen/logrus"
 )
