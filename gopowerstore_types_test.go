@@ -19,17 +19,15 @@
 package gopowerstore
 
 import (
+	"github.com/stretchr/testify/assert"
 	"net/http"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
 )
 
 func TestAPIError_VolumeNameIsAlreadyUse(t *testing.T) {
 	apiError := NewAPIError()
 	assert.False(t, apiError.VolumeNameIsAlreadyUse())
 	apiError.StatusCode = http.StatusUnprocessableEntity
-	// apiError.ErrorCode = VolumeNameAlreadyUseErrorCode
 	assert.True(t, apiError.VolumeNameIsAlreadyUse())
 }
 
@@ -37,7 +35,6 @@ func TestAPIError_VolumeIsNotExist(t *testing.T) {
 	apiError := NewAPIError()
 	assert.False(t, apiError.NotFound())
 	apiError.StatusCode = http.StatusNotFound
-	// apiError.ErrorCode = UnknownVolumeErrorCode
 	assert.True(t, apiError.NotFound())
 }
 

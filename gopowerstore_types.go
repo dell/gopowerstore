@@ -19,45 +19,9 @@
 package gopowerstore
 
 import (
-	"net/http"
-
 	"github.com/dell/gopowerstore/api"
+	"net/http"
 )
-
-// const (
-// 	// UnknownVolumeErrorCode indicates an unknown volume error
-// 	UnknownVolumeErrorCode = api.UnknownVolumeErrorCode
-// 	// UnknownVolumeGroupErrorCode indicates an unknown volume error
-// 	UnknownVolumeGroupErrorCode = api.UnknownVolumeGroupErrorCode
-// 	// VolumeNameAlreadyUseErrorCode indicates non unique volume name
-// 	VolumeNameAlreadyUseErrorCode = api.VolumeNameAlreadyUseErrorCode
-// 	// SnapshotNameAlreadyUseErrorCode indicates non unique snapshot name
-// 	SnapshotNameAlreadyUseErrorCode = api.SnapshotNameAlreadyUseErrorCode
-// 	// FilesystemNameAlreadyUseErrorCode indicates non unique fs name
-// 	FilesystemNameAlreadyUseErrorCode = api.FilesystemNameAlreadyUseErrorCode
-// 	// InvalidInstance - instance not found
-// 	InvalidInstance = api.InvalidInstance
-// 	// HostIsNotAttachedToVolumeErrorCode - host not attached to volume
-// 	HostIsNotAttachedToVolumeErrorCode = api.HostIsNotAttachedToVolumeErrorCode
-// 	// VolumeIsNotAttachedToHost - volume is not attached to host
-// 	VolumeIsNotAttachedToHost = api.VolumeIsNotAttachedToHost
-// 	// NoHostObjectFoundCode - no host object found in management db for specified ID
-// 	NoHostObjectFoundCode = api.NoHostObjectFoundCode
-// 	// BadRangeCode - invalid range was used in request
-// 	BadRangeCode = api.BadRangeCode
-// 	// VolumeAttachedToHost - volume attached to host
-// 	VolumeAttachedToHost = api.VolumeAttachedToHost
-// 	// InstanceWasNotFound - Instance was not found on array
-// 	InstanceWasNotFound = api.InstanceWasNotFound
-// 	// HostAlreadyPresentInNFSExport - host already have an access
-// 	HostAlreadyPresentInNFSExport = api.HostAlreadyPresentInNFSExport
-// 	// HostAlreadyRemovedFromNFSExport
-// 	HostAlreadyRemovedFromNFSExport = api.HostAlreadyRemovedFromNFSExport
-// 	//UnableToMatchHostVolume - Couldn't find any host volume matching volume id
-// 	UnableToMatchHostVolume = api.UnableToMatchHostVolume
-// 	//UnableToFailoverFromDestination - Couldn't find any host volume matching volume id
-// 	UnableToFailoverFromDestination = api.UnableToFailoverFromDestination
-// )
 
 // RequestConfig represents options for request
 type RequestConfig api.RequestConfig
@@ -112,7 +76,7 @@ func (err *APIError) SnapshotNameIsAlreadyUse() bool {
 
 // FSNameIsAlreadyUse returns true if API error indicate that fs name is already in use
 func (err *APIError) FSNameIsAlreadyUse() bool {
-	return (err.StatusCode == http.StatusBadRequest || err.StatusCode == http.StatusUnprocessableEntity)
+	return err.StatusCode == http.StatusBadRequest || err.StatusCode == http.StatusUnprocessableEntity
 }
 
 // HostIsNotAttachedToVolume returns true if API error indicate that host is not attached to volume
@@ -127,7 +91,7 @@ func (err *APIError) VolumeIsNotAttachedToHost() bool {
 
 // HostIsNotExist returns true if API error indicate that host is not exists
 func (err *APIError) HostIsNotExist() bool {
-	return (err.StatusCode == http.StatusNotFound || err.StatusCode == http.StatusBadRequest)
+	return err.StatusCode == http.StatusNotFound || err.StatusCode == http.StatusBadRequest
 }
 
 // BadRange returns true if API error indicate that request was submitted with invalid range
