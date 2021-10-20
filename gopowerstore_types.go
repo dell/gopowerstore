@@ -23,41 +23,6 @@ import (
 	"net/http"
 )
 
-const (
-	// UnknownVolumeErrorCode indicates an unknown volume error
-	UnknownVolumeErrorCode = api.UnknownVolumeErrorCode
-	// UnknownVolumeGroupErrorCode indicates an unknown volume error
-	UnknownVolumeGroupErrorCode = api.UnknownVolumeGroupErrorCode
-	// VolumeNameAlreadyUseErrorCode indicates non unique volume name
-	VolumeNameAlreadyUseErrorCode = api.VolumeNameAlreadyUseErrorCode
-	// SnapshotNameAlreadyUseErrorCode indicates non unique snapshot name
-	SnapshotNameAlreadyUseErrorCode = api.SnapshotNameAlreadyUseErrorCode
-	// FilesystemNameAlreadyUseErrorCode indicates non unique fs name
-	FilesystemNameAlreadyUseErrorCode = api.FilesystemNameAlreadyUseErrorCode
-	// InvalidInstance - instance not found
-	InvalidInstance = api.InvalidInstance
-	// HostIsNotAttachedToVolumeErrorCode - host not attached to volume
-	HostIsNotAttachedToVolumeErrorCode = api.HostIsNotAttachedToVolumeErrorCode
-	// VolumeIsNotAttachedToHost - volume is not attached to host
-	VolumeIsNotAttachedToHost = api.VolumeIsNotAttachedToHost
-	// NoHostObjectFoundCode - no host object found in management db for specified ID
-	NoHostObjectFoundCode = api.NoHostObjectFoundCode
-	// BadRangeCode - invalid range was used in request
-	BadRangeCode = api.BadRangeCode
-	// VolumeAttachedToHost - volume attached to host
-	VolumeAttachedToHost = api.VolumeAttachedToHost
-	// InstanceWasNotFound - Instance was not found on array
-	InstanceWasNotFound = api.InstanceWasNotFound
-	// HostAlreadyPresentInNFSExport - host already have an access
-	HostAlreadyPresentInNFSExport = api.HostAlreadyPresentInNFSExport
-	// HostAlreadyRemovedFromNFSExport
-	HostAlreadyRemovedFromNFSExport = api.HostAlreadyRemovedFromNFSExport
-	//UnableToMatchHostVolume - Couldn't find any host volume matching volume id
-	UnableToMatchHostVolume = api.UnableToMatchHostVolume
-	//UnableToFailoverFromDestination - Couldn't find any host volume matching volume id
-	UnableToFailoverFromDestination = api.UnableToFailoverFromDestination
-)
-
 // RequestConfig represents options for request
 type RequestConfig api.RequestConfig
 
@@ -101,68 +66,61 @@ func (err *APIError) NotFound() bool {
 
 // VolumeNameIsAlreadyUse returns true if API error indicate that volume name is already in use
 func (err *APIError) VolumeNameIsAlreadyUse() bool {
-	return err.StatusCode == http.StatusUnprocessableEntity &&
-		err.ErrorCode == VolumeNameAlreadyUseErrorCode
+	return err.StatusCode == http.StatusUnprocessableEntity
 }
 
 // SnapshotNameIsAlreadyUse returns true if API error indicate that snapshot name is already in use
 func (err *APIError) SnapshotNameIsAlreadyUse() bool {
-	return err.StatusCode == http.StatusBadRequest &&
-		err.ErrorCode == SnapshotNameAlreadyUseErrorCode
+	return err.StatusCode == http.StatusBadRequest
 }
 
 // FSNameIsAlreadyUse returns true if API error indicate that fs name is already in use
 func (err *APIError) FSNameIsAlreadyUse() bool {
-	return (err.StatusCode == http.StatusBadRequest || err.StatusCode == http.StatusUnprocessableEntity) &&
-		err.ErrorCode == FilesystemNameAlreadyUseErrorCode
+	return err.StatusCode == http.StatusBadRequest || err.StatusCode == http.StatusUnprocessableEntity
 }
 
 // HostIsNotAttachedToVolume returns true if API error indicate that host is not attached to volume
 func (err *APIError) HostIsNotAttachedToVolume() bool {
-	return err.StatusCode == http.StatusBadRequest &&
-		err.ErrorCode == HostIsNotAttachedToVolumeErrorCode
+	return err.StatusCode == http.StatusBadRequest
 }
 
 // VolumeIsNotAttachedToHost returns true if API error indicate that volume is not attached to host
 func (err *APIError) VolumeIsNotAttachedToHost() bool {
-	return (err.StatusCode == http.StatusBadRequest &&
-		err.ErrorCode == VolumeIsNotAttachedToHost) || (err.StatusCode == http.StatusBadRequest &&
-		err.ErrorCode == UnableToMatchHostVolume)
+	return err.StatusCode == http.StatusBadRequest
 }
 
 // HostIsNotExist returns true if API error indicate that host is not exists
 func (err *APIError) HostIsNotExist() bool {
-	return (err.StatusCode == http.StatusNotFound || err.StatusCode == http.StatusBadRequest) &&
-		(err.ErrorCode == InvalidInstance || err.ErrorCode == NoHostObjectFoundCode)
+	return err.StatusCode == http.StatusNotFound || err.StatusCode == http.StatusBadRequest
 }
 
 // BadRange returns true if API error indicate that request was submitted with invalid range
 func (err *APIError) BadRange() bool {
-	return err.StatusCode == http.StatusRequestedRangeNotSatisfiable || err.ErrorCode == BadRangeCode
+	return err.StatusCode == http.StatusRequestedRangeNotSatisfiable
 }
 
 // VolumeAttachedToHost returns true if API error indicate that operation can't be complete because
 // volume is attached to host
 func (err *APIError) VolumeAttachedToHost() bool {
-	return err.StatusCode == http.StatusUnprocessableEntity || err.ErrorCode == VolumeAttachedToHost
+	return err.StatusCode == http.StatusUnprocessableEntity
 }
 
 // HostAlreadyRemovedFromNFSExport returns true if API error indicate that operation can't be complete because
 // host ip already removed from nfs export access
 func (err *APIError) HostAlreadyRemovedFromNFSExport() bool {
-	return err.StatusCode == http.StatusUnprocessableEntity || err.ErrorCode == HostAlreadyRemovedFromNFSExport
+	return err.StatusCode == http.StatusUnprocessableEntity
 }
 
 // HostAlreadyPresentInNFSExport returns true if API error indicate that operation can't be complete because
 // host ip already present in nfs export access
 func (err *APIError) HostAlreadyPresentInNFSExport() bool {
-	return err.StatusCode == http.StatusUnprocessableEntity || err.ErrorCode == HostAlreadyPresentInNFSExport
+	return err.StatusCode == http.StatusUnprocessableEntity
 }
 
 // UnableToFailoverFromDestination returns true if API error indicate that operation can't be complete because
 // it is impossible to failover from Destination
 func (err *APIError) UnableToFailoverFromDestination() bool {
-	return err.StatusCode == http.StatusBadRequest && err.ErrorCode == UnableToFailoverFromDestination
+	return err.StatusCode == http.StatusBadRequest
 }
 
 // NewNotFoundError returns new VolumeIsNotExistError
@@ -178,7 +136,6 @@ func NewHostIsNotExistError() APIError {
 // NewHostIsNotAttachedToVolume returns new HostIsNotAttachedToVolume error
 func NewHostIsNotAttachedToVolume() APIError {
 	apiError := APIError{&api.ErrorMsg{}}
-	apiError.ErrorCode = HostIsNotAttachedToVolumeErrorCode
 	apiError.StatusCode = http.StatusBadRequest
 	return apiError
 }
@@ -186,35 +143,30 @@ func NewHostIsNotAttachedToVolume() APIError {
 // NewVolumeAttachedToHostError returns new VolumeAttachedToHost error
 func NewVolumeAttachedToHostError() APIError {
 	apiError := APIError{&api.ErrorMsg{}}
-	apiError.ErrorCode = VolumeAttachedToHost
 	apiError.StatusCode = http.StatusUnprocessableEntity
 	return apiError
 }
 
 func notFoundError() APIError {
 	apiError := APIError{&api.ErrorMsg{}}
-	apiError.ErrorCode = InvalidInstance
 	apiError.StatusCode = http.StatusNotFound
 	return apiError
 }
 
 func replicationRuleNotExists() APIError {
 	apiError := APIError{&api.ErrorMsg{}}
-	apiError.ErrorCode = InvalidInstance
 	apiError.StatusCode = http.StatusNotFound
 	return apiError
 }
 
 func protectionPolicyNotExists() APIError {
 	apiError := APIError{&api.ErrorMsg{}}
-	apiError.ErrorCode = InvalidInstance
 	apiError.StatusCode = http.StatusNotFound
 	return apiError
 }
 
 func replicationGroupNotExists() APIError {
 	apiError := APIError{&api.ErrorMsg{}}
-	apiError.ErrorCode = InvalidInstance
 	apiError.StatusCode = http.StatusNotFound
 	return apiError
 }

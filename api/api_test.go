@@ -45,22 +45,23 @@ func buildResp(t *testing.T, path string, statusCode int) *http.Response {
 func Test_buildError(t *testing.T) {
 	httpResp := buildResp(t, errResponseFile, 422)
 	apiErr := buildError(httpResp)
-	assert.Equal(t, UnknownVolumeErrorCode, apiErr.ErrorCode)
+
 	assert.Equal(t, 422, apiErr.StatusCode)
 	assert.Equal(t, errorSeverity, apiErr.Severity)
 	assert.Contains(t, apiErr.Message, "Could not find")
 	assert.Contains(t, apiErr.Arguments, "f98de58e-9223-4fdc-86bd-d4ff268e20e1")
-	httpResp.Body.Close()
+	assert.NoError(t, httpResp.Body.Close())
 	assert.NotEmpty(t, apiErr.Error())
 }
 
 func Test_buildErrorUnknownFormat(t *testing.T) {
 	httpResp := buildResp(t, unknownErrResponseFile, 404)
 	apiErr := buildError(httpResp)
+
 	assert.Equal(t, 404, apiErr.StatusCode)
 	assert.Equal(t, errorSeverity, apiErr.Severity)
 	assert.Contains(t, apiErr.Message, "Message: File not found.")
-	httpResp.Body.Close()
+	assert.NoError(t, httpResp.Body.Close())
 	assert.NotEmpty(t, apiErr.Error())
 }
 
@@ -68,16 +69,15 @@ func TestNew(t *testing.T) {
 	url := "test_url"
 	user := "admin"
 	password := "password"
-	insecure := false
 	timeout := uint64(120)
 	limit := uint64(1000)
 	key := "key"
 	var err error
 	var c *ClientIMPL
-	c, err = New(url, user, password, insecure, timeout, limit, key)
+	c, err = New(url, user, password, false, timeout, limit, key)
 	assert.NotNil(t, c)
 	assert.Nil(t, err)
-	_, err = New(url, "", "", insecure, timeout, limit, key)
+	_, err = New(url, "", "", false, timeout, limit, key)
 	assert.NotNil(t, err)
 	c, err = New(url, user, password, true, timeout, limit, key)
 	assert.Nil(t, err)
@@ -255,8 +255,8 @@ func Test_addMetaData(t *testing.T) {
 	}{
 		{"nil request is a noop", nil, nil, nil},
 		{"nil body is a noop", nil, nil, nil},
-		{"nil header is updated", &http.Request{Header: nil}, &http.Request{Header: map[string][]string{"Foo": []string{"bar"}}}, stubTypeWithMetaData{}},
-		{"header is updated", &http.Request{Header: map[string][]string{}}, &http.Request{Header: map[string][]string{"Foo": []string{"bar"}}}, stubTypeWithMetaData{}},
+		{"nil header is updated", &http.Request{Header: nil}, &http.Request{Header: map[string][]string{"Foo": {"bar"}}}, stubTypeWithMetaData{}},
+		{"header is updated", &http.Request{Header: map[string][]string{}}, &http.Request{Header: map[string][]string{"Foo": {"bar"}}}, stubTypeWithMetaData{}},
 		{"header is not updated", &http.Request{Header: map[string][]string{}}, &http.Request{Header: map[string][]string{}}, struct{}{}},
 	}
 	for _, tt := range tests {

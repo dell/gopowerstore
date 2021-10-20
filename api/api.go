@@ -116,7 +116,6 @@ type ClientIMPL struct {
 	password          string
 	httpClient        *http.Client
 	defaultTimeout    uint64
-	rateLimit         uint64
 	requestIDKey      string
 	customHTTPHeaders http.Header
 	logger            Logger
@@ -169,15 +168,14 @@ type apiErrorMsg struct {
 
 // ErrorMsg is internal error representation
 type ErrorMsg struct {
-	StatusCode int    `json:"-"`
-	ErrorCode  string `json:"code"`
+	StatusCode int `json:"-"`
 	Severity   string
 	Message    string `json:"message_l10n"`
 	Arguments  []string
 }
 
 func (err *ErrorMsg) Error() string {
-	return fmt.Sprintf("%s: %s", err.ErrorCode, err.Message)
+	return err.Message
 }
 
 func buildError(r *http.Response) *ErrorMsg {
