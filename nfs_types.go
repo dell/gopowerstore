@@ -108,6 +108,14 @@ type NFSExport struct {
 	// Local path to a location within the file system.
 	// With NFS, each export must have a unique local path.
 	Path string `json:"path,omitempty"`
+	// Read-Write hosts
+	RWHosts []string `json:"read_write_hosts,omitempty"`
+	// Read-Only hosts
+	ROHosts []string `json:"read_only_hosts,omitempty"`
+	// Read-Write, allow Root hosts
+	RWRootHosts []string `json:"read_write_root_hosts,omitempty"`
+	// Read-Only, allow Roots hosts
+	RORootHosts []string `json:"read_only_root_hosts,omitempty"`
 }
 
 // Details about the file interface
@@ -120,7 +128,7 @@ type FileInterface struct {
 
 // Fields returns fields which must be requested to fill struct
 func (n *NFSExport) Fields() []string {
-	return []string{"description", "id", "name", "file_system_id", "default_access", "path"}
+	return []string{"description", "id", "name", "file_system_id", "default_access", "path", "read_only_hosts", "read_only_root_hosts", "read_write_hosts", "read_write_root_hosts"}
 }
 
 // Fields returns fields which must be requested to fill struct
