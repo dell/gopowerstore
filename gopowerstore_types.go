@@ -19,8 +19,9 @@
 package gopowerstore
 
 import (
-	"github.com/dell/gopowerstore/api"
 	"net/http"
+
+	"github.com/dell/gopowerstore/api"
 )
 
 // RequestConfig represents options for request
@@ -108,7 +109,7 @@ func (err *APIError) VolumeAttachedToHost() bool {
 // HostAlreadyRemovedFromNFSExport returns true if API error indicate that operation can't be complete because
 // host ip already removed from nfs export access
 func (err *APIError) HostAlreadyRemovedFromNFSExport() bool {
-	return err.StatusCode == http.StatusUnprocessableEntity
+	return err.StatusCode == http.StatusBadRequest
 }
 
 // HostAlreadyPresentInNFSExport returns true if API error indicate that operation can't be complete because
