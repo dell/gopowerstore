@@ -20,6 +20,7 @@ package gopowerstore
 
 import (
 	"net/http"
+	"time"
 )
 
 // VolumeStateEnum Volume life cycle states.
@@ -164,6 +165,14 @@ type SnapshotCreate struct {
 	Description *string `json:"description,omitempty"`
 }
 
+// RemoteSnapshotSessionCreate params for creating 'create snapshot' request
+type RemoteSnapshotSessionCreate struct {
+	Type             *string `json:"type,omitempty"`
+	RemoteSystemID   *string `json:"remote_system_id,omitempty"`
+	SourceResourceID *string `json:"source_resource_id,omitempty"`
+	HostID           *string `json:"host_id,omitempty"`
+}
+
 // VolumeDelete body for VolumeDelete request
 type VolumeDelete struct {
 	ForceInternal *bool `json:"force_internal,omitempty"`
@@ -194,6 +203,32 @@ type Volume struct {
 // ProtectionData is a field that holds meta information about volume creation
 type ProtectionData struct {
 	SourceID string `json:"source_id"`
+}
+
+type RemoteSnapshotSession struct {
+	Id               string `json:"id"`
+	SessionType      string `json:"session_type"`
+	ResourceType     string `json:"resource_type"`
+	State            string `json:"state"`
+	RemoteSystemId   string `json:"remote_system_id"`
+	RemoteSnapshotId string `json:"remote_snapshot_id"`
+	VolumeId         string `json:"volume_id"`
+	MemberDetails    []struct {
+		VolumeId string `json:"volume_id"`
+	} `json:"member_details"`
+	StartTimestamp               time.Time `json:"start_timestamp"`
+	EndTimestamp                 time.Time `json:"end_timestamp"`
+	EstimatedCompletionTimestamp time.Time `json:"estimated_completion_timestamp"`
+	ProgressPercentage           int       `json:"progress_percentage"`
+	AverageTransferRate          int       `json:"average_transfer_rate"`
+	CurrentTransferRate          int       `json:"current_transfer_rate"`
+	CreatorType                  string    `json:"creator_type"`
+	Error                        struct {
+		Code        string   `json:"code"`
+		Severity    string   `json:"severity"`
+		MessageL10N string   `json:"message_l10n"`
+		Arguments   []string `json:"arguments"`
+	} `json:"error"`
 }
 
 // Fields returns fields which must be requested to fill struct

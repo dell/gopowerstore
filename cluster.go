@@ -46,6 +46,22 @@ func (c *ClientIMPL) GetRemoteSystem(ctx context.Context, id string) (resp Remot
 	return resp, WrapErr(err)
 }
 
+// CreateRemoteSystem creates a remote system through payload
+func (c *ClientIMPL) CreateRemoteSystem(ctx context.Context, createParams CreateRemoteSystem) (resp RemoteSystem, err error) {
+	sys := RemoteSystem{}
+	qp := c.APIClient().QueryParamsWithFields(&sys)
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:      "POST",
+			Endpoint:    remoteSystemURL,
+			QueryParams: qp,
+			Body:        createParams,
+		},
+		&resp)
+	return resp, WrapErr(err)
+}
+
 // GetRemoteSystemByName query and return specific remote system by name
 func (c *ClientIMPL) GetRemoteSystemByName(ctx context.Context, name string) (resp RemoteSystem, err error) {
 	var systemList []RemoteSystem

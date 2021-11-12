@@ -15,6 +15,20 @@ type RemoteSystem struct {
 	ManagementAddress string `json:"management_address,omitempty"`
 }
 
+// CreateRemoteSystem To create a remote system
+type CreateRemoteSystem struct {
+	// Management IP address of the remote system instance
+	ManagementAddress string `json:"management_address,omitempty"`
+	// Type array type
+	Type string `json:"type,omitempty"`
+	// RemoteUserName IP address of the remote system instance
+	RemoteUserName string `json:"remote_username,omitempty"`
+	// RemotePassword remote system password
+	RemotePassword string `json:"remote_password,omitempty"`
+	// IscsiAddresses IP address of the remote system instance
+	IscsiAddresses string `json:"iscsi_addresses,omitempty"`
+}
+
 // Fields returns fields which must be requested to fill struct
 func (r *RemoteSystem) Fields() []string {
 	return []string{"id", "name", "description", "serial_number", "management_address"}

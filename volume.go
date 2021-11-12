@@ -26,7 +26,8 @@ import (
 )
 
 const (
-	volumeURL = "volume"
+	volumeURL            = "volume"
+	remoteSnapSessionURL = "remote_snapshot_session"
 )
 
 func getVolumeDefaultQueryParams(c Client) api.QueryParamsEncoder {
@@ -219,6 +220,29 @@ func (c *ClientIMPL) CreateVolumeFromSnapshot(ctx context.Context,
 	return resp, WrapErr(err)
 }
 
+// GetRemoteSnapshotSessionByID returns all remoteSnapSessions
+func (c *ClientIMPL) GetRemoteSnapshotSessionByID(ctx context.Context) ([]RemoteSnapshotSession, error) {
+	var result []RemoteSnapshotSession
+	err := c.readPaginatedData(func(offset int) (api.RespMeta, error) {
+		var page []RemoteSnapshotSession
+		qp := getVolumeDefaultQueryParams(c)
+		qp.Offset(offset).Limit(paginationDefaultPageSize)
+		meta, err := c.APIClient().Query(
+			ctx,
+			RequestConfig{
+				Method:      "GET",
+				Endpoint:    remoteSnapSessionURL,
+				QueryParams: qp},
+			&page)
+		err = WrapErr(err)
+		if err == nil {
+			result = append(result, page...)
+		}
+		return meta, err
+	})
+	return result, err
+}
+
 // CreateSnapshot creates a new snapshot
 func (c *ClientIMPL) CreateSnapshot(ctx context.Context,
 	createSnapParams *SnapshotCreate, id string) (resp CreateResponse, err error) {
@@ -230,6 +254,19 @@ func (c *ClientIMPL) CreateSnapshot(ctx context.Context,
 			ID:       id,
 			Action:   "snapshot",
 			Body:     createSnapParams},
+		&resp)
+	return resp, WrapErr(err)
+}
+
+// CreateRemoteSnapshotSession creates a new snapshot
+func (c *ClientIMPL) CreateRemoteSnapshotSession(ctx context.Context,
+	createParams *RemoteSnapshotSessionCreate) (resp CreateResponse, err error) {
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:   "POST",
+			Endpoint: remoteSnapSessionURL,
+			Body:     createParams},
 		&resp)
 	return resp, WrapErr(err)
 }

@@ -144,8 +144,10 @@ type HostCreate struct {
 	Name *string `json:"name"`
 	// os type
 	OsType *OSTypeEnum `json:"os_type"`
-	// type
-	Type *HostTypeEnum `json:"type,omitempty"`
+	// PortalUsageSelector
+	PortalUsageSelector *HostTypeEnum `json:"portal_usage_selector,omitempty"`
+	// HostConnectivity
+	HostConnectivity *HostTypeEnum `json:"host_connectivity,omitempty"`
 }
 
 // UpdateInitiatorInHost update initiator in host
