@@ -26,7 +26,7 @@ type CreateRemoteSystem struct {
 	// RemotePassword remote system password
 	RemotePassword string `json:"remote_password,omitempty"`
 	// IscsiAddresses IP address of the remote system instance
-	IscsiAddresses string `json:"iscsi_addresses,omitempty"`
+	IscsiAddresses []string `json:"iscsi_addresses,omitempty"`
 }
 
 // Fields returns fields which must be requested to fill struct

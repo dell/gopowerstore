@@ -35,6 +35,11 @@ func getVolumeDefaultQueryParams(c Client) api.QueryParamsEncoder {
 	return c.APIClient().QueryParamsWithFields(&vol)
 }
 
+func getRemoteSnapSessionDefaultQueryParams(c Client) api.QueryParamsEncoder {
+	remoteSnapSession := RemoteSnapshotSession{}
+	return c.APIClient().QueryParamsWithFields(&remoteSnapSession)
+}
+
 // GetVolume query and return specific volume by id
 func (c *ClientIMPL) GetVolume(ctx context.Context, id string) (resp Volume, err error) {
 	_, err = c.APIClient().Query(
@@ -220,27 +225,18 @@ func (c *ClientIMPL) CreateVolumeFromSnapshot(ctx context.Context,
 	return resp, WrapErr(err)
 }
 
-// GetRemoteSnapshotSessionByID returns all remoteSnapSessions
-func (c *ClientIMPL) GetRemoteSnapshotSessionByID(ctx context.Context) ([]RemoteSnapshotSession, error) {
-	var result []RemoteSnapshotSession
-	err := c.readPaginatedData(func(offset int) (api.RespMeta, error) {
-		var page []RemoteSnapshotSession
-		qp := getVolumeDefaultQueryParams(c)
-		qp.Offset(offset).Limit(paginationDefaultPageSize)
-		meta, err := c.APIClient().Query(
-			ctx,
-			RequestConfig{
-				Method:      "GET",
-				Endpoint:    remoteSnapSessionURL,
-				QueryParams: qp},
-			&page)
-		err = WrapErr(err)
-		if err == nil {
-			result = append(result, page...)
-		}
-		return meta, err
-	})
-	return result, err
+// GetRemoteSnapshotSessionByID returns remoteSnapSessions by ID
+func (c *ClientIMPL) GetRemoteSnapshotSessionByID(ctx context.Context, sessionId string, remoteSnapResp []RemoteSnapshotSession) ([]RemoteSnapshotSession, error) {
+	qp := c.APIClient().QueryParams()
+	qp.RawArg("id", fmt.Sprintf("eq.%s", sessionId))
+	_, err := c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:      "GET",
+			Endpoint:    remoteSnapSessionURL,
+			QueryParams: qp},
+		&remoteSnapResp)
+	return remoteSnapResp, WrapErr(err)
 }
 
 // CreateSnapshot creates a new snapshot

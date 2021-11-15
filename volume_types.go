@@ -82,7 +82,7 @@ type VolumeCreate struct {
 	// Maximum volume size is 256TB. Size must be a multiple of 8192.
 	Size *int64 `json:"size"`
 	// Storage type. Valid values are:
-	StorageType *StorageTypeEnum `json:"storage_type,omitempty"`
+	//StorageType *StorageTypeEnum `json:"storage_type,omitempty"`
 	// Volume group to add the volume to. If not specified, the volume is not added to a volume group.
 	VolumeGroupID string `json:"volume_group_id,omitempty"`
 
@@ -206,33 +206,34 @@ type ProtectionData struct {
 }
 
 type RemoteSnapshotSession struct {
-	Id               string `json:"id"`
-	SessionType      string `json:"session_type"`
-	ResourceType     string `json:"resource_type"`
-	State            string `json:"state"`
-	RemoteSystemId   string `json:"remote_system_id"`
-	RemoteSnapshotId string `json:"remote_snapshot_id"`
-	VolumeId         string `json:"volume_id"`
+	Id               string `json:"id,omitempty"`
+	SessionType      string `json:"session_type,omitempty"`
+	ResourceType     string `json:"resource_type,omitempty"`
+	State            string `json:"state,omitempty"`
+	RemoteSystemId   string `json:"remote_system_id,omitempty"`
+	RemoteSnapshotId string `json:"remote_snapshot_id,omitempty"`
+	VolumeId         string `json:"volume_id,omitempty"`
 	MemberDetails    []struct {
 		VolumeId string `json:"volume_id"`
-	} `json:"member_details"`
-	StartTimestamp               time.Time `json:"start_timestamp"`
-	EndTimestamp                 time.Time `json:"end_timestamp"`
-	EstimatedCompletionTimestamp time.Time `json:"estimated_completion_timestamp"`
-	ProgressPercentage           int       `json:"progress_percentage"`
-	AverageTransferRate          int       `json:"average_transfer_rate"`
-	CurrentTransferRate          int       `json:"current_transfer_rate"`
-	CreatorType                  string    `json:"creator_type"`
-	Error                        struct {
-		Code        string   `json:"code"`
-		Severity    string   `json:"severity"`
-		MessageL10N string   `json:"message_l10n"`
-		Arguments   []string `json:"arguments"`
-	} `json:"error"`
+	} `json:"member_details,omitempty"`
+	StartTimestamp               time.Time `json:"start_timestamp,omitempty"`
+	EndTimestamp                 time.Time `json:"end_timestamp,omitempty"`
+	EstimatedCompletionTimestamp time.Time `json:"estimated_completion_timestamp,omitempty"`
+	ProgressPercentage           int       `json:"progress_percentage,omitempty"`
+	AverageTransferRate          int       `json:"average_transfer_rate,omitempty"`
+	CurrentTransferRate          int       `json:"current_transfer_rate,omitempty"`
+	CreatorType                  string    `json:"creator_type,omitempty"`
 }
 
 // Fields returns fields which must be requested to fill struct
 func (v *Volume) Fields() []string {
 	return []string{"description", "id", "name",
 		"size", "state", "storage_type", "type", "wwn", "protection_data"}
+}
+
+// Fields returns fields which must be requested to fill struct
+func (v *RemoteSnapshotSession) Fields() []string {
+	return []string{"id", "session_type", "resource_type", "state", "remote_system_id", "remote_snapshot_id", "volume_id",
+		"member_details", "start_timestamp", "end_timestamp", "estimated_completion_timestamp", "progress_percentage",
+		"average_transfer_rate", "current_transfer_rate", "creator_type"}
 }

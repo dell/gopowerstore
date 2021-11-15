@@ -148,6 +148,7 @@ type HostCreate struct {
 	PortalUsageSelector *HostTypeEnum `json:"portal_usage_selector,omitempty"`
 	// HostConnectivity
 	HostConnectivity *HostTypeEnum `json:"host_connectivity,omitempty"`
+	Type             string        `json:"type,omitempty"`
 }
 
 // UpdateInitiatorInHost update initiator in host
