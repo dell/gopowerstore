@@ -226,17 +226,31 @@ func (c *ClientIMPL) CreateVolumeFromSnapshot(ctx context.Context,
 }
 
 // GetRemoteSnapshotSessionByID returns remoteSnapSessions by ID
-func (c *ClientIMPL) GetRemoteSnapshotSessionByID(ctx context.Context, sessionId string, remoteSnapResp []RemoteSnapshotSession) ([]RemoteSnapshotSession, error) {
-	qp := c.APIClient().QueryParams()
-	qp.RawArg("id", fmt.Sprintf("eq.%s", sessionId))
-	_, err := c.APIClient().Query(
+func (c *ClientIMPL) GetRemoteSnapshotSessionByID(ctx context.Context, sessionId string) (resp RemoteSnapshotSession, err error) {
+	remoteSnapSession := RemoteSnapshotSession{}
+	qp := c.APIClient().QueryParamsWithFields(&remoteSnapSession)
+	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{
 			Method:      "GET",
 			Endpoint:    remoteSnapSessionURL,
-			QueryParams: qp},
-		&remoteSnapResp)
-	return remoteSnapResp, WrapErr(err)
+			ID:          sessionId,
+			QueryParams: qp,
+		},
+		&resp)
+	return resp, WrapErr(err)
+
+	//qp := getRemoteSnapSessionDefaultQueryParams(c)
+	////qp=c.APIClient().QueryParamsWithFields()
+	//qp.RawArg("id", fmt.Sprintf("eq.%s", sessionId))
+	//_, err := c.APIClient().Query(
+	//	ctx,
+	//	RequestConfig{
+	//		Method:      "GET",
+	//		Endpoint:    remoteSnapSessionURL,
+	//		QueryParams: qp},
+	//	&remoteSnapResp)
+	//return remoteSnapResp, WrapErr(err)
 }
 
 // CreateSnapshot creates a new snapshot

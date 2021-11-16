@@ -206,11 +206,11 @@ type ProtectionData struct {
 }
 
 type RemoteSnapshotSession struct {
-	Id               string `json:"id,omitempty"`
+	ID               string `json:"id,omitempty"`
 	SessionType      string `json:"session_type,omitempty"`
 	ResourceType     string `json:"resource_type,omitempty"`
 	State            string `json:"state,omitempty"`
-	RemoteSystemId   string `json:"remote_system_id,omitempty"`
+	RemoteSystemID   string `json:"remote_system_id,omitempty"`
 	RemoteSnapshotId string `json:"remote_snapshot_id,omitempty"`
 	VolumeId         string `json:"volume_id,omitempty"`
 	MemberDetails    []struct {
