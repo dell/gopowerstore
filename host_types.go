@@ -129,26 +129,15 @@ type HostDelete struct {
 	ForceInternal *bool `json:"force_internal,omitempty"`
 }
 
-// HostCreate request
 type HostCreate struct {
-	// An optional description for the host. The description should not be more than 256 UTF-8
-	// characters long and should not have any unprintable characters.
-	Description *string `json:"description,omitempty"`
-	// Normally, this operation is not allowed on host types other than external.
-	// This flag will override that error and allow the operation to continue.
-	ForceInternal *bool `json:"force_internal,omitempty"`
-	// initiator
-	Initiators *[]InitiatorCreateModify `json:"initiators"`
-	// The host name. The name should not be more than 128 UTF-8 characters long
-	// and should not have any unprintable characters.
-	Name *string `json:"name"`
-	// os type
-	OsType *OSTypeEnum `json:"os_type"`
-	// PortalUsageSelector
-	PortalUsageSelector *HostTypeEnum `json:"portal_usage_selector,omitempty"`
-	// HostConnectivity
-	HostConnectivity *HostTypeEnum `json:"host_connectivity,omitempty"`
-	Type             string        `json:"type,omitempty"`
+	Name                string                  `json:"name,omitempty"`
+	Description         string                  `json:"description,omitempty"`
+	Type                string                  `json:"type,omitempty"`
+	OsType              string                  `json:"os_type,omitempty"`
+	PortalUsageSelector string                  `json:"portal_usage_selector,omitempty"`
+	ForceInternal       bool                    `json:"force_internal,omitempty"`
+	HostConnectivity    string                  `json:"host_connectivity,omitempty"`
+	Initiators          []InitiatorCreateModify `json:"initiators,omitempty"`
 }
 
 // UpdateInitiatorInHost update initiator in host
