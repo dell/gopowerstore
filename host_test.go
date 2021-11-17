@@ -87,8 +87,8 @@ func TestClientIMPL_CreateHost(t *testing.T) {
 	portName := "foobar"
 	initiators := []InitiatorCreateModify{{PortName: &portName}}
 	createReq := HostCreate{}
-	createReq.Name = &name
-	createReq.Initiators = &initiators
+	createReq.Name = name
+	createReq.Initiators = initiators
 
 	resp, err := C.CreateHost(context.Background(), &createReq)
 	assert.Nil(t, err)

@@ -199,7 +199,7 @@ type Host struct {
 // Fields returns fields which must be requested to fill struct
 func (h *Host) Fields() []string {
 	return []string{"id", "name", "description", "host_group_id",
-		"import_host_system_id", "os_type", "type", "host_initiators"}
+		"os_type", "type", "host_initiators"}
 }
 
 // MapTypeEnum iSCSI volume access type.
