@@ -101,12 +101,10 @@ func (suite *ReplicationTestSuite) TestReplication() {
 	assert.NoError(t, err)
 
 	volName := "intcsi-voltst"
-	// tpe := gopowerstore.StorageTypeEnumBlock
 	size := int64(1048576)
 	suite.vol, err = C.CreateVolume(context.Background(), &gopowerstore.VolumeCreate{
-		Name: &volName,
-		Size: &size,
-		// StorageType:   &tpe,
+		Name:          &volName,
+		Size:          &size,
 		VolumeGroupID: suite.vg.ID,
 	})
 	assert.NoError(t, err)
