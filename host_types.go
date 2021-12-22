@@ -18,20 +18,6 @@
 
 package gopowerstore
 
-//HostTypeEnum Type of host. Defaults to external, so normal clients can only create external hosts.
-type HostTypeEnum string
-
-const (
-	// HostTypeEnumExternal captures enum value "External"
-	HostTypeEnumExternal HostTypeEnum = "External"
-	// HostTypeEnumRestricted captures enum value "Restricted"
-	HostTypeEnumRestricted HostTypeEnum = "Restricted"
-	// HostTypeEnumInternal captures enum value "Internal"
-	HostTypeEnumInternal HostTypeEnum = "Internal"
-	// HostTypeEnumLocal captures enum value "Local"
-	HostTypeEnumLocal HostTypeEnum = "Local"
-)
-
 // OSTypeEnum Operating system of the host.
 type OSTypeEnum string
 
@@ -144,8 +130,6 @@ type HostCreate struct {
 	Name *string `json:"name"`
 	// os type
 	OsType *OSTypeEnum `json:"os_type"`
-	// type
-	Type *HostTypeEnum `json:"type,omitempty"`
 }
 
 // UpdateInitiatorInHost update initiator in host
@@ -192,59 +176,43 @@ type Host struct {
 	HostGroupID string `json:"host_group_id,omitempty"`
 	// Unique id of the host.
 	ID string `json:"id,omitempty"`
-	// Unique Identifier of the Host Agent System; FOREIGN KEY corresponds to import_host_system table
-	ImportHostSystemID string `json:"import_host_system_id,omitempty"`
 	// initiators
 	Initiators []InitiatorInstance `json:"host_initiators"`
 	// The host name.
 	Name string `json:"name,omitempty"`
 	// os type
 	OsType OSTypeEnum `json:"os_type,omitempty"`
-	// type
-	Type HostTypeEnum `json:"type,omitempty"`
 }
 
 // Fields returns fields which must be requested to fill struct
 func (h *Host) Fields() []string {
 	return []string{"id", "name", "description", "host_group_id",
-		"import_host_system_id", "os_type", "type", "host_initiators"}
+		"os_type", "host_initiators"}
 }
-
-// MapTypeEnum iSCSI volume access type.
-type MapTypeEnum string
-
-const (
-	// MapTypeEnumStandard captures enum value "Standard"
-	MapTypeEnumStandard MapTypeEnum = "Standard"
-	// MapTypeEnumIscsiTunnel captures enum value "Iscsi_Tunnel"
-	MapTypeEnumIscsiTunnel MapTypeEnum = "Iscsi_Tunnel"
-)
 
 // HostVolumeMapping Details about a configured host or host group attached to a volume.
 // The host or host group may not necessarily be connected.
 type HostVolumeMapping struct {
-	// Unique identifier of the appliance on which the volume is provisioned.
-	ApplianceID string `json:"appliance_id,omitempty"`
+	Volume struct {
+		ApplianceID string `json:"appliance_id,omitempty"`
+	} `json:"volume,omitempty"`
+
 	// Unique identifier of a host group attached to a volume. The host_id and host_group_id cannot both be set.
 	HostGroupID string `json:"host_group_id,omitempty"`
 	// Unique identifier of a host attached to a volume. The host_id and host_group_id cannot both be set.
 	HostID string `json:"host_id,omitempty"`
-	// host type
-	HostType HostTypeEnum `json:"host_type,omitempty"`
 	// Unique identifier of a mapping between a host and a volume.
 	ID string `json:"id,omitempty"`
 	// Logical unit number for the host volume access.
 	LogicalUnitNumber int64 `json:"logical_unit_number,omitempty"`
-	// map type
-	MapType MapTypeEnum `json:"map_type,omitempty"`
 	// Unique identifier of the volume to which the host is attached.
 	VolumeID string `json:"volume_id,omitempty"`
 }
 
 // Fields returns fields which must be requested to fill struct
 func (h *HostVolumeMapping) Fields() []string {
-	return []string{"appliance_id", "host_group_id", "host_id", "host_type",
-		"id", "logical_unit_number", "map_type", "volume_id"}
+	return []string{"volume(appliance_id)", "host_group_id", "host_id",
+		"id", "logical_unit_number", "volume_id"}
 }
 
 // HostVolumeAttach Volume id and optional logical unit number for attaching to host.
