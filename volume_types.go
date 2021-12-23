@@ -80,8 +80,6 @@ type VolumeCreate struct {
 	// Size of the volume to be created, in bytes. Minimum volume size is 1MB.
 	// Maximum volume size is 256TB. Size must be a multiple of 8192.
 	Size *int64 `json:"size"`
-	// Storage type. Valid values are:
-	StorageType *StorageTypeEnum `json:"storage_type,omitempty"`
 	// Volume group to add the volume to. If not specified, the volume is not added to a volume group.
 	VolumeGroupID string `json:"volume_group_id,omitempty"`
 
@@ -180,8 +178,6 @@ type Volume struct {
 	Size int64 `json:"size,omitempty"`
 	// state
 	State VolumeStateEnum `json:"state,omitempty"`
-	// Storage type. Valid values are:
-	StorageType StorageTypeEnum `json:"storage_type,omitempty"`
 	// type
 	Type VolumeTypeEnum `json:"type,omitempty"`
 	// volume topology
@@ -199,5 +195,5 @@ type ProtectionData struct {
 // Fields returns fields which must be requested to fill struct
 func (v *Volume) Fields() []string {
 	return []string{"description", "id", "name",
-		"size", "state", "storage_type", "type", "wwn", "protection_data"}
+		"size", "state", "type", "wwn", "protection_data"}
 }

@@ -85,8 +85,7 @@ func TestClientIMPL_GetSnapshotsByVolumeID(t *testing.T) {
 		"id":"%s",
 		"name":"rpo.VOLUME_esa51_volume_test1.2019-12-06T12:35:21Z 183173616",
 		"size":10737418240,
-		"state":"Ready",
-		"storage_type":"Block",
+		"state":"Ready",		
 		"type":"Snapshot",
 		"wwn":null,
 		"protection_data":{
