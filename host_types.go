@@ -38,6 +38,8 @@ type InitiatorProtocolTypeEnum string
 const (
 	// InitiatorProtocolTypeEnumISCSI captures enum value "iSCSI"
 	InitiatorProtocolTypeEnumISCSI InitiatorProtocolTypeEnum = "iSCSI"
+	// InitiatorProtocolTypeEnumNVME captures enum value "NVMe"
+	InitiatorProtocolTypeEnumNVME InitiatorProtocolTypeEnum = "NVMe"
 	// InitiatorProtocolTypeEnumFC captures enum value "FC"
 	InitiatorProtocolTypeEnumFC InitiatorProtocolTypeEnum = "FC"
 )
