@@ -19,9 +19,9 @@
 package inttests
 
 import (
-	"math/rand"
+	"crypto/rand"
+	"math/big"
 	"testing"
-	"time"
 )
 
 func checkAPIErr(t *testing.T, err error) {
@@ -40,10 +40,14 @@ func skipTestOnError(t *testing.T, err error) {
 const letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 func randString(n int) string {
-	rand.Seed(time.Now().UnixNano())
 	b := make([]byte, n)
 	for i := range b {
-		b[i] = letters[rand.Intn(len(letters))]
+		if len(letters) > 0 {
+			n, err := rand.Int(rand.Reader, big.NewInt(int64(len(letters))))
+			if err == nil {
+				b[i] = letters[n.Int64()]
+			}
+		}
 	}
 	return string(b)
 }
