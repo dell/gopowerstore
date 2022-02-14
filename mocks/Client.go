@@ -1172,6 +1172,27 @@ func (_m *Client) GetNASByName(ctx context.Context, name string) (gopowerstore.N
 	return r0, r1
 }
 
+// GetNfsServer provides a mock function with given fields: ctx, name
+func (_m *Client) GetNfsServer(ctx context.Context, id string) (gopowerstore.NFSServerInstance, error) {
+	ret := _m.Called(ctx, id)
+
+	var r0 gopowerstore.NFSServerInstance
+	if rf, ok := ret.Get(0).(func(context.Context, string) gopowerstore.NFSServerInstance); ok {
+		r0 = rf(ctx, id)
+	} else {
+		r0 = ret.Get(0).(gopowerstore.NFSServerInstance)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = rf(ctx, id)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // GetNFSExportByFileSystemID provides a mock function with given fields: ctx, fsID
 func (_m *Client) GetNFSExportByFileSystemID(ctx context.Context, fsID string) (gopowerstore.NFSExport, error) {
 	ret := _m.Called(ctx, fsID)

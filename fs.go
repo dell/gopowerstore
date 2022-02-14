@@ -40,6 +40,11 @@ func getFSDefaultQueryParams(c Client) api.QueryParamsEncoder {
 	return c.APIClient().QueryParamsWithFields(&fs)
 }
 
+func getNfsServerDefaultQueryParams(c Client) api.QueryParamsEncoder {
+	nfsServer := NFSServerInstance{}
+	return c.APIClient().QueryParamsWithFields(&nfsServer)
+}
+
 // GetNASByName query and return specific NAS by name
 func (c *ClientIMPL) GetNASByName(ctx context.Context, name string) (resp NAS, err error) {
 	var nasList []NAS
@@ -71,6 +76,19 @@ func (c *ClientIMPL) GetNAS(ctx context.Context, id string) (resp NAS, err error
 			Endpoint:    nasURL,
 			ID:          id,
 			QueryParams: getNASDefaultQueryParams(c)},
+		&resp)
+	return resp, WrapErr(err)
+}
+
+// GetNfsServer query and return specified NFS server instance by id
+func (c *ClientIMPL) GetNfsServer(ctx context.Context, id string) (resp NFSServerInstance, err error) {
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:      "GET",
+			Endpoint:    nfsServerURL,
+			ID:          id,
+			QueryParams: getNfsServerDefaultQueryParams(c)},
 		&resp)
 	return resp, WrapErr(err)
 }

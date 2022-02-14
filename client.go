@@ -76,6 +76,7 @@ type Client interface {
 	CreateVolumeFromSnapshot(ctx context.Context, createParams *VolumeClone, snapID string) (CreateResponse, error)
 	GetNAS(ctx context.Context, id string) (NAS, error)
 	GetNASByName(ctx context.Context, name string) (NAS, error)
+	GetNfsServer(ctx context.Context, id string) (NFSServerInstance, error)
 	GetFSByName(ctx context.Context, name string) (FileSystem, error)
 	GetFS(ctx context.Context, id string) (FileSystem, error)
 	GetFileInterface(ctx context.Context, id string) (FileInterface, error)
