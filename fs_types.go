@@ -119,6 +119,14 @@ type FileSystem struct {
 	ParentId string `json:"parent_id,omitempty"`
 }
 
+// NFS server instance in NAS server
+type NFSServerInstance struct {
+	// Unique identifier for NFS server
+	Id string `json:"id"`
+	// IsNFSv4Enabled is set to true if nfsv4 is enabled on NAS server
+	IsNFSv4Enabled bool `json:"is_nfsv4_enabled,omitempty"`
+}
+
 // Details about the NAS.
 type NAS struct {
 	// Unique identifier of the NAS server.
@@ -131,14 +139,20 @@ type NAS struct {
 	OperationalStatus NASServerOperationalStatusEnum `json:"operational_status,omitempty"`
 	// IPv4 file interface id nas server currently uses
 	CurrentPreferredIPv4InterfaceId string `json:"current_preferred_IPv4_interface_id"`
+	// NfsServers define NFS server instance if nfs exports are present
+	NfsServers []NFSServerInstance `json:"nfs_servers"`
 }
 
 // Fields returns fields which must be requested to fill struct
 func (n *NAS) Fields() []string {
-	return []string{"description", "id", "name", "operational_status", "current_preferred_IPv4_interface_id"}
+	return []string{"description", "id", "name", "operational_status", "current_preferred_IPv4_interface_id", "nfs_servers"}
 }
 
 // Fields returns fields which must be requested to fill struct
 func (n *FileSystem) Fields() []string {
 	return []string{"description", "id", "name", "nas_server_id", "filesystem_type", "size_total", "size_used", "parent_id"}
+}
+
+func (n *NFSServerInstance) Fields() []string {
+	return []string{"id", "is_nfsv4_enabled"}
 }
