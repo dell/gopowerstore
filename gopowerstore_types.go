@@ -115,7 +115,7 @@ func (err *APIError) HostAlreadyRemovedFromNFSExport() bool {
 // HostAlreadyPresentInNFSExport returns true if API error indicate that operation can't be complete because
 // host ip already present in nfs export access
 func (err *APIError) HostAlreadyPresentInNFSExport() bool {
-	return err.StatusCode == http.StatusUnprocessableEntity
+	return err.StatusCode == http.StatusBadRequest
 }
 
 // UnableToFailoverFromDestination returns true if API error indicate that operation can't be complete because
