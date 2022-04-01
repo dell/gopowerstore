@@ -67,7 +67,7 @@ func (err *APIError) NotFound() bool {
 
 // VolumeNameIsAlreadyUse returns true if API error indicate that volume name is already in use
 func (err *APIError) VolumeNameIsAlreadyUse() bool {
-	return err.StatusCode == http.StatusUnprocessableEntity
+	return err.StatusCode == http.StatusUnprocessableEntity || err.StatusCode == http.StatusInternalServerError
 }
 
 // SnapshotNameIsAlreadyUse returns true if API error indicate that snapshot name is already in use
