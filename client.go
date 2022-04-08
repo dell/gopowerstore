@@ -152,6 +152,7 @@ type Client interface {
 	PerformanceMetricsNfsv4ByNode(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]PerformanceMetricsByNfsv4Response, error)
 	ExecuteActionOnReplicationSession(ctx context.Context, id string, actionType ActionType, params *FailoverParams) (resp EmptyResponse, err error)
 	GetReplicationSessionByID(ctx context.Context, id string) (resp ReplicationSession, err error)
+	RegisterK8sCluster(ctx context.Context, request *K8sCluster) (CreateResponse, error)
 }
 
 // ClientIMPL provides basic API client implementation
