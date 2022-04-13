@@ -11,6 +11,7 @@ const (
 	k8sClusterURL = "k8s_cluster"
 )
 
+// RegisterK8sCluster registers K8s cluster with PowerStore array
 func (c *ClientIMPL) RegisterK8sCluster(ctx context.Context,
 	createParams *K8sCluster) (resp CreateResponse, err error) {
 	defaultHeaders := c.GetCustomHTTPHeaders()

@@ -199,6 +199,7 @@ func buildError(r *http.Response) *ErrorMsg {
 	return &firstErrMsg
 }
 
+// GetCustomHTTPHeaders method retrieves http headers
 func (c *ClientIMPL) GetCustomHTTPHeaders() http.Header {
 	return c.customHTTPHeaders
 }
