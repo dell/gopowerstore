@@ -36,6 +36,17 @@ func (c *ClientIMPL) GetFCPorts(
 	err = c.readPaginatedData(func(offset int) (api.RespMeta, error) {
 		var page []FcPort
 		qp := getFCPortDefaultQueryParams(c)
+
+		var OEVersion string
+		softwareInstalled, err := c.GetSoftwareInstalled(ctx)
+		for _, software := range softwareInstalled {
+			if software.IsCluster == true {
+				OEVersion = software.BuildVersion
+			}
+		}
+		if OEVersion == "3.0.0.0" {
+			qp.Select("wwn_nvme,wwn_node")
+		}
 		qp.Limit(paginationDefaultPageSize)
 		qp.Offset(offset)
 		qp.Order("id")
