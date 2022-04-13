@@ -24,11 +24,11 @@ func TestClientIMPL_RegisterK8sCluster(t *testing.T) {
 	registerReq := K8sCluster{
 		Name:      "test-cluster",
 		IPAddress: "1.1.1.1",
-		Port:      "8080",
+		Port:      8080,
 		Token:     "test-token",
 	}
 
-	fs, err := C.RegisterK8sCluster(context.Background(), &registerReq)
+	cl, err := C.RegisterK8sCluster(context.Background(), &registerReq)
 	assert.Nil(t, err)
-	assert.Equal(t, fsID, fs.ID)
+	assert.Equal(t, k8sClusterID, cl.ID)
 }

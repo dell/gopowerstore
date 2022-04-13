@@ -170,6 +170,10 @@ func (c *ClientIMPL) SetCustomHTTPHeaders(headers http.Header) {
 	c.API.SetCustomHTTPHeaders(headers)
 }
 
+func (c *ClientIMPL) GetCustomHTTPHeaders() http.Header {
+	return c.API.GetCustomHTTPHeaders()
+}
+
 // Logger is interface required for gopowerstore custom logger
 type Logger api.Logger
 

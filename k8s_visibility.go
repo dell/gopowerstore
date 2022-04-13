@@ -3,6 +3,8 @@ package gopowerstore
 import (
 	"context"
 	"net/http"
+
+	"github.com/sirupsen/logrus"
 )
 
 const (
@@ -11,10 +13,16 @@ const (
 
 func (c *ClientIMPL) RegisterK8sCluster(ctx context.Context,
 	createParams *K8sCluster) (resp CreateResponse, err error) {
-	customHeader := http.Header{
-		"DELL-VISIBILITY": []string{"internal"},
+	defaultHeaders := c.GetCustomHTTPHeaders()
+	if defaultHeaders == nil {
+		defaultHeaders = make(http.Header)
 	}
-	c.SetCustomHTTPHeaders(customHeader)
+
+	customHeaders := defaultHeaders
+
+	customHeaders.Add("DELL-VISIBILITY", "internal")
+	c.SetCustomHTTPHeaders(customHeaders)
+
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{
@@ -22,10 +30,14 @@ func (c *ClientIMPL) RegisterK8sCluster(ctx context.Context,
 			Endpoint: k8sClusterURL,
 			Body:     createParams},
 		&resp)
+	if err != nil {
+		logrus.Error(err.Error())
+	}
 
 	// reset custom header
-	customHeader = http.Header{}
-	c.SetCustomHTTPHeaders(customHeader)
+	customHeaders.Del("DELL-VISIBILITY")
+	c.SetCustomHTTPHeaders(customHeaders)
+	logrus.Info("default headers: ", customHeaders)
 
 	return resp, WrapErr(err)
 }
