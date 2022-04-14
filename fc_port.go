@@ -46,12 +46,14 @@ func (c *ClientIMPL) GetFCPorts(
 				softwareVersion = software.BuildVersion
 			}
 		}
-		majorVersion, err := strconv.Atoi(softwareVersion[0:1])
-		if err != nil {
-			log.Printf("Couldn't convert the software version")
-		} else {
-			if majorVersion > 2 {
-				qp.Select("wwn_nvme,wwn_node")
+		if len(softwareVersion) > 0 {
+			majorVersion, err := strconv.Atoi(softwareVersion[0:1])
+			if err != nil {
+				log.Printf("Couldn't convert the software version")
+			} else {
+				if majorVersion > 2 {
+					qp.Select("wwn_nvme,wwn_node")
+				}
 			}
 		}
 		qp.Limit(paginationDefaultPageSize)
