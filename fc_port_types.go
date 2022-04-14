@@ -52,7 +52,6 @@ type FcPort struct {
 	WwnNVMe string `json:"wwn_nvme,omitempty"`
 	// World Wide Name (WWN) of the Node of the port.
 	WwnNode string `json:"wwn_node,omitempty"`
-
 }
 
 // FcPortSpeedEnum Possible Fibre Channel port speeds. For the current_speed attribute, these values show the current transmission speed on the port.

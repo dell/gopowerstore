@@ -21,6 +21,8 @@ package gopowerstore
 import (
 	"context"
 	"github.com/dell/gopowerstore/api"
+	"log"
+	"strconv"
 )
 
 const apiFCPortURL = "fc_port"
@@ -37,15 +39,20 @@ func (c *ClientIMPL) GetFCPorts(
 		var page []FcPort
 		qp := getFCPortDefaultQueryParams(c)
 
-		var OEVersion string
+		var softwareVersion string
 		softwareInstalled, err := c.GetSoftwareInstalled(ctx)
 		for _, software := range softwareInstalled {
 			if software.IsCluster == true {
-				OEVersion = software.BuildVersion
+				softwareVersion = software.BuildVersion
 			}
 		}
-		if OEVersion == "3.0.0.0" {
-			qp.Select("wwn_nvme,wwn_node")
+		majorVersion, err := strconv.Atoi(softwareVersion[0:1])
+		if err != nil {
+			log.Printf("Couldn't convert the software version")
+		} else {
+			if majorVersion > 2 {
+				qp.Select("wwn_nvme,wwn_node")
+			}
 		}
 		qp.Limit(paginationDefaultPageSize)
 		qp.Offset(offset)
