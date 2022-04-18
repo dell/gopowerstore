@@ -23,7 +23,7 @@ check: mock-test gosec
 	go vet
 
 mocks:
-	mockery --all --disable-version-string
+	mockery --all
 
 gosec:
 	gosec -quiet -log gosec.log -out=gosecresults.csv -fmt=csv ./...

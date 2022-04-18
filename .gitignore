@@ -21,7 +21,7 @@ GOPOWERSTORE_TEST.env
 
 # IDE
 .idea
-
+.vscode
 
 # gosec
 gosec.log
