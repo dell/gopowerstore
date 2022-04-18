@@ -41,15 +41,19 @@ func (c *ClientIMPL) GetFCPorts(
 
 		var softwareVersion string
 		softwareInstalled, err := c.GetSoftwareInstalled(ctx)
-		for _, software := range softwareInstalled {
-			if software.IsCluster == true {
-				softwareVersion = software.BuildVersion
+		if err != nil {
+			log.Printf("ERROR: couldn't find the softwares installed on array")
+		} else {
+			for _, software := range softwareInstalled {
+				if software.IsCluster == true {
+					softwareVersion = software.BuildVersion
+				}
 			}
 		}
 		if len(softwareVersion) > 0 {
 			majorVersion, err := strconv.Atoi(softwareVersion[0:1])
 			if err != nil {
-				log.Printf("Couldn't convert the software version")
+				log.Printf("ERROR: Couldn't convert the software version")
 			} else {
 				if majorVersion > 2 {
 					qp.Select("wwn_nvme,wwn_node")
