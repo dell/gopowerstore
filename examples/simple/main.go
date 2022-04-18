@@ -22,6 +22,8 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"sync"
+	"time"
 
 	"github.com/dell/gopowerstore"
 )
@@ -34,9 +36,9 @@ func initClient() gopowerstore.Client {
 	clientOptions := gopowerstore.NewClientOptions()
 	clientOptions.SetInsecure(true)
 	c, err := gopowerstore.NewClientWithArgs(
-		"https://10.230.24.77/api/rest",
+		"https://127.0.0.1/api/rest",
 		"admin",
-		"Password123!",
+		"Password",
 		clientOptions)
 	if err != nil {
 		panic(err)
@@ -47,46 +49,46 @@ func initClient() gopowerstore.Client {
 func main() {
 	c := initClient()
 	// By default PowerStore API will return only volume ID
-	v, err := c.GetVolumeGroup(context.Background(), "2f7efafd-46ff-486d-8f7d-e7b2dcea5ffd")
+	v, err := c.GetVolume(context.Background(), "52209728-d23c-44c3-9ae0-2ada07ce81d0")
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(v)
+	fmt.Println(v.ID)
 
-	// // use context to cancel request or to set per-request timeout
-	// ctx, cancelFunc := context.WithTimeout(context.Background(), 10*time.Second)
+	// use context to cancel request or to set per-request timeout
+	ctx, cancelFunc := context.WithTimeout(context.Background(), 10*time.Second)
 
-	// var wg sync.WaitGroup
-	// wg.Add(1)
-	// go func() {
-	// 	v, err = c.GetVolume(ctx, "52209728-d23c-44c3-9ae0-2ada07ce81d0")
-	// 	wg.Done()
-	// }()
-	// cancelFunc()
-	// wg.Wait()
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		v, err = c.GetVolume(ctx, "52209728-d23c-44c3-9ae0-2ada07ce81d0")
+		wg.Done()
+	}()
+	cancelFunc()
+	wg.Wait()
 
-	// // simple write request
-	// name := "test_vol1"
-	// size := int64(1048576)
-	// r, err := c.CreateVolume(context.Background(), &gopowerstore.VolumeCreate{Name: &name, Size: &size})
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// fmt.Println(r.ID)
-	// name = "test_vol2"
-	// size = int64(1)
-	// // api error handling
-	// _, err = c.CreateVolume(context.Background(), &gopowerstore.VolumeCreate{Name: &name, Size: &size})
-	// if err != nil {
-	// 	apiErr, ok := err.(gopowerstore.APIError)
-	// 	if !ok {
-	// 		// handle general errors
-	// 		panic(err)
-	// 	}
-	// 	// handle api errors(logical, validation, etc)
-	// 	if apiErr.StatusCode == 400 || apiErr.StatusCode == 422 {
-	// 		// validation failure
-	// 		fmt.Println(apiErr.Message)
-	// 	}
-	// }
+	// simple write request
+	name := "test_vol1"
+	size := int64(1048576)
+	r, err := c.CreateVolume(context.Background(), &gopowerstore.VolumeCreate{Name: &name, Size: &size})
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(r.ID)
+	name = "test_vol2"
+	size = int64(1)
+	// api error handling
+	_, err = c.CreateVolume(context.Background(), &gopowerstore.VolumeCreate{Name: &name, Size: &size})
+	if err != nil {
+		apiErr, ok := err.(gopowerstore.APIError)
+		if !ok {
+			// handle general errors
+			panic(err)
+		}
+		// handle api errors(logical, validation, etc)
+		if apiErr.StatusCode == 400 || apiErr.StatusCode == 422 {
+			// validation failure
+			fmt.Println(apiErr.Message)
+		}
+	}
 }
