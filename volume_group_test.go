@@ -3,13 +3,15 @@ package gopowerstore
 import (
 	"context"
 	"fmt"
+	"testing"
+
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 const (
-	volumeGroupMockURL = APIMockURL + volumeGroupURL
+	volumeGroupMockURL         = APIMockURL + volumeGroupURL
+	volumeGroupSnapshotMockURL = APIMockURL + volumeGroupURL + "/test-id" + snapshotURL
 )
 
 func TestClientIMPL_CreateVolumeGroup(t *testing.T) {
@@ -31,6 +33,22 @@ func TestClientIMPL_CreateVolumeGroup(t *testing.T) {
 	assert.Equal(t, volID, resp.ID)
 }
 
+func TestClientIMPL_CreateVolumeGroupSnapshot(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	respData := fmt.Sprintf(`{"id": "%s"}`, volID)
+	httpmock.RegisterResponder("POST", volumeGroupSnapshotMockURL,
+		httpmock.NewStringResponder(201, respData))
+
+	createReq := VolumeGroupSnapshotCreate{
+		Name:        "vgs-test",
+		Description: "vgs-test",
+	}
+
+	resp, err := C.CreateVolumeGroupSnapshot(context.Background(), "test-id", &createReq)
+	assert.Nil(t, err)
+	assert.Equal(t, volID, resp.ID)
+}
 func TestClientIMPL_DeleteVolumeGroup(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()

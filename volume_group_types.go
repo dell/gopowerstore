@@ -29,14 +29,18 @@ type VolumeGroup struct {
 	// Description for the volume group.
 	Description string `json:"description,omitempty"`
 	// Unique identifier of the protection policy assigned to the volume.
-	ProtectionPolicyID string           `json:"protection_policy_id,omitempty"`
-	Volumes            []Volume         `json:"volume"`
-	ProtectionPolicy   ProtectionPolicy `json:"protection_policy"`
+	ProtectionPolicyID string `json:"protection_policy_id,omitempty"`
+	// Volumes provides list of volumes associated to the volume group
+	Volumes []Volume `json:"volume"`
+	// ProtectionPolicy provides snapshot details of the volume or volumeGroup
+	ProtectionPolicy ProtectionPolicy `json:"protection_policy"`
+	// CreationTimeStamp provides volume group creation time
+	CreationTimeStamp string `json:"creation_timestamp,omitempty"`
 }
 
 // Fields returns fields which must be requested to fill struct
 func (v *VolumeGroup) Fields() []string {
-	return []string{"id", "name", "description", "protection_policy_id"}
+	return []string{"id", "name", "description", "protection_policy_id", "creation_timestamp"}
 }
 
 type VolumeGroups struct {
@@ -56,4 +60,12 @@ type VolumeGroupModify struct {
 
 type VolumeGroupChangePolicy struct {
 	ProtectionPolicyID string `json:"protection_policy_id"`
+}
+
+// VolumeGroupSnapshotCreate create volume group snapshot request
+type VolumeGroupSnapshotCreate struct {
+	// Unique name for the volume group.
+	Name string `json:"name"`
+	// Optional description
+	Description string `json:"description,omitempty"`
 }

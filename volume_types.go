@@ -183,11 +183,12 @@ type Volume struct {
 	// volume topology
 	// World wide name of the volume.
 	Wwn string `json:"wwn,omitempty"`
-
 	// ApplianceID - Placeholder for appliance ID where the volume resides
 	ApplianceID string `json:"appliance_id,omitempty"`
-
+	// ProtectionData provides snapshot details of the volume
 	ProtectionData ProtectionData `json:"protection_data,omitempty"`
+	// CreationTimeStamp provides volume group creation time
+	CreationTimeStamp string `json:"creation_timestamp,omitempty"`
 }
 
 // ProtectionData is a field that holds meta information about volume creation
@@ -198,5 +199,5 @@ type ProtectionData struct {
 // Fields returns fields which must be requested to fill struct
 func (v *Volume) Fields() []string {
 	return []string{"description", "id", "name",
-		"size", "state", "type", "wwn", "appliance_id", "protection_data"}
+		"size", "state", "type", "wwn", "appliance_id", "protection_data", "creation_timestamp"}
 }

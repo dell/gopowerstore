@@ -112,6 +112,7 @@ type Client interface {
 	GetVolumeGroupByName(ctx context.Context, name string) (VolumeGroup, error)
 	GetVolumeGroupsByVolumeID(ctx context.Context, id string) (VolumeGroups, error)
 	CreateVolumeGroup(ctx context.Context, createParams *VolumeGroupCreate) (CreateResponse, error)
+	CreateVolumeGroupSnapshot(ctx context.Context, volumeGroupID string, createParams *VolumeGroupSnapshotCreate) (resp CreateResponse, err error)
 	UpdateVolumeGroupProtectionPolicy(ctx context.Context, id string, params *VolumeGroupChangePolicy) (resp EmptyResponse, err error)
 	RemoveMembersFromVolumeGroup(ctx context.Context, params *VolumeGroupRemoveMember, id string) (EmptyResponse, error)
 	GetReplicationSessionByLocalResourceID(ctx context.Context, id string) (ReplicationSession, error)
