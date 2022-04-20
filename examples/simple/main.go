@@ -21,10 +21,11 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/dell/gopowerstore"
 	"os"
 	"sync"
 	"time"
+
+	"github.com/dell/gopowerstore"
 )
 
 func initClient() gopowerstore.Client {
