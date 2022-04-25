@@ -3,7 +3,8 @@ package gopowerstore
 import (
 	"context"
 	"fmt"
-	"log"
+
+	log "github.com/sirupsen/logrus"
 )
 
 const (
@@ -19,7 +20,7 @@ func (c *ClientIMPL) GetCluster(ctx context.Context) (resp Cluster, err error) {
 
 	majorVersion, err := c.GetSoftwareMajorVersion(ctx)
 	if err != nil {
-		log.Printf("ERROR: Couldn't find the major array version")
+		log.Errorf("Couldn't find the major array version %s", err.Error())
 	} else {
 		if majorVersion > 2 {
 			qp.Select("nvm_subsystem_nqn")

@@ -21,7 +21,8 @@ package gopowerstore
 import (
 	"context"
 	"github.com/dell/gopowerstore/api"
-	"log"
+
+	log "github.com/sirupsen/logrus"
 )
 
 const apiFCPortURL = "fc_port"
@@ -40,7 +41,7 @@ func (c *ClientIMPL) GetFCPorts(
 
 		majorVersion, err := c.GetSoftwareMajorVersion(ctx)
 		if err != nil {
-			log.Printf("ERROR: Couldn't find the major array version")
+			log.Errorf("Couldn't find the major array version %s", err.Error())
 		} else {
 			if majorVersion > 2 {
 				qp.Select("wwn_nvme,wwn_node")

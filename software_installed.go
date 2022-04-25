@@ -21,8 +21,9 @@ package gopowerstore
 import (
 	"context"
 	"github.com/dell/gopowerstore/api"
-	"log"
 	"strconv"
+
+	log "github.com/sirupsen/logrus"
 )
 
 const apiSoftwareInstalledURL = "software_installed"
@@ -62,7 +63,7 @@ func (c *ClientIMPL) GetSoftwareMajorVersion(
 	var softwareVersion string
 	softwareInstalled, err := c.GetSoftwareInstalled(ctx)
 	if err != nil {
-		log.Printf("ERROR: couldn't find the softwares installed on array")
+		log.Errorf("couldn't find the softwares installed on array %s", err.Error())
 		return 0, err
 	} else {
 		for _, software := range softwareInstalled {
@@ -75,7 +76,7 @@ func (c *ClientIMPL) GetSoftwareMajorVersion(
 	if len(softwareVersion) > 0 {
 		majorVersion, err = strconv.Atoi(softwareVersion[0:1])
 		if err != nil {
-			log.Printf("ERROR: Couldn't convert the software version")
+			log.Errorf("Couldn't convert the software version %s", err.Error())
 			return 0, err
 		}
 	}
