@@ -22,7 +22,6 @@ import (
 	"context"
 	"github.com/dell/gopowerstore/api"
 	"log"
-	"strconv"
 )
 
 const apiFCPortURL = "fc_port"
@@ -39,25 +38,12 @@ func (c *ClientIMPL) GetFCPorts(
 		var page []FcPort
 		qp := getFCPortDefaultQueryParams(c)
 
-		var softwareVersion string
-		softwareInstalled, err := c.GetSoftwareInstalled(ctx)
+		majorVersion, err := c.GetSoftwareMajorVersion(ctx)
 		if err != nil {
-			log.Printf("ERROR: couldn't find the softwares installed on array")
+			log.Printf("ERROR: Couldn't find the major array version")
 		} else {
-			for _, software := range softwareInstalled {
-				if software.IsCluster == true {
-					softwareVersion = software.BuildVersion
-				}
-			}
-		}
-		if len(softwareVersion) > 0 {
-			majorVersion, err := strconv.Atoi(softwareVersion[0:1])
-			if err != nil {
-				log.Printf("ERROR: Couldn't convert the software version")
-			} else {
-				if majorVersion > 2 {
-					qp.Select("wwn_nvme,wwn_node")
-				}
+			if majorVersion > 2 {
+				qp.Select("wwn_nvme,wwn_node")
 			}
 		}
 		qp.Limit(paginationDefaultPageSize)

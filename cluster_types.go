@@ -30,6 +30,8 @@ type Cluster struct {
 	ManagementAddress string `json:"management_address,omitempty"`
 	// Current state of the cluster
 	State string `json:"state,omitempty"`
+	// NVMe Subsystem NQN for cluster
+	NVMeNQN string `json:"nvm_subsystem_nqn,omitempty"`
 }
 
 // Fields returns fields which must be requested to fill struct

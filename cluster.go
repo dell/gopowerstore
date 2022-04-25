@@ -3,6 +3,7 @@ package gopowerstore
 import (
 	"context"
 	"fmt"
+	"log"
 )
 
 const (
@@ -15,6 +16,15 @@ func (c *ClientIMPL) GetCluster(ctx context.Context) (resp Cluster, err error) {
 	var systemList []Cluster
 	cluster := Cluster{}
 	qp := c.APIClient().QueryParamsWithFields(&cluster)
+
+	majorVersion, err := c.GetSoftwareMajorVersion(ctx)
+	if err != nil {
+		log.Printf("ERROR: Couldn't find the major array version")
+	} else {
+		if majorVersion > 2 {
+			qp.Select("nvm_subsystem_nqn")
+		}
+	}
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{
