@@ -39,7 +39,7 @@ func (c *ClientIMPL) GetFCPorts(
 		var page []FcPort
 		qp := getFCPortDefaultQueryParams(c)
 
-		majorMinorVersion, err := c.GetSoftwareMajorVersion(ctx)
+		majorMinorVersion, err := c.GetSoftwareMajorMinorVersion(ctx)
 		if err != nil {
 			log.Errorf("Couldn't find the major array version %s", err.Error())
 		} else {

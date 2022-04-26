@@ -59,7 +59,7 @@ func (c *ClientIMPL) GetSoftwareInstalled(
 	return resp, err
 }
 
-func (c *ClientIMPL) GetSoftwareMajorVersion(
+func (c *ClientIMPL) GetSoftwareMajorMinorVersion(
 	ctx context.Context) (majorMinorVersion float32, err error) {
 
 	resp, err := c.GetSoftwareInstalled(ctx)

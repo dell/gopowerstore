@@ -18,7 +18,7 @@ func (c *ClientIMPL) GetCluster(ctx context.Context) (resp Cluster, err error) {
 	cluster := Cluster{}
 	qp := c.APIClient().QueryParamsWithFields(&cluster)
 
-	majorMinorVersion, err := c.GetSoftwareMajorVersion(ctx)
+	majorMinorVersion, err := c.GetSoftwareMajorMinorVersion(ctx)
 	if err != nil {
 		log.Errorf("Couldn't find the major array version %s", err.Error())
 	} else {
