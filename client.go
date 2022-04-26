@@ -154,6 +154,7 @@ type Client interface {
 	PerformanceMetricsNfsv4ByNode(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]PerformanceMetricsByNfsv4Response, error)
 	ExecuteActionOnReplicationSession(ctx context.Context, id string, actionType ActionType, params *FailoverParams) (resp EmptyResponse, err error)
 	GetReplicationSessionByID(ctx context.Context, id string) (resp ReplicationSession, err error)
+	RegisterK8sCluster(ctx context.Context, request *K8sCluster) (CreateResponse, error)
 }
 
 // ClientIMPL provides basic API client implementation
@@ -169,6 +170,10 @@ func (c *ClientIMPL) SetTraceID(ctx context.Context, value string) context.Conte
 // SetCustomHTTPHeaders method register headers which will be sent with every request
 func (c *ClientIMPL) SetCustomHTTPHeaders(headers http.Header) {
 	c.API.SetCustomHTTPHeaders(headers)
+}
+
+func (c *ClientIMPL) GetCustomHTTPHeaders() http.Header {
+	return c.API.GetCustomHTTPHeaders()
 }
 
 // Logger is interface required for gopowerstore custom logger

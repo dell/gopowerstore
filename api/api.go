@@ -99,6 +99,7 @@ type ApiClient interface {
 		resp interface{}) (RespMeta, error)
 	QueryParams() QueryParamsEncoder
 	QueryParamsWithFields(provider FieldProvider) QueryParamsEncoder
+	GetCustomHTTPHeaders() http.Header
 	SetCustomHTTPHeaders(headers http.Header)
 	SetLogger(logger Logger)
 }
@@ -196,6 +197,11 @@ func buildError(r *http.Response) *ErrorMsg {
 	firstErrMsg := (*apiErrorMsg.Messages)[0]
 	firstErrMsg.StatusCode = r.StatusCode
 	return &firstErrMsg
+}
+
+// GetCustomHTTPHeaders method retrieves http headers
+func (c *ClientIMPL) GetCustomHTTPHeaders() http.Header {
+	return c.customHTTPHeaders
 }
 
 // SetCustomHTTPHeaders method register headers which will be sent with every request
