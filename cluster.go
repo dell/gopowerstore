@@ -18,11 +18,11 @@ func (c *ClientIMPL) GetCluster(ctx context.Context) (resp Cluster, err error) {
 	cluster := Cluster{}
 	qp := c.APIClient().QueryParamsWithFields(&cluster)
 
-	majorVersion, err := c.GetSoftwareMajorVersion(ctx)
+	majorMinorVersion, err := c.GetSoftwareMajorVersion(ctx)
 	if err != nil {
 		log.Errorf("Couldn't find the major array version %s", err.Error())
 	} else {
-		if majorVersion > 2 {
+		if majorMinorVersion >= 3.1 {
 			qp.Select("nvm_subsystem_nqn")
 		}
 	}

@@ -67,7 +67,7 @@ type Client interface {
 	GetFCPorts(ctx context.Context) (resp []FcPort, err error)
 	GetFCPort(ctx context.Context, id string) (resp FcPort, err error)
 	GetSoftwareInstalled(ctx context.Context) (resp []SoftwareInstalled, err error)
-	GetSoftwareMajorVersion(ctx context.Context) (majorVersion int, err error )
+	GetSoftwareMajorVersion(ctx context.Context) (majorVersion float32, err error )
 	SetLogger(logger Logger)
 	CreateSnapshot(ctx context.Context, createSnapParams *SnapshotCreate, id string) (CreateResponse, error)
 	DeleteSnapshot(ctx context.Context, deleteParams *VolumeDelete, id string) (EmptyResponse, error)

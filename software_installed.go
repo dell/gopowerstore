@@ -22,6 +22,7 @@ import (
 	"context"
 	"github.com/dell/gopowerstore/api"
 	"strconv"
+	"strings"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -59,26 +60,35 @@ func (c *ClientIMPL) GetSoftwareInstalled(
 }
 
 func (c *ClientIMPL) GetSoftwareMajorVersion(
-	ctx context.Context) (majorVersion int, err error) {
-	var softwareVersion string
-	softwareInstalled, err := c.GetSoftwareInstalled(ctx)
+	ctx context.Context) (majorMinorVersion float32, err error) {
+
+	resp, err := c.GetSoftwareInstalled(ctx)
 	if err != nil {
-		log.Errorf("couldn't find the softwares installed on array %s", err.Error())
-		return 0, err
-	} else {
-		for _, software := range softwareInstalled {
-			if software.IsCluster == true {
-				softwareVersion = software.BuildVersion
+		log.Errorf("couldn't find the softwares installed on the Powerstore array %s", err.Error())
+		return 0.0, err
+	}
+
+	for _, softwareInstalled := range resp {
+		if softwareInstalled.IsCluster {
+			softwareVersion := softwareInstalled.BuildVersion
+			versions := strings.Split(softwareVersion, ".")
+
+			if len(versions) > 2 {
+				var majorVersion, minorVersion int
+
+				if majorVersion, err = strconv.Atoi(versions[0]); err != nil {
+					log.Errorf("couldn't get the software major version installed on the PowerStore array: %s", err.Error())
+					return 0.0, err
+				}
+
+				if minorVersion, err = strconv.Atoi(versions[1]); err != nil {
+					log.Errorf("couldn't get the software minor version installed on the PowerStore array: %s", err.Error())
+					return 0.0, err
+				}
+
+				majorMinorVersion = float32(majorVersion) + float32(minorVersion)*0.1
 			}
 		}
 	}
-
-	if len(softwareVersion) > 0 {
-		majorVersion, err = strconv.Atoi(softwareVersion[0:1])
-		if err != nil {
-			log.Errorf("Couldn't convert the software version %s", err.Error())
-			return 0, err
-		}
-	}
-	return majorVersion, nil
+	return majorMinorVersion, nil
 }
