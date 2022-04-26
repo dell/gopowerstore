@@ -20,7 +20,7 @@ func (c *ClientIMPL) GetCluster(ctx context.Context) (resp Cluster, err error) {
 
 	majorMinorVersion, err := c.GetSoftwareMajorMinorVersion(ctx)
 	if err != nil {
-		log.Errorf("Couldn't find the major array version %s", err.Error())
+		log.Errorf("Couldn't find the array version %s", err.Error())
 	} else {
 		if majorMinorVersion >= 3.0 {
 			qp.Select("nvm_subsystem_nqn")

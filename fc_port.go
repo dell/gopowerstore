@@ -41,7 +41,7 @@ func (c *ClientIMPL) GetFCPorts(
 
 		majorMinorVersion, err := c.GetSoftwareMajorMinorVersion(ctx)
 		if err != nil {
-			log.Errorf("Couldn't find the major array version %s", err.Error())
+			log.Errorf("Couldn't find the array version %s", err.Error())
 		} else {
 			if majorMinorVersion >= 3.0 {
 				qp.Select("wwn_nvme,wwn_node")
