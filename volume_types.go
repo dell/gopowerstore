@@ -81,8 +81,13 @@ type VolumeCreate struct {
 	// Maximum volume size is 256TB. Size must be a multiple of 8192.
 	Size *int64 `json:"size"`
 	// Volume group to add the volume to. If not specified, the volume is not added to a volume group.
-	VolumeGroupID string `json:"volume_group_id,omitempty"`
-
+	VolumeGroupID       string `json:"volume_group_id,omitempty"`
+	ApplianceID         string `json:"appliance_id,omitempty"`
+	Description         string `json:"description,omitempty"`
+	ProtectionPolicyID  string `json:"protection_policy_id,omitempty"`
+	PerformancePolicyID string `json:"performance_policy_id,omitempty"`
+	AppType             string `json:"app_type,omitempty"`
+	AppTypeOther        string `json:"app_type_other,omitempty"`
 	MetaDataHeader
 }
 
