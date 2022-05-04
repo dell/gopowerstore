@@ -3,6 +3,8 @@ package gopowerstore
 import (
 	"context"
 	"fmt"
+
+	log "github.com/sirupsen/logrus"
 )
 
 const (
@@ -15,6 +17,15 @@ func (c *ClientIMPL) GetCluster(ctx context.Context) (resp Cluster, err error) {
 	var systemList []Cluster
 	cluster := Cluster{}
 	qp := c.APIClient().QueryParamsWithFields(&cluster)
+
+	majorMinorVersion, err := c.GetSoftwareMajorMinorVersion(ctx)
+	if err != nil {
+		log.Errorf("Couldn't find the array version %s", err.Error())
+	} else {
+		if majorMinorVersion >= 3.0 {
+			qp.Select("nvm_subsystem_nqn")
+		}
+	}
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{

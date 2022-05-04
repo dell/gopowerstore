@@ -132,6 +132,8 @@ type HostCreate struct {
 	Name *string `json:"name"`
 	// os type
 	OsType *OSTypeEnum `json:"os_type"`
+	// Metadata addition for Hosts on array with OE version 3.0 and above
+	Metadata *map[string]string `json:"metadata,omitempty"`
 }
 
 // UpdateInitiatorInHost update initiator in host
