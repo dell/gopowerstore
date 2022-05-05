@@ -82,6 +82,8 @@ type VolumeCreate struct {
 	Size *int64 `json:"size"`
 	// Volume group to add the volume to. If not specified, the volume is not added to a volume group.
 	VolumeGroupID string `json:"volume_group_id,omitempty"`
+	// Metadata addition for volumes on array with OE version 3.0 and above
+	Metadata *map[string]string `json:"metadata,omitempty"`
 
 	MetaDataHeader
 }

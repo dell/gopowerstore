@@ -839,6 +839,20 @@ func (_m *Client) GetCluster(ctx context.Context) (gopowerstore.Cluster, error) 
 	return r0, r1
 }
 
+// GetCustomHTTPHeaders provides a mock function with given fields:
+func (_m *Client) GetCustomHTTPHeaders() http.Header {
+	ret := _m.Called()
+	var r0 http.Header
+	if rf, ok := ret.Get(0).(func() http.Header); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(http.Header)
+		}
+	}
+	return r0
+}
+
 // GetFCPort provides a mock function with given fields: ctx, id
 func (_m *Client) GetFCPort(ctx context.Context, id string) (gopowerstore.FcPort, error) {
 	ret := _m.Called(ctx, id)

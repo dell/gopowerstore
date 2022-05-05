@@ -43,6 +43,7 @@ type Client interface {
 	APIClient() api.ApiClient
 	SetTraceID(ctx context.Context, value string) context.Context
 	SetCustomHTTPHeaders(headers http.Header)
+	GetCustomHTTPHeaders() http.Header
 	GetVolume(ctx context.Context, id string) (Volume, error)
 	GetVolumeByName(ctx context.Context, name string) (Volume, error)
 	GetVolumes(ctx context.Context) ([]Volume, error)
