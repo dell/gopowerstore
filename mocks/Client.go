@@ -839,6 +839,20 @@ func (_m *Client) GetCluster(ctx context.Context) (gopowerstore.Cluster, error) 
 	return r0, r1
 }
 
+// GetCustomHTTPHeaders provides a mock function with given fields:
+func (_m *Client) GetCustomHTTPHeaders() http.Header {
+	ret := _m.Called()
+	var r0 http.Header
+	if rf, ok := ret.Get(0).(func() http.Header); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(http.Header)
+		}
+	}
+	return r0
+}
+
 // GetFCPort provides a mock function with given fields: ctx, id
 func (_m *Client) GetFCPort(ctx context.Context, id string) (gopowerstore.FcPort, error) {
 	ret := _m.Called(ctx, id)
@@ -1454,6 +1468,27 @@ func (_m *Client) GetSoftwareInstalled(ctx context.Context) ([]gopowerstore.Soft
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]gopowerstore.SoftwareInstalled)
 		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = rf(ctx)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetSoftwareMajorMinorVersion provides a mock function with given fields: ctx
+func (_m *Client) GetSoftwareMajorMinorVersion(ctx context.Context) (float32, error) {
+	ret := _m.Called(ctx)
+
+	var r0 float32
+	if rf, ok := ret.Get(0).(func(context.Context) float32); ok {
+		r0 = rf(ctx)
+	} else {
+		r0 = ret.Get(0).(float32)
 	}
 
 	var r1 error

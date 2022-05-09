@@ -43,6 +43,7 @@ type Client interface {
 	APIClient() api.ApiClient
 	SetTraceID(ctx context.Context, value string) context.Context
 	SetCustomHTTPHeaders(headers http.Header)
+	GetCustomHTTPHeaders() http.Header
 	GetVolume(ctx context.Context, id string) (Volume, error)
 	GetVolumeByName(ctx context.Context, name string) (Volume, error)
 	GetVolumes(ctx context.Context) ([]Volume, error)
@@ -67,6 +68,7 @@ type Client interface {
 	GetFCPorts(ctx context.Context) (resp []FcPort, err error)
 	GetFCPort(ctx context.Context, id string) (resp FcPort, err error)
 	GetSoftwareInstalled(ctx context.Context) (resp []SoftwareInstalled, err error)
+	GetSoftwareMajorMinorVersion(ctx context.Context) (majorVersion float32, err error)
 	SetLogger(logger Logger)
 	CreateSnapshot(ctx context.Context, createSnapParams *SnapshotCreate, id string) (CreateResponse, error)
 	DeleteSnapshot(ctx context.Context, deleteParams *VolumeDelete, id string) (EmptyResponse, error)

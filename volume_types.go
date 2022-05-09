@@ -94,6 +94,8 @@ type VolumeCreate struct {
 	AppType string `json:"app_type,omitempty"`
 	// More details on type of application using the volume
 	AppTypeOther string `json:"app_type_other,omitempty"`
+	// Metadata addition for volumes on array with OE version 3.0 and above
+	Metadata *map[string]string `json:"metadata,omitempty"`
 
 	MetaDataHeader
 }

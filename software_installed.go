@@ -21,6 +21,10 @@ package gopowerstore
 import (
 	"context"
 	"github.com/dell/gopowerstore/api"
+	"strconv"
+	"strings"
+
+	log "github.com/sirupsen/logrus"
 )
 
 const apiSoftwareInstalledURL = "software_installed"
@@ -53,4 +57,38 @@ func (c *ClientIMPL) GetSoftwareInstalled(
 		return meta, err
 	})
 	return resp, err
+}
+
+func (c *ClientIMPL) GetSoftwareMajorMinorVersion(
+	ctx context.Context) (majorMinorVersion float32, err error) {
+
+	resp, err := c.GetSoftwareInstalled(ctx)
+	if err != nil {
+		log.Errorf("couldn't find the softwares installed on the Powerstore array %s", err.Error())
+		return 0.0, err
+	}
+
+	for _, softwareInstalled := range resp {
+		if softwareInstalled.IsCluster {
+			softwareVersion := softwareInstalled.BuildVersion
+			versions := strings.Split(softwareVersion, ".")
+
+			if len(versions) > 2 {
+				var majorVersion, minorVersion int
+
+				if majorVersion, err = strconv.Atoi(versions[0]); err != nil {
+					log.Errorf("couldn't get the software major version installed on the PowerStore array: %s", err.Error())
+					return 0.0, err
+				}
+
+				if minorVersion, err = strconv.Atoi(versions[1]); err != nil {
+					log.Errorf("couldn't get the software minor version installed on the PowerStore array: %s", err.Error())
+					return 0.0, err
+				}
+
+				majorMinorVersion = float32(majorVersion) + float32(minorVersion)*0.1
+			}
+		}
+	}
+	return majorMinorVersion, nil
 }
