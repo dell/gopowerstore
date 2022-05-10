@@ -82,6 +82,18 @@ type VolumeCreate struct {
 	Size *int64 `json:"size"`
 	// Volume group to add the volume to. If not specified, the volume is not added to a volume group.
 	VolumeGroupID string `json:"volume_group_id,omitempty"`
+	// Appliance on which volume will be placed on. If not specified, an appliance is chosen by the array.
+	ApplianceID string `json:"appliance_id,omitempty"`
+	// Description of the volume
+	Description string `json:"description,omitempty"`
+	// Protection policy to associate the volume with. If not specified, protection policy is not associated to the volume.
+	ProtectionPolicyID string `json:"protection_policy_id,omitempty"`
+	// Performance policy to associate the volume with. If not specified, performance policy is not associated to the volume.
+	PerformancePolicyID string `json:"performance_policy_id,omitempty"`
+	// Type of application using the volume
+	AppType string `json:"app_type,omitempty"`
+	// More details on type of application using the volume
+	AppTypeOther string `json:"app_type_other,omitempty"`
 	// Metadata addition for volumes on array with OE version 3.0 and above
 	Metadata *map[string]string `json:"metadata,omitempty"`
 

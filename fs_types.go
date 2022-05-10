@@ -42,14 +42,37 @@ const (
 	FileSystemTypeEnumSnapshot FileSystemTypeEnum = "Snapshot" // Snapshot of a file system
 )
 
+type FLRCreate struct {
+	Mode             string `json:"mode,omitempty"`
+	MinimumRetention string `json:"minimum_retention,omitempty"`
+	DefaultRetention string `json:"default_retention,omitempty"`
+	MaximumRetention string `json:"maximum_retention,omitempty"`
+}
+
 // FsCreate params for creating 'create fs' request
 type FsCreate struct {
-	Description string `json:"description,omitempty"`
-	Name        string `json:"name"`
-	NASServerID string `json:"nas_server_id"`
-	Size        int64  `json:"size_total"`
+	Description              string    `json:"description,omitempty"`
+	Name                     string    `json:"name"`
+	NASServerID              string    `json:"nas_server_id"`
+	Size                     int64     `json:"size_total"`
+	ConfigType               string    `json:"config_type,omitempty"`
+	AccessPolicy             string    `json:"access_policy,omitempty"`
+	LockingPolicy            string    `json:"locking_policy,omitempty"`
+	FolderRenamePolicy       string    `json:"folder_rename_policy,omitempty"`
+	IsAsyncMTimeEnabled      bool      `json:"is_async_MTime_enabled,omitempty"`
+	ProtectionPolicyId       string    `json:"protection_policy_id,omitempty"`
+	FileEventsPublishingMode string    `json:"file_events_publishing_mode,omitempty"`
+	HostIOSize               string    `json:"host_io_size,omitempty"`
+	FlrCreate                FLRCreate `json:"flr_attributes,omitempty"`
 	MetaDataHeader
 }
+
+const (
+	VMware8K  string = "VMware_8K"
+	VMware16K string = "VMware_16K"
+	VMware32K string = "VMware_32K"
+	VMware64K string = "VMware_64K"
+)
 
 // MetaData returns the metadata headers.
 func (fc *FsCreate) MetaData() http.Header {
