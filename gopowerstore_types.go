@@ -77,7 +77,7 @@ func (err *APIError) SnapshotNameIsAlreadyUse() bool {
 
 // FSNameIsAlreadyUse returns true if API error indicate that fs name is already in use
 func (err *APIError) FSNameIsAlreadyUse() bool {
-	return err.StatusCode == http.StatusBadRequest || err.StatusCode == http.StatusUnprocessableEntity
+	return err.StatusCode == http.StatusUnprocessableEntity
 }
 
 // HostIsNotAttachedToVolume returns true if API error indicate that host is not attached to volume
