@@ -54,7 +54,7 @@ func (suite *ReplicationTestSuite) TearDownSuite() {
 		suite.T().Fail()
 	}
 	C.ModifyVolumeGroup(context.Background(), &gopowerstore.VolumeGroupModify{ProtectionPolicyId: ""}, suite.vg.ID)
-	C.RemoveMembersFromVolumeGroup(context.Background(), &gopowerstore.VolumeGroupRemoveMember{VolumeIds: []string{suite.vol.ID}}, suite.vg.ID)
+	C.RemoveMembersFromVolumeGroup(context.Background(), &gopowerstore.VolumeGroupMembers{VolumeIds: []string{suite.vol.ID}}, suite.vg.ID)
 	C.ModifyVolume(context.Background(), &gopowerstore.VolumeModify{ProtectionPolicyID: ""}, suite.vol.ID)
 	C.DeleteProtectionPolicy(context.Background(), suite.pp.ID)
 	C.DeleteReplicationRule(context.Background(), suite.rr.ID)

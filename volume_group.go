@@ -97,7 +97,7 @@ func (c *ClientIMPL) UpdateVolumeGroupProtectionPolicy(ctx context.Context, id s
 }
 
 func (c *ClientIMPL) RemoveMembersFromVolumeGroup(ctx context.Context,
-	params *VolumeGroupRemoveMember, id string) (resp EmptyResponse, err error) {
+	params *VolumeGroupMembers, id string) (resp EmptyResponse, err error) {
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{
@@ -106,6 +106,21 @@ func (c *ClientIMPL) RemoveMembersFromVolumeGroup(ctx context.Context,
 			ID:       id,
 			Body:     params,
 			Action:   "remove_members",
+		},
+		&resp)
+	return resp, WrapErr(err)
+}
+
+func (c *ClientIMPL) AddMembersToVolumeGroup(ctx context.Context,
+	params *VolumeGroupMembers, id string) (resp EmptyResponse, err error) {
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:   "POST",
+			Endpoint: volumeGroupURL,
+			ID:       id,
+			Body:     params,
+			Action:   "add_members",
 		},
 		&resp)
 	return resp, WrapErr(err)
