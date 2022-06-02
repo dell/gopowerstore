@@ -128,7 +128,7 @@ func TestClientIMPL_RemoveMembersFromVolumeGroup(t *testing.T) {
 	httpmock.RegisterResponder("POST", fmt.Sprintf("%s/%s/remove_members", volumeGroupMockURL, volID),
 		httpmock.NewStringResponder(201, respData))
 
-	createReq := VolumeGroupRemoveMember{
+	createReq := VolumeGroupMembers{
 		VolumeIds: []string{"id-1", "id-2"},
 	}
 

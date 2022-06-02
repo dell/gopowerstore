@@ -47,7 +47,7 @@ type VolumeGroups struct {
 	VolumeGroup []VolumeGroup `json:"volume_group,omitempty"`
 }
 
-type VolumeGroupRemoveMember struct {
+type VolumeGroupMembers struct {
 	VolumeIds []string `json:"volume_ids"`
 }
 
