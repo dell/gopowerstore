@@ -106,6 +106,11 @@ func (err *APIError) VolumeAttachedToHost() bool {
 	return err.StatusCode == http.StatusUnprocessableEntity
 }
 
+// VolumeDetachedFromHost returns true if API error indicate that volume is detached from host
+func (err *APIError) VolumeDetachedFromHost() bool {
+	return err.StatusCode == http.StatusUnprocessableEntity
+}
+
 // HostAlreadyRemovedFromNFSExport returns true if API error indicate that operation can't be complete because
 // host ip already removed from nfs export access
 func (err *APIError) HostAlreadyRemovedFromNFSExport() bool {
