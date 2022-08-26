@@ -47,3 +47,8 @@ func TestAPIError_VolumeAttachedToHost(t *testing.T) {
 	apiError := NewVolumeAttachedToHostError()
 	assert.True(t, apiError.VolumeAttachedToHost())
 }
+
+func TestAPIError_VolumeDetachedFromHost(t *testing.T) {
+	apiError := NewVolumeAttachedToHostError()
+	assert.True(t, apiError.VolumeDetachedFromHost())
+}
