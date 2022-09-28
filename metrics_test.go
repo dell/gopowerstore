@@ -32,14 +32,18 @@ import (
 const metricsMockURL = APIMockURL + metricsURL
 
 func TestClientIMPL_GetCapacity(t *testing.T) {
-	totalSpace := 12077448036352
-	usedSpace := 1905262588
-	freeSpace := int64(totalSpace - usedSpace)
+	totalSpace0 := 12077448036352
+	usedSpace0 := 1905262588
+	totalSpace1 := 12077448036352
+	usedSpace1 := 5905262588
+	totalSpace2 := 12077448036352
+	usedSpace2 := 9905262588
+	freeSpace := int64(totalSpace2 - usedSpace2)
 
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
-	respData := fmt.Sprintf(`[{"physical_total": %d, "physical_used": %d}]`,
-		totalSpace, usedSpace)
+	respData := fmt.Sprintf(`[{"physical_total": %d, "physical_used": %d},{"physical_total": %d, "physical_used": %d},{"physical_total": %d, "physical_used": %d}]`,
+		totalSpace0, usedSpace0, totalSpace1, usedSpace1, totalSpace2, usedSpace2)
 	httpmock.RegisterResponder("POST", metricsMockURL+"/generate",
 		httpmock.NewStringResponder(200, respData))
 
@@ -49,14 +53,18 @@ func TestClientIMPL_GetCapacity(t *testing.T) {
 }
 
 func TestClientIMPL_GetCapacity_Zero(t *testing.T) {
-	totalSpace := 1905262588
-	usedSpace := 12077448036352
+	totalSpace0 := 12077448036352
+	usedSpace0 := 10077448036352
+	totalSpace1 := 12077448036352
+	usedSpace1 := 11077448036352
+	totalSpace2 := 12077448036352
+	usedSpace2 := 12077448036353
 	var freeSpace int64
 
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
-	respData := fmt.Sprintf(`[{"physical_total": %d, "physical_used": %d}]`,
-		totalSpace, usedSpace)
+	respData := fmt.Sprintf(`[{"physical_total": %d, "physical_used": %d},{"physical_total": %d, "physical_used": %d},{"physical_total": %d, "physical_used": %d}]`,
+		totalSpace0, usedSpace0, totalSpace1, usedSpace1, totalSpace2, usedSpace2)
 	httpmock.RegisterResponder("POST", metricsMockURL+"/generate",
 		httpmock.NewStringResponder(200, respData))
 

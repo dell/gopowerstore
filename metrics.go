@@ -307,7 +307,7 @@ func (c *ClientIMPL) GetCapacity(ctx context.Context) (int64, error) {
 		return 0, err
 	}
 	if len(resp) == 0 {
-		return 0, errors.New("can't get appliance list")
+		return 0, errors.New("can't get space metrics by cluster")
 	}
 	lastEntry := len(resp) - 1
 	freeSpace := resp[lastEntry].PhysicalTotal - resp[lastEntry].PhysicalUsed
