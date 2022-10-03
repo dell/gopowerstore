@@ -309,6 +309,7 @@ func (c *ClientIMPL) GetCapacity(ctx context.Context) (int64, error) {
 	if len(resp) == 0 {
 		return 0, errors.New("can't get space metrics by cluster")
 	}
+	// Latest information is present in last entry of the response
 	lastEntry := len(resp) - 1
 	freeSpace := resp[lastEntry].PhysicalTotal - resp[lastEntry].PhysicalUsed
 	if freeSpace < 0 {
