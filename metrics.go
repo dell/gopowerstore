@@ -296,8 +296,8 @@ func (c *ClientIMPL) GetCapacity(ctx context.Context) (int64, error) {
 			Action:      "generate",
 			QueryParams: qp,
 			Body: &MetricsRequest{
-				Entity:   "space_metrics_by_appliance",
-				EntityID: "A1",
+				Entity:   "space_metrics_by_cluster",
+				EntityID: "0",
 				Interval: "Five_Mins",
 			},
 		},
@@ -307,9 +307,11 @@ func (c *ClientIMPL) GetCapacity(ctx context.Context) (int64, error) {
 		return 0, err
 	}
 	if len(resp) == 0 {
-		return 0, errors.New("can't get appliance list")
+		return 0, errors.New("can't get space metrics by cluster")
 	}
-	freeSpace := resp[0].PhysicalTotal - resp[0].PhysicalUsed
+	// Latest information is present in last entry of the response
+	lastEntry := len(resp) - 1
+	freeSpace := resp[lastEntry].PhysicalTotal - resp[lastEntry].PhysicalUsed
 	if freeSpace < 0 {
 		return 0, nil
 	}
