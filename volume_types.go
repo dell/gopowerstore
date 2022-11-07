@@ -159,7 +159,8 @@ type VolumeModify struct {
 	//  Size must be a multiple of 8192.
 	Size int64 `json:"size,omitempty"`
 	// Unique identifier of the protection policy assigned to the volume.
-	ProtectionPolicyID string `json:"protection_policy_id"`
+	ProtectionPolicyID  string `json:"protection_policy_id"`
+	PerformancePolicyID string `json:"performance_policy_id,omitempty"`
 }
 
 // VolumeClone request for cloning snapshot/volume
