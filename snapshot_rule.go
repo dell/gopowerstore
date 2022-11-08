@@ -65,6 +65,21 @@ func (c *ClientIMPL) CreateSnapshotRule(ctx context.Context,
 	return resp, WrapErr(err)
 }
 
+// ModifySnapshotRule updates existing snapshot rule
+// If the snapshot rule is associated with a policy that is currently applied to a storage resource,
+// the modified rule is immediately applied to the associated storage resource.
+func (c *ClientIMPL) ModifySnapshotRule(ctx context.Context, modifyParams *SnapshotRuleCreate, id string) (resp EmptyResponse, err error) {
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:   "PATCH",
+			Endpoint: snapshotRuleURL,
+			ID:       id,
+			Body:     modifyParams},
+		&resp)
+	return resp, WrapErr(err)
+}
+
 // DeleteSnapshotRule deletes existing snapshot rule
 func (c *ClientIMPL) DeleteSnapshotRule(ctx context.Context,
 	deleteParams *SnapshotRuleDelete, id string) (resp EmptyResponse, err error) {

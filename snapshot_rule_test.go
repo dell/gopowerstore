@@ -58,6 +58,21 @@ func TestClientIMPL_CreateSnapshotRule(t *testing.T) {
 	assert.Equal(t, snapshotRuleID, resp.ID)
 }
 
+func TestClientIMPL_ModifySnapshotRule(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	httpmock.RegisterResponder("PATCH", fmt.Sprintf("%s/%s", snapshotRuleMockURL, snapshotRuleID),
+		httpmock.NewStringResponder(201, ""))
+
+	modifyParams := SnapshotRuleCreate{
+		TimeZone: TimeZoneEnumUS__Pacific,
+	}
+
+	resp, err := C.ModifySnapshotRule(context.Background(), &modifyParams, snapshotRuleID)
+	assert.Nil(t, err)
+	assert.Equal(t, EmptyResponse(""), resp)
+}
+
 func TestClientIMPL_DeleteSnapshotRule(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()

@@ -52,6 +52,7 @@ type Client interface {
 	GetSnapshotRules(ctx context.Context) ([]SnapshotRule, error)
 	GetSnapshotRule(ctx context.Context, id string) (SnapshotRule, error)
 	CreateSnapshotRule(ctx context.Context, createParams *SnapshotRuleCreate) (CreateResponse, error)
+	ModifySnapshotRule(ctx context.Context, modifyParams *SnapshotRuleCreate, id string) (resp EmptyResponse, err error)
 	DeleteSnapshotRule(ctx context.Context, deleteParams *SnapshotRuleDelete, id string) (EmptyResponse, error)
 	DeleteReplicationRule(ctx context.Context, id string) (resp EmptyResponse, err error)
 	DeleteProtectionPolicy(ctx context.Context, id string) (resp EmptyResponse, err error)
