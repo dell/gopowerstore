@@ -28,11 +28,13 @@ import (
 )
 
 const (
-	volumeMockURL = APIMockURL + volumeURL
+	volumeMockURL    = APIMockURL + volumeURL
+	applianceMockURL = APIMockURL + applianceURL
 )
 
 var volID = "6b930711-46bc-4a4b-9d6a-22c77a7838c4"
 var volID2 = "3765da74-28a7-49db-a693-10cec1de91f8"
+var appID = "A1"
 
 func TestClientIMPL_GetVolumes(t *testing.T) {
 	httpmock.Activate()
@@ -72,6 +74,37 @@ func TestClientIMPL_GetVolumeByName(t *testing.T) {
 	httpmock.Reset()
 	setResponder("")
 	_, err = C.GetVolumeByName(context.Background(), "test")
+	assert.NotNil(t, err)
+	apiError := err.(APIError)
+	assert.True(t, apiError.NotFound())
+}
+
+func TestClientIMPL_GetAppliance(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	respData := fmt.Sprintf(`{"id": "%s"}`, appID)
+	httpmock.RegisterResponder("GET", fmt.Sprintf("%s/%s", applianceMockURL, appID),
+		httpmock.NewStringResponder(200, respData))
+	app, err := C.GetAppliance(context.Background(), appID)
+	assert.Nil(t, err)
+	assert.Equal(t, appID, app.ID)
+}
+
+func TestClientIMPL_GetApplianceByName(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	setResponder := func(respData string) {
+		httpmock.RegisterResponder("GET", applianceMockURL,
+			httpmock.NewStringResponder(200, respData))
+	}
+	respData := fmt.Sprintf(`[{"id": "%s"}]`, appID)
+	setResponder(respData)
+	ap, err := C.GetApplianceByName(context.Background(), "test")
+	assert.Nil(t, err)
+	assert.Equal(t, appID, ap.ID)
+	httpmock.Reset()
+	setResponder("")
+	_, err = C.GetApplianceByName(context.Background(), "test")
 	assert.NotNil(t, err)
 	apiError := err.(APIError)
 	assert.True(t, apiError.NotFound())
