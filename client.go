@@ -52,6 +52,8 @@ type Client interface {
 	DeleteReplicationRule(ctx context.Context, id string) (resp EmptyResponse, err error)
 	DeleteProtectionPolicy(ctx context.Context, id string) (resp EmptyResponse, err error)
 	DeleteVolumeGroup(ctx context.Context, id string) (resp EmptyResponse, err error)
+	GetAppliance(ctx context.Context, id string) (ApplianceInstance, error)
+	GetApplianceByName(ctx context.Context, name string) (ApplianceInstance, error)
 	GetHost(ctx context.Context, id string) (Host, error)
 	GetHostByName(ctx context.Context, name string) (Host, error)
 	GetHosts(ctx context.Context) ([]Host, error)

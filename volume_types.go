@@ -191,6 +191,16 @@ type VolumeDelete struct {
 	ForceInternal *bool `json:"force_internal,omitempty"`
 }
 
+// Appliance instance on the array
+type ApplianceInstance struct {
+	// Unique identifier for the Appliance
+	ID string `json:"id"`
+	// Name of the Appliance
+	Name string `json:"name"`
+	// ServiceTag is the service tag attached to the appliance
+	ServiceTag string `json:"service_tag,omitempty"`
+}
+
 // Volume Details about a volume, including snapshots and clones of volumes.
 type Volume struct {
 	Description string `json:"description,omitempty"`
@@ -231,6 +241,8 @@ type Volume struct {
 	Nsid int64 `json:"nsid,omitempty"`
 	// NVMe Namespace globally unique identifier. Used for volumes attached to NVMEoF hosts.
 	Nguid string `json:"nguid,omitempty"`
+	// Appliance defines the properties of the appliance
+	Appliance ApplianceInstance `json:"appliance"`
 }
 
 // ProtectionData is a field that holds meta information about volume creation
@@ -243,5 +255,10 @@ func (v *Volume) Fields() []string {
 	return []string{"description", "id", "name",
 		"size", "state", "type", "wwn", "appliance_id", "protection_data", "creation_timestamp",
 		"logical_used", "node_affinity", "protection_policy_id", "performance_policy_id",
-		"is_replication_destination", "app_type", "app_type_other", "nsid", "nguid"}
+		"is_replication_destination", "app_type", "app_type_other", "nsid", "nguid","appliance"}
+}
+
+// Fields returns fields which must be requested to fill struct
+func (n *ApplianceInstance) Fields() []string {
+	return []string{"id", "name", "service_tag"}
 }
