@@ -826,6 +826,48 @@ func (_m *Client) GetAllRemoteSystems(ctx context.Context) ([]gopowerstore.Remot
 	return r0, r1
 }
 
+// GetAppliance provides a mock function with given fields: ctx, id
+func (_m *Client) GetAppliance(ctx context.Context, id string) (gopowerstore.ApplianceInstance, error) {
+	ret := _m.Called(ctx, id)
+
+	var r0 gopowerstore.ApplianceInstance
+	if rf, ok := ret.Get(0).(func(context.Context, string) gopowerstore.ApplianceInstance); ok {
+			r0 = rf(ctx, id)
+	} else {
+			r0 = ret.Get(0).(gopowerstore.ApplianceInstance)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
+			r1 = rf(ctx, id)
+	} else {
+			r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetApplianceByName provides a mock function with given fields: ctx, name
+func (_m *Client) GetApplianceByName(ctx context.Context, name string) (gopowerstore.ApplianceInstance, error) {
+	ret := _m.Called(ctx, name)
+
+	var r0 gopowerstore.ApplianceInstance
+	if rf, ok := ret.Get(0).(func(context.Context, string) gopowerstore.ApplianceInstance); ok {
+			r0 = rf(ctx, name)
+	} else {
+			r0 = ret.Get(0).(gopowerstore.ApplianceInstance)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
+			r1 = rf(ctx, name)
+	} else {
+			r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // GetCapacity provides a mock function with given fields: ctx
 func (_m *Client) GetCapacity(ctx context.Context) (int64, error) {
 	ret := _m.Called(ctx)
