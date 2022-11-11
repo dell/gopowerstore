@@ -158,6 +158,8 @@ type NAS struct {
 	Description string `json:"description,omitempty"`
 	// Name of the NAS server
 	Name string `json:"name,omitempty"`
+	// CurrentNodeId represents on which node the nas server is present
+	CurrentNodeId string `json:"current_node_id,omitempty"`
 	// NAS server operational status: [ Stopped, Starting, Started, Stopping, Failover, Degraded, Unknown ]
 	OperationalStatus NASServerOperationalStatusEnum `json:"operational_status,omitempty"`
 	// IPv4 file interface id nas server currently uses
@@ -168,7 +170,7 @@ type NAS struct {
 
 // Fields returns fields which must be requested to fill struct
 func (n *NAS) Fields() []string {
-	return []string{"description", "id", "name", "operational_status", "current_preferred_IPv4_interface_id", "nfs_servers"}
+	return []string{"description", "id", "name", "current_node_id", "operational_status", "current_preferred_IPv4_interface_id", "nfs_servers"}
 }
 
 // Fields returns fields which must be requested to fill struct

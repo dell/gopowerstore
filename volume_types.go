@@ -181,6 +181,16 @@ type VolumeDelete struct {
 	ForceInternal *bool `json:"force_internal,omitempty"`
 }
 
+// Appliance instance on the array
+type ApplianceInstance struct {
+	// Unique identifier for the Appliance
+	ID string `json:"id"`
+	// Name of the Appliance
+	Name string `json:"name"`
+	// ServiceTag is the service tag attached to the appliance
+	ServiceTag string `json:"service_tag,omitempty"`
+}
+
 // Volume Details about a volume, including snapshots and clones of volumes.
 type Volume struct {
 	Description string `json:"description,omitempty"`
@@ -203,6 +213,8 @@ type Volume struct {
 	ProtectionData ProtectionData `json:"protection_data,omitempty"`
 	// CreationTimeStamp provides volume group creation time
 	CreationTimeStamp string `json:"creation_timestamp,omitempty"`
+	// Appliance defines the properties of the appliance
+	Appliance ApplianceInstance `json:"appliance"`
 }
 
 // ProtectionData is a field that holds meta information about volume creation
@@ -213,5 +225,10 @@ type ProtectionData struct {
 // Fields returns fields which must be requested to fill struct
 func (v *Volume) Fields() []string {
 	return []string{"description", "id", "name",
-		"size", "state", "type", "wwn", "appliance_id", "protection_data", "creation_timestamp"}
+		"size", "state", "type", "wwn", "appliance_id", "protection_data", "creation_timestamp", "appliance"}
+}
+
+// Fields returns fields which must be requested to fill struct
+func (n *ApplianceInstance) Fields() []string {
+	return []string{"id", "name", "service_tag"}
 }

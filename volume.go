@@ -26,12 +26,18 @@ import (
 )
 
 const (
-	volumeURL = "volume"
+	volumeURL    = "volume"
+	applianceURL = "appliance"
 )
 
 func getVolumeDefaultQueryParams(c Client) api.QueryParamsEncoder {
 	vol := Volume{}
 	return c.APIClient().QueryParamsWithFields(&vol)
+}
+
+func getApplianceDefaultQueryParams(c Client) api.QueryParamsEncoder {
+	app := ApplianceInstance{}
+	return c.APIClient().QueryParamsWithFields(&app)
 }
 
 // GetVolume query and return specific volume by id
@@ -268,4 +274,39 @@ func (c *ClientIMPL) CloneVolume(ctx context.Context,
 		},
 		&resp)
 	return resp, WrapErr(err)
+}
+
+// GetAppliance query and return specific appliance by ID
+func (c *ClientIMPL) GetAppliance(ctx context.Context, id string) (resp ApplianceInstance, err error) {
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:      "GET",
+			Endpoint:    applianceURL,
+			ID:          id,
+			QueryParams: getApplianceDefaultQueryParams(c)},
+		&resp)
+	return resp, WrapErr(err)
+}
+
+// GetApplianceByName query and return specific appliance by name
+func (c *ClientIMPL) GetApplianceByName(ctx context.Context, name string) (resp ApplianceInstance, err error) {
+	var appList []ApplianceInstance
+	qp := getApplianceDefaultQueryParams(c)
+	qp.RawArg("name", fmt.Sprintf("eq.%s", name))
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:      "GET",
+			Endpoint:    applianceURL,
+			QueryParams: qp},
+		&appList)
+	err = WrapErr(err)
+	if err != nil {
+		return resp, err
+	}
+	if len(appList) != 1 {
+		return resp, NewNotFoundError()
+	}
+	return appList[0], err
 }
