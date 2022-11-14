@@ -94,6 +94,15 @@ type VolumeCreate struct {
 	AppType string `json:"app_type,omitempty"`
 	// More details on type of application using the volume
 	AppTypeOther string `json:"app_type_other,omitempty"`
+	// Unique identifier of a host attached to a volume
+	HostID string `json:"host_id,omitempty"`
+	// Unique identifier of a host group attached to a volume. The host_id and host_group_id cannot both be set.
+	HostGroupID string `json:"host_group_id,omitempty"`
+	// Logical unit number for the host volume access.
+	LogicalUnitNumber int64 `json:"logical_unit_number,omitempty"`
+	// Minimum size for the volume, in bytes.
+	MinimumSize int64 `json:"min_size,omitempty"`
+
 	// Metadata addition for volumes on array with OE version 3.0 and above
 	Metadata *map[string]string `json:"metadata,omitempty"`
 
@@ -150,7 +159,8 @@ type VolumeModify struct {
 	//  Size must be a multiple of 8192.
 	Size int64 `json:"size,omitempty"`
 	// Unique identifier of the protection policy assigned to the volume.
-	ProtectionPolicyID string `json:"protection_policy_id"`
+	ProtectionPolicyID  string `json:"protection_policy_id"`
+	PerformancePolicyID string `json:"performance_policy_id,omitempty"`
 }
 
 // VolumeClone request for cloning snapshot/volume
@@ -213,6 +223,24 @@ type Volume struct {
 	ProtectionData ProtectionData `json:"protection_data,omitempty"`
 	// CreationTimeStamp provides volume group creation time
 	CreationTimeStamp string `json:"creation_timestamp,omitempty"`
+	// Current amount of data (in bytes) host has written to a volume without dedupe, compression or sharing.
+	LogicalUsed int64 `json:"logical_used,omitempty"`
+	// It shows which node will be advertised as the optimized IO path to the volume
+	NodeAffinity string `json:"node_affinity,omitempty"`
+	//Unique identifier of the protection policy assigned to the volume. Only applicable to primary and clone volumes.
+	ProtectionPolicyID string `json:"protection_policy_id,omitempty"`
+	// Unique identifier of the performance policy assigned to the volume.
+	PerformancePolicyID string `json:"performance_policy_id,omitempty"`
+	// Indicates whether this volume is a replication destination.
+	IsReplicationDestination bool `json:"is_replication_destination,omitempty"`
+	// This attribute indicates the intended use of this volume. It may be null.
+	AppType string `json:"app_type,omitempty"`
+	// An optional field used to describe application type usage for a volume.
+	AppTypeOther string `json:"app_type_other,omitempty"`
+	// NVMe Namespace unique identifier in the NVME subsystem. Used for volumes attached to NVMEoF hosts.
+	Nsid int64 `json:"nsid,omitempty"`
+	// NVMe Namespace globally unique identifier. Used for volumes attached to NVMEoF hosts.
+	Nguid string `json:"nguid,omitempty"`
 	// Appliance defines the properties of the appliance
 	Appliance ApplianceInstance `json:"appliance"`
 }
@@ -225,7 +253,9 @@ type ProtectionData struct {
 // Fields returns fields which must be requested to fill struct
 func (v *Volume) Fields() []string {
 	return []string{"description", "id", "name",
-		"size", "state", "type", "wwn", "appliance_id", "protection_data", "creation_timestamp", "appliance"}
+		"size", "state", "type", "wwn", "appliance_id", "protection_data", "creation_timestamp",
+		"logical_used", "node_affinity", "protection_policy_id", "performance_policy_id",
+		"is_replication_destination", "app_type", "app_type_other", "nsid", "nguid","appliance"}
 }
 
 // Fields returns fields which must be requested to fill struct
