@@ -18,6 +18,7 @@ type ReplicationTestSuite struct {
 	suite.Suite
 	remoteSystem    string
 	remoteSystemMIP string
+	randomString    string
 	remoteClient    gopowerstore.Client
 	pp              gopowerstore.CreateResponse
 	vg              gopowerstore.CreateResponse
@@ -40,15 +41,18 @@ func (suite *ReplicationTestSuite) SetupSuite() {
 	if err != nil {
 		return
 	}
+	// instead of completely hardcoded/constant string, let's make it dynamic
+	// in case if TearDownSuite doesn't run at the end, we will not be blocked in
+	suite.randomString = randString(8)
 	suite.remoteClient = client
 }
 
 func (suite *ReplicationTestSuite) TearDownSuite() {
 	vg, err := C.GetVolumeGroup(context.Background(), suite.vg.ID)
 	assert.NoError(suite.T(), err)
-	pp, err := C.GetProtectionPolicyByName(context.Background(), "intcsi-pptst")
+	pp, err := C.GetProtectionPolicyByName(context.Background(), "intcsi"+suite.randomString+"-pptst")
 	assert.NoError(suite.T(), err)
-	rr, err := C.GetReplicationRuleByName(context.Background(), "intcsi-ruletst")
+	rr, err := C.GetReplicationRuleByName(context.Background(), "intcsi"+suite.randomString+"-ruletst")
 	assert.NoError(suite.T(), err)
 	if len(rr.ProtectionPolicies) != 1 || len(pp.ReplicationRules) != 1 || len(vg.Volumes) != 1 || len(pp.VolumeGroups) != 1 {
 		suite.T().Fail()
@@ -59,7 +63,7 @@ func (suite *ReplicationTestSuite) TearDownSuite() {
 	C.DeleteProtectionPolicy(context.Background(), suite.pp.ID)
 	C.DeleteReplicationRule(context.Background(), suite.rr.ID)
 	C.DeleteVolumeGroup(context.Background(), suite.vg.ID)
-	vgid, err := suite.remoteClient.GetVolumeGroupByName(context.Background(), "intcsi-vgtst")
+	vgid, err := suite.remoteClient.GetVolumeGroupByName(context.Background(), "intcsi"+suite.randomString+"-vgtst")
 	if err != nil {
 		logrus.Info(err)
 	}
@@ -77,30 +81,31 @@ func getRemoteSystem(t *testing.T) (string, string) {
 
 func (suite *ReplicationTestSuite) TestReplication() {
 	t := suite.T()
+
 	remoteSystem := suite.remoteSystem
 	rs, err := C.GetRemoteSystem(context.Background(), remoteSystem)
 	assert.NoError(t, err)
 	assert.Equal(t, rs.ID, remoteSystem)
 
 	suite.rr, err = C.CreateReplicationRule(context.Background(), &gopowerstore.ReplicationRuleCreate{
-		Name:           "intcsi-ruletst",
+		Name:           "intcsi" + suite.randomString + "-ruletst",
 		Rpo:            gopowerstore.RpoFifteenMinutes,
 		RemoteSystemID: rs.ID,
 	})
 	assert.NoError(t, err)
 
 	suite.pp, err = C.CreateProtectionPolicy(context.Background(), &gopowerstore.ProtectionPolicyCreate{
-		Name:               "intcsi-pptst",
+		Name:               "intcsi" + suite.randomString + "-pptst",
 		ReplicationRuleIds: []string{suite.rr.ID},
 	})
 	assert.NoError(t, err)
 	suite.vg, err = C.CreateVolumeGroup(context.Background(), &gopowerstore.VolumeGroupCreate{
-		Name:               "intcsi-vgtst",
+		Name:               "intcsi" + suite.randomString + "-vgtst",
 		ProtectionPolicyID: suite.pp.ID,
 	})
 	assert.NoError(t, err)
 
-	volName := "intcsi-voltst"
+	volName := "intcsi" + suite.randomString + "-voltst"
 	size := int64(1048576)
 	suite.vol, err = C.CreateVolume(context.Background(), &gopowerstore.VolumeCreate{
 		Name:          &volName,

@@ -11,7 +11,7 @@ unit-test:
 	go test -v -coverprofile=c.out $(unit_test_paths)
 
 int-test:
-		 go test -v -coverprofile=c.out -coverpkg github.com/dell/gopowerstore \
+		 go test -timeout 600s -v -coverprofile=c.out -coverpkg github.com/dell/gopowerstore \
 		 $(integration_tests_path)
 
 gocover:
