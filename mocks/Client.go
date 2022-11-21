@@ -95,6 +95,27 @@ func (_m *Client) AttachVolumeToHost(ctx context.Context, hostID string, attachP
 	return r0, r1
 }
 
+// AttachVolumeToHostGroup provides a mock function with given fields: ctx, hostGroupID, attachParams
+func (_m *Client) AttachVolumeToHostGroup(ctx context.Context, hostGroupID string, attachParams *gopowerstore.HostVolumeAttach) (gopowerstore.EmptyResponse, error) {
+	ret := _m.Called(ctx, hostGroupID, attachParams)
+
+	var r0 gopowerstore.EmptyResponse
+	if rf, ok := ret.Get(0).(func(context.Context, string, *gopowerstore.HostVolumeAttach) gopowerstore.EmptyResponse); ok {
+		r0 = rf(ctx, hostGroupID, attachParams)
+	} else {
+		r0 = ret.Get(0).(gopowerstore.EmptyResponse)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, string, *gopowerstore.HostVolumeAttach) error); ok {
+		r1 = rf(ctx, hostGroupID, attachParams)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // CloneFS provides a mock function with given fields: ctx, createParams, fsID
 func (_m *Client) CloneFS(ctx context.Context, createParams *gopowerstore.FsClone, fsID string) (gopowerstore.CreateResponse, error) {
 	ret := _m.Called(ctx, createParams, fsID)
@@ -483,6 +504,27 @@ func (_m *Client) CreateSnapshot(ctx context.Context, createSnapParams *gopowers
 	return r0, r1
 }
 
+// CreateSnapshotRule provides a mock function with given fields: ctx, createParams
+func (_m *Client) CreateSnapshotRule(ctx context.Context, createParams *gopowerstore.SnapshotRuleCreate) (gopowerstore.CreateResponse, error) {
+	ret := _m.Called(ctx, createParams)
+
+	var r0 gopowerstore.CreateResponse
+	if rf, ok := ret.Get(0).(func(context.Context, *gopowerstore.SnapshotRuleCreate) gopowerstore.CreateResponse); ok {
+		r0 = rf(ctx, createParams)
+	} else {
+		r0 = ret.Get(0).(gopowerstore.CreateResponse)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, *gopowerstore.SnapshotRuleCreate) error); ok {
+		r1 = rf(ctx, createParams)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // CreateVolume provides a mock function with given fields: ctx, createParams
 func (_m *Client) CreateVolume(ctx context.Context, createParams *gopowerstore.VolumeCreate) (gopowerstore.CreateResponse, error) {
 	ret := _m.Called(ctx, createParams)
@@ -735,6 +777,27 @@ func (_m *Client) DeleteSnapshot(ctx context.Context, deleteParams *gopowerstore
 	return r0, r1
 }
 
+// DeleteSnapshotRule provides a mock function with given fields: ctx, deleteParams, id
+func (_m *Client) DeleteSnapshotRule(ctx context.Context, deleteParams *gopowerstore.SnapshotRuleDelete, id string) (gopowerstore.EmptyResponse, error) {
+	ret := _m.Called(ctx, deleteParams, id)
+
+	var r0 gopowerstore.EmptyResponse
+	if rf, ok := ret.Get(0).(func(context.Context, *gopowerstore.SnapshotRuleDelete, string) gopowerstore.EmptyResponse); ok {
+		r0 = rf(ctx, deleteParams, id)
+	} else {
+		r0 = ret.Get(0).(gopowerstore.EmptyResponse)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, *gopowerstore.SnapshotRuleDelete, string) error); ok {
+		r1 = rf(ctx, deleteParams, id)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // DeleteVolume provides a mock function with given fields: ctx, deleteParams, id
 func (_m *Client) DeleteVolume(ctx context.Context, deleteParams *gopowerstore.VolumeDelete, id string) (gopowerstore.EmptyResponse, error) {
 	ret := _m.Called(ctx, deleteParams, id)
@@ -791,6 +854,27 @@ func (_m *Client) DetachVolumeFromHost(ctx context.Context, hostID string, detac
 	var r1 error
 	if rf, ok := ret.Get(1).(func(context.Context, string, *gopowerstore.HostVolumeDetach) error); ok {
 		r1 = rf(ctx, hostID, detachParams)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// DetachVolumeFromHostGroup provides a mock function with given fields: ctx, hostGroupID, detachParams
+func (_m *Client) DetachVolumeFromHostGroup(ctx context.Context, hostGroupID string, detachParams *gopowerstore.HostVolumeDetach) (gopowerstore.EmptyResponse, error) {
+	ret := _m.Called(ctx, hostGroupID, detachParams)
+
+	var r0 gopowerstore.EmptyResponse
+	if rf, ok := ret.Get(0).(func(context.Context, string, *gopowerstore.HostVolumeDetach) gopowerstore.EmptyResponse); ok {
+		r0 = rf(ctx, hostGroupID, detachParams)
+	} else {
+		r0 = ret.Get(0).(gopowerstore.EmptyResponse)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, string, *gopowerstore.HostVolumeDetach) error); ok {
+		r1 = rf(ctx, hostGroupID, detachParams)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -1500,6 +1584,50 @@ func (_m *Client) GetSnapshot(ctx context.Context, snapID string) (gopowerstore.
 	return r0, r1
 }
 
+// GetSnapshotRule provides a mock function with given fields: ctx, id
+func (_m *Client) GetSnapshotRule(ctx context.Context, id string) (gopowerstore.SnapshotRule, error) {
+	ret := _m.Called(ctx, id)
+
+	var r0 gopowerstore.SnapshotRule
+	if rf, ok := ret.Get(0).(func(context.Context, string) gopowerstore.SnapshotRule); ok {
+		r0 = rf(ctx, id)
+	} else {
+		r0 = ret.Get(0).(gopowerstore.SnapshotRule)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = rf(ctx, id)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetSnapshotRules provides a mock function with given fields: ctx
+func (_m *Client) GetSnapshotRules(ctx context.Context) ([]gopowerstore.SnapshotRule, error) {
+	ret := _m.Called(ctx)
+
+	var r0 []gopowerstore.SnapshotRule
+	if rf, ok := ret.Get(0).(func(context.Context) []gopowerstore.SnapshotRule); ok {
+		r0 = rf(ctx)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]gopowerstore.SnapshotRule)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = rf(ctx)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // GetSnapshots provides a mock function with given fields: ctx
 func (_m *Client) GetSnapshots(ctx context.Context) ([]gopowerstore.Volume, error) {
 	ret := _m.Called(ctx)
@@ -1796,6 +1924,27 @@ func (_m *Client) ModifyNFSExport(ctx context.Context, modifyParams *gopowerstor
 
 	var r1 error
 	if rf, ok := ret.Get(1).(func(context.Context, *gopowerstore.NFSExportModify, string) error); ok {
+		r1 = rf(ctx, modifyParams, id)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// ModifySnapshotRule provides a mock function with given fields: ctx, modifyParams, id
+func (_m *Client) ModifySnapshotRule(ctx context.Context, modifyParams *gopowerstore.SnapshotRuleCreate, id string) (gopowerstore.EmptyResponse, error) {
+	ret := _m.Called(ctx, modifyParams, id)
+
+	var r0 gopowerstore.EmptyResponse
+	if rf, ok := ret.Get(0).(func(context.Context, *gopowerstore.SnapshotRuleCreate, string) gopowerstore.EmptyResponse); ok {
+		r0 = rf(ctx, modifyParams, id)
+	} else {
+		r0 = ret.Get(0).(gopowerstore.EmptyResponse)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, *gopowerstore.SnapshotRuleCreate, string) error); ok {
 		r1 = rf(ctx, modifyParams, id)
 	} else {
 		r1 = ret.Error(1)
