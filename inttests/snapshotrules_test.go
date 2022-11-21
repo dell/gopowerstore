@@ -75,5 +75,5 @@ func TestModifySnapshotRule(t *testing.T) {
 	checkAPIErr(t, err)
 	got, err := C.GetSnapshotRule(context.Background(), snapshotRuleID)
 	checkAPIErr(t, err)
-	assert.Equal(t, 7, got.DesiredRetention)
+	assert.Equal(t, int32(7), got.DesiredRetention)
 }

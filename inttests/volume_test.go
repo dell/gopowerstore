@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2020 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2020-2022 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ package inttests
 
 import (
 	"context"
+	"net/http"
 	"testing"
 
 	"github.com/dell/gopowerstore"
@@ -263,6 +264,15 @@ func TestComputeDifferences(t *testing.T) {
 		Length:         &length,
 		Offset:         &offset,
 	}
+	defaultHeaders := C.GetCustomHTTPHeaders()
+	if defaultHeaders == nil {
+		defaultHeaders = make(http.Header)
+	}
+	customHeaders := defaultHeaders
+	// for accessing internal REST-APIs
+	customHeaders.Add("DELL-VISIBILITY", "internal")
+	C.SetCustomHTTPHeaders(customHeaders)
+
 	resp, err := C.ComputeDifferences(context.Background(), &snapdiffParams, snap1.ID)
 	checkAPIErr(t, err)
 	// AA== is equivalent to an empty bitmap
