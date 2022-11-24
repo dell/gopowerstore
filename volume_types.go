@@ -255,7 +255,7 @@ func (v *Volume) Fields() []string {
 	return []string{"description", "id", "name",
 		"size", "state", "type", "wwn", "appliance_id", "protection_data", "creation_timestamp",
 		"logical_used", "node_affinity", "protection_policy_id", "performance_policy_id",
-		"is_replication_destination", "app_type", "app_type_other", "nsid", "nguid","appliance"}
+		"is_replication_destination", "app_type", "app_type_other", "nsid", "nguid", "appliance"}
 }
 
 // Fields returns fields which must be requested to fill struct

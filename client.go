@@ -167,6 +167,9 @@ type Client interface {
 	ExecuteActionOnReplicationSession(ctx context.Context, id string, actionType ActionType, params *FailoverParams) (resp EmptyResponse, err error)
 	GetReplicationSessionByID(ctx context.Context, id string) (resp ReplicationSession, err error)
 	RegisterK8sCluster(ctx context.Context, request *K8sCluster) (CreateResponse, error)
+	CreateStorageContainer(ctx context.Context, createParams *StorageContainer) (CreateResponse, error)
+	DeleteStorageContainer(ctx context.Context, id string) (EmptyResponse, error)
+	GetStorageContainer(ctx context.Context, id string) (StorageContainer, error)
 }
 
 // ClientIMPL provides basic API client implementation
