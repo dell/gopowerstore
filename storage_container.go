@@ -20,6 +20,7 @@ package gopowerstore
 
 import (
 	"context"
+
 	"github.com/dell/gopowerstore/api"
 )
 
@@ -67,6 +68,19 @@ func (c *ClientIMPL) DeleteStorageContainer(ctx context.Context, id string) (res
 			Endpoint: storageContainerURL,
 			ID:       id,
 			Body:     nil},
+		&resp)
+	return resp, WrapErr(err)
+}
+
+// ModifyStorageContainer updates existing storage container
+func (c *ClientIMPL) ModifyStorageContainer(ctx context.Context, modifyParams *StorageContainer, id string) (resp EmptyResponse, err error) {
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:   "PATCH",
+			Endpoint: storageContainerURL,
+			ID:       id,
+			Body:     modifyParams},
 		&resp)
 	return resp, WrapErr(err)
 }

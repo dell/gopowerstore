@@ -20,9 +20,10 @@ package inttests
 
 import (
 	"context"
+	"testing"
+
 	"github.com/dell/gopowerstore"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 const TestStorageContainerPrefix = "test_sc_"
@@ -53,4 +54,17 @@ func TestGetSC(t *testing.T) {
 func TestCreateDeleteSC(t *testing.T) {
 	scID, _ := createSC(t)
 	deleteSC(t, scID)
+}
+
+func TestModifySC(t *testing.T) {
+	scID, _ := createSC(t)
+	defer deleteSC(t, scID)
+
+	newName := TestStorageContainerPrefix + randString(8) + "new"
+
+	_, err := C.ModifyStorageContainer(context.Background(), &gopowerstore.StorageContainer{Name: newName}, scID)
+	checkAPIErr(t, err)
+	got, err := C.GetStorageContainer(context.Background(), scID)
+	checkAPIErr(t, err)
+	assert.Equal(t, newName, got.Name)
 }

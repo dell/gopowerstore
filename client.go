@@ -170,6 +170,7 @@ type Client interface {
 	CreateStorageContainer(ctx context.Context, createParams *StorageContainer) (CreateResponse, error)
 	DeleteStorageContainer(ctx context.Context, id string) (EmptyResponse, error)
 	GetStorageContainer(ctx context.Context, id string) (StorageContainer, error)
+	ModifyStorageContainer(ctx context.Context, modifyParams *StorageContainer, id string) (EmptyResponse, error)
 }
 
 // ClientIMPL provides basic API client implementation
