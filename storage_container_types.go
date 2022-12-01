@@ -22,7 +22,7 @@ type StorageContainerStorageProtocolEnum string
 
 const (
 	StorageContainerStorageProtocolEnumSCSI StorageContainerStorageProtocolEnum = "SCSI"
-	StorageContainerStorageProtocolEnumNVME StorageContainerStorageProtocolEnum = "NVME"
+	StorageContainerStorageProtocolEnumNVME StorageContainerStorageProtocolEnum = "NVMe"
 )
 
 type StorageContainer struct {
