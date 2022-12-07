@@ -30,11 +30,10 @@ const apiPoolAddressURL = "ip_pool_address"
 func (c *ClientIMPL) GetStorageISCSITargetAddresses(
 	ctx context.Context) (resp []IPPoolAddress, err error) {
 	var ipPoolAddress IPPoolAddress
-	client := c.APIClient()
-	qp := client.QueryParamsWithFields(&ipPoolAddress)
+	qp := c.APIClient().QueryParamsWithFields(&ipPoolAddress)
 	qp.RawArg("purposes", fmt.Sprintf("cs.{%s}", IPPurposeTypeEnumStorageIscsiTarget))
 	qp.Order("id")
-	_, err = client.Query(
+	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{
 			Method:      "GET",
