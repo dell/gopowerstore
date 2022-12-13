@@ -116,6 +116,7 @@ type Client interface {
 	GetReplicationRuleByName(ctx context.Context, name string) (ReplicationRule, error)
 	CreateProtectionPolicy(ctx context.Context, createParams *ProtectionPolicyCreate) (CreateResponse, error)
 	ModifyVolumeGroup(ctx context.Context, modifyParams *VolumeGroupModify, id string) (resp EmptyResponse, err error)
+	GetProtectionPolicy(ctx context.Context, id string) (ProtectionPolicy, error)
 	GetProtectionPolicyByName(ctx context.Context, name string) (ProtectionPolicy, error)
 	GetRemoteSystem(ctx context.Context, id string) (RemoteSystem, error)
 	GetRemoteSystemByName(ctx context.Context, name string) (RemoteSystem, error)

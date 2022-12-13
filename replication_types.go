@@ -105,6 +105,7 @@ type ProtectionPolicy struct {
 	ID               string            `json:"id"`
 	Name             string            `json:"name"`
 	ReplicationRules []ReplicationRule `json:"replication_rules"`
+	SnapshotRules    []SnapshotRule    `json:"snapshot_rules"`
 	Volumes          []Volume          `json:"volume"`
 	VolumeGroups     []VolumeGroup     `json:"volume_group"`
 }
