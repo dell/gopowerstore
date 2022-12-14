@@ -113,6 +113,21 @@ func (c *ClientIMPL) GetProtectionPolicyByName(ctx context.Context,
 	return policyList[0], nil
 }
 
+// GetProtectionPolicy query and return specific protection policy id
+func (c *ClientIMPL) GetProtectionPolicy(ctx context.Context, id string) (resp ProtectionPolicy, err error) {
+	protectionPolicy := ProtectionPolicy{}
+	qc := c.APIClient().QueryParamsWithFields(&protectionPolicy)
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:      "GET",
+			Endpoint:    policyURL,
+			ID:          id,
+			QueryParams: qc},
+		&resp)
+	return resp, WrapErr(err)
+}
+
 func (c *ClientIMPL) GetReplicationSessionByLocalResourceID(ctx context.Context, id string) (resp ReplicationSession, err error) {
 	var sessionList []ReplicationSession
 	ses := ReplicationSession{}

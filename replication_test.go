@@ -19,15 +19,20 @@ package gopowerstore
 import (
 	"context"
 	"fmt"
+	"testing"
+
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 const (
 	policyMockURL             = APIMockURL + policyURL
 	replicationRuleMockURL    = APIMockURL + replicationRuleURL
 	replicationSessionMockURL = APIMockURL + replicationSessionURL
+)
+
+var (
+	protectionPolicyID = "15c03067-c4f2-428b-b637-18b0266979f0"
 )
 
 func TestClientIMPL_CreateProtectionPolicy(t *testing.T) {
@@ -86,6 +91,17 @@ func TestClientIMPL_DeleteReplicationRule(t *testing.T) {
 	resp, err := C.DeleteReplicationRule(context.Background(), volID)
 	assert.Nil(t, err)
 	assert.Len(t, string(resp), 0)
+}
+
+func TestClientIMPL_GetProtectionPolicy(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	respData := fmt.Sprintf(`{"id": "%s"}`, protectionPolicyID)
+	httpmock.RegisterResponder("GET", fmt.Sprintf("%s/%s", policyMockURL, protectionPolicyID),
+		httpmock.NewStringResponder(200, respData))
+	protectionPolicy, err := C.GetProtectionPolicy(context.Background(), protectionPolicyID)
+	assert.Nil(t, err)
+	assert.Equal(t, protectionPolicyID, protectionPolicy.ID)
 }
 
 func TestClientIMPL_GetProtectionPolicyByName(t *testing.T) {
