@@ -104,6 +104,7 @@ type FailoverParams struct {
 type ProtectionPolicy struct {
 	ID               string            `json:"id"`
 	Name             string            `json:"name"`
+	Description      string            `json:"description"`
 	ReplicationRules []ReplicationRule `json:"replication_rules"`
 	SnapshotRules    []SnapshotRule    `json:"snapshot_rules"`
 	Volumes          []Volume          `json:"volume"`
@@ -111,7 +112,7 @@ type ProtectionPolicy struct {
 }
 
 func (policy *ProtectionPolicy) Fields() []string {
-	return []string{"id", "name", "replication_rules"}
+	return []string{"id", "name", "replication_rules", "description", "snapshot_rules"}
 }
 
 type StorageElementPair struct {
