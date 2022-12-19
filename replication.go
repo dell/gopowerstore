@@ -88,6 +88,19 @@ func (c *ClientIMPL) CreateProtectionPolicy(ctx context.Context,
 	return resp, WrapErr(err)
 }
 
+// ModifyProtectionPolicy updates existing protection policy
+func (c *ClientIMPL) ModifyProtectionPolicy(ctx context.Context, modifyParams *ProtectionPolicyCreate, id string) (resp EmptyResponse, err error) {
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:   "PATCH",
+			Endpoint: policyURL,
+			ID:       id,
+			Body:     modifyParams},
+		&resp)
+	return resp, WrapErr(err)
+}
+
 func (c *ClientIMPL) GetProtectionPolicyByName(ctx context.Context,
 	policyName string) (resp ProtectionPolicy, err error) {
 	var policyList []ProtectionPolicy
