@@ -56,3 +56,21 @@ func TestClientIMPL_DetachVolumeFromHostGroup(t *testing.T) {
 	_, err := C.DetachVolumeFromHostGroup(context.Background(), hostGroupID, &detach)
 	assert.Nil(t, err)
 }
+
+func TestClientIMPL_GetHostGroupByName(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	setResponder := func(respData string) {
+		httpmock.RegisterResponder("GET", hostGroupMockURL,
+			httpmock.NewStringResponder(200, respData))
+	}
+	respData := fmt.Sprintf(`[{"id": "%s"}]`, hostGroupID)
+	setResponder(respData)
+	hostGroup, err := C.GetHostGroupByName(context.Background(), "test")
+	assert.Nil(t, err)
+	assert.Equal(t, hostGroupID, hostGroup.ID)
+	httpmock.Reset()
+	setResponder("")
+	_, err = C.GetHostByName(context.Background(), "test")
+	assert.NotNil(t, err)
+}

@@ -20,6 +20,7 @@ package gopowerstore
 
 import (
 	"context"
+	"fmt"
 )
 
 const (
@@ -58,4 +59,26 @@ func (c *ClientIMPL) DetachVolumeFromHostGroup(
 			Body:     detachParams},
 		&resp)
 	return resp, WrapErr(err)
+}
+
+// GetHostGroupByName get host by name
+func (c *ClientIMPL) GetHostGroupByName(ctx context.Context, name string) (resp Host, err error) {
+	var hostList []Host
+	qp := getHostDefaultQueryParams(c)
+	qp.RawArg("name", fmt.Sprintf("eq.%s", name))
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:      "GET",
+			Endpoint:    hostGroupURL,
+			QueryParams: qp},
+		&hostList)
+	err = WrapErr(err)
+	if err != nil {
+		return resp, err
+	}
+	if len(hostList) != 1 {
+		return resp, NewHostIsNotExistError()
+	}
+	return hostList[0], err
 }
