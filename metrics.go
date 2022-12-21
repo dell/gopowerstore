@@ -286,9 +286,8 @@ func (c *ClientIMPL) PerformanceMetricsNfsv4ByNode(ctx context.Context, entityID
 // GetCapacity return capacity of first appliance
 func (c *ClientIMPL) GetCapacity(ctx context.Context) (int64, error) {
 	var resp []ApplianceMetrics
-	client := c.APIClient()
-	qp := client.QueryParams().Select("physical_total", "physical_used")
-	_, err := client.Query(
+	qp := c.APIClient().QueryParams().Select("physical_total", "physical_used")
+	_, err := c.APIClient().Query(
 		ctx,
 		RequestConfig{
 			Method:      "POST",
