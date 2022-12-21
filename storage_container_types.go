@@ -34,5 +34,5 @@ type StorageContainer struct {
 }
 
 func (s StorageContainer) Fields() []string {
-	return []string{"id", "name", "quota", "storage_protocol"}
+	return []string{"id", "name", "quota", "storage_protocol", "high_water_mark"}
 }
