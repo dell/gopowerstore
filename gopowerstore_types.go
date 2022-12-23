@@ -165,6 +165,12 @@ func replicationRuleNotExists() APIError {
 	return apiError
 }
 
+func snapshotRuleNotExists() APIError {
+	apiError := APIError{&api.ErrorMsg{}}
+	apiError.StatusCode = http.StatusNotFound
+	return apiError
+}
+
 func protectionPolicyNotExists() APIError {
 	apiError := APIError{&api.ErrorMsg{}}
 	apiError.StatusCode = http.StatusNotFound
