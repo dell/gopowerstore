@@ -20,6 +20,7 @@ package gopowerstore
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/dell/gopowerstore/api"
 )
@@ -48,7 +49,13 @@ func (c *ClientIMPL) CreateStorageContainer(ctx context.Context,
 
 // GetStorageContainer get existing StorageContainer with ID
 func (c *ClientIMPL) GetStorageContainer(ctx context.Context, id string) (resp StorageContainer, err error) {
-	_, err = c.APIClient().Query(
+
+	customHeader := http.Header{}
+	customHeader.Add("DELL-VISIBILITY", "Partner")
+	apiClient := c.APIClient()
+	apiClient.SetCustomHTTPHeaders(customHeader)
+
+	_, err = apiClient.Query(
 		ctx,
 		RequestConfig{
 			Method:      "GET",
@@ -74,7 +81,13 @@ func (c *ClientIMPL) DeleteStorageContainer(ctx context.Context, id string) (res
 
 // ModifyStorageContainer updates existing storage container
 func (c *ClientIMPL) ModifyStorageContainer(ctx context.Context, modifyParams *StorageContainer, id string) (resp EmptyResponse, err error) {
-	_, err = c.APIClient().Query(
+
+	customHeader := http.Header{}
+	customHeader.Add("DELL-VISIBILITY", "Partner")
+	apiClient := c.APIClient()
+	apiClient.SetCustomHTTPHeaders(customHeader)
+
+	_, err = apiClient.Query(
 		ctx,
 		RequestConfig{
 			Method:   "PATCH",
