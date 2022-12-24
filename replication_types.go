@@ -86,9 +86,9 @@ type ProtectionPolicyCreate struct {
 	// Policy description.
 	Description string `json:"description,omitempty"`
 	// IDs of replication rules
-	ReplicationRuleIds []string `json:"replication_rule_ids,omitempty"`
+	ReplicationRuleIds []string `json:"replication_rule_ids"`
 	// IDs of snapshot rules
-	SnapshotRuleIds []string `json:"snapshot_rule_ids,omitempty"`
+	SnapshotRuleIds []string `json:"snapshot_rule_ids"`
 	// Names of replication rules
 	ReplicationRuleNames []string `json:"replication_rule_names,omitempty"`
 	// Names of snapshot rules
