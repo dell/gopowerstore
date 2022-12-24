@@ -118,6 +118,7 @@ type Client interface {
 	ModifyVolumeGroup(ctx context.Context, modifyParams *VolumeGroupModify, id string) (resp EmptyResponse, err error)
 	GetProtectionPolicy(ctx context.Context, id string) (ProtectionPolicy, error)
 	GetProtectionPolicyByName(ctx context.Context, name string) (ProtectionPolicy, error)
+	ModifyProtectionPolicy(ctx context.Context, modifyParams *ProtectionPolicyCreate, id string) (resp EmptyResponse, err error)
 	GetRemoteSystem(ctx context.Context, id string) (RemoteSystem, error)
 	GetRemoteSystemByName(ctx context.Context, name string) (RemoteSystem, error)
 	GetVolumeGroup(ctx context.Context, id string) (VolumeGroup, error)

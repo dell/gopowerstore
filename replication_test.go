@@ -124,6 +124,21 @@ func TestClientIMPL_GetProtectionPolicyByName(t *testing.T) {
 	assert.True(t, apiError.NotFound())
 }
 
+func TestClientIMPL_ModifyProtectionPolicy(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	httpmock.RegisterResponder("PATCH", fmt.Sprintf("%s/%s", policyMockURL, protectionPolicyID),
+		httpmock.NewStringResponder(201, ""))
+
+	modifyParams := ProtectionPolicyCreate{
+		Description: "Test ModifyProtectionPolicy",
+	}
+
+	resp, err := C.ModifyProtectionPolicy(context.Background(), &modifyParams, protectionPolicyID)
+	assert.Nil(t, err)
+	assert.Equal(t, EmptyResponse(""), resp)
+}
+
 func TestClientIMPL_GetReplicationRuleByName(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
