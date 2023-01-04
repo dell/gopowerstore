@@ -75,6 +75,23 @@ func (c *ClientIMPL) GetReplicationRuleByName(ctx context.Context,
 	return ruleList[0], nil
 }
 
+// GetReplicationRule query and return specific replication rule by id
+func (c *ClientIMPL) GetReplicationRule(ctx context.Context, id string) (resp ReplicationRule, err error) {
+
+	rule := ReplicationRule{}
+	qp := c.APIClient().QueryParamsWithFields(&rule)
+
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:      "GET",
+			Endpoint:    replicationRuleURL,
+			ID:          id,
+			QueryParams: qp},
+		&resp)
+	return resp, WrapErr(err)
+}
+
 // CreateProtectionPolicy creates new protection policy
 func (c *ClientIMPL) CreateProtectionPolicy(ctx context.Context,
 	createParams *ProtectionPolicyCreate) (resp CreateResponse, err error) {
