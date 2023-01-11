@@ -89,10 +89,6 @@ type ProtectionPolicyCreate struct {
 	ReplicationRuleIds []string `json:"replication_rule_ids"`
 	// IDs of snapshot rules
 	SnapshotRuleIds []string `json:"snapshot_rule_ids"`
-	// Names of replication rules
-	ReplicationRuleNames []string `json:"replication_rule_names,omitempty"`
-	// Names of snapshot rules
-	SnapshotRuleNames []string `json:"snapshot_rule_names,omitempty"`
 }
 
 // failover params create failover request
