@@ -105,6 +105,8 @@ type ProtectionPolicy struct {
 	ID               string            `json:"id"`
 	Name             string            `json:"name"`
 	Description      string            `json:"description"`
+	Type             string            `json:"type"`
+	IsReadOnly       bool              `json:"is_read_only"`
 	ReplicationRules []ReplicationRule `json:"replication_rules"`
 	SnapshotRules    []SnapshotRule    `json:"snapshot_rules"`
 	Volumes          []Volume          `json:"volume"`
@@ -112,7 +114,7 @@ type ProtectionPolicy struct {
 }
 
 func (policy *ProtectionPolicy) Fields() []string {
-	return []string{"id", "name", "replication_rules", "description", "snapshot_rules"}
+	return []string{"id", "name", "replication_rules", "description", "snapshot_rules", "type", "is_read_only"}
 }
 
 type StorageElementPair struct {
