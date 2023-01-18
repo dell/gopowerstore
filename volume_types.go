@@ -343,12 +343,7 @@ type Datastores struct {
 
 // Fields returns fields which must be requested to fill struct
 func (v *Volume) Fields() []string {
-	return []string{"description", "id", "name",
-		"size", "state", "type", "wwn", "appliance_id", "protection_data", "creation_timestamp",
-		"logical_used", "node_affinity", "protection_policy_id", "performance_policy_id",
-		"is_replication_destination", "app_type", "app_type_other", "nsid", "nguid", "appliance",
-		"migration_session_id", "metro_replication_session_id", "type_l10n", "state_l10n", "node_affinity_l10n",
-		"app_type_l10n", "location_history", "protection_policy", "migration_session", "mapped_volumes", "volume_groups", "datastores"}
+	return []string{"*"}
 }
 
 // Fields returns fields which must be requested to fill struct
