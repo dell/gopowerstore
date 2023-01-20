@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2020 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2020-2023 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -174,7 +174,7 @@ type Client interface {
 	DeleteStorageContainer(ctx context.Context, id string) (EmptyResponse, error)
 	GetStorageContainer(ctx context.Context, id string) (StorageContainer, error)
 	ModifyStorageContainer(ctx context.Context, modifyParams *StorageContainer, id string) (EmptyResponse, error)
-	GetHostGroupByName(ctx context.Context, name string) (Host, error)
+	GetHostGroupByName(ctx context.Context, name string) (HostGroup, error)
 }
 
 // ClientIMPL provides basic API client implementation

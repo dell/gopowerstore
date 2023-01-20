@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2020 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2020-2023 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -98,10 +98,10 @@ const (
 	AppTypeEnumElasticSearch              AppTypeEnum = "Big_Data_Analytics_ElasticSearch"
 	AppTypeEnumExchange                   AppTypeEnum = "Business_Applications_Exchange"
 	AppTypeEnumSharepoint                 AppTypeEnum = "Business_Applications_Sharepoint"
-	AppTypeEnumRBusinessApplicationsOther AppTypeEnum = "Business Applications Other"
+	AppTypeEnumRBusinessApplicationsOther AppTypeEnum = "Business_Applications_Other"
 	AppTypeEnumRelationERPSAP             AppTypeEnum = "Business_Applications_ERP_SAP"
 	AppTypeEnumCRM                        AppTypeEnum = "Business_Applications_CRM"
-	AppTypeEnumHealthcareOther            AppTypeEnum = "Healthcare Other"
+	AppTypeEnumHealthcareOther            AppTypeEnum = "Healthcare_Other"
 	AppTypeEnumEpic                       AppTypeEnum = "Healthcare_Epic"
 	AppTypeEnumMEDITECH                   AppTypeEnum = "Healthcare_MEDITECH"
 	AppTypeEnumAllscripts                 AppTypeEnum = "Healthcare_Allscripts"

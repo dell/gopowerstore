@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2022 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2023 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,12 @@ func getStorageContainerDefaultQueryParams(c Client) api.QueryParamsEncoder {
 // CreateStorageContainer creates new StorageContainer
 func (c *ClientIMPL) CreateStorageContainer(ctx context.Context,
 	createParams *StorageContainer) (resp CreateResponse, err error) {
+
+	customHeader := http.Header{}
+	customHeader.Add("DELL-VISIBILITY", "Partner")
+	apiClient := c.APIClient()
+	apiClient.SetCustomHTTPHeaders(customHeader)
+
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{
@@ -68,6 +74,11 @@ func (c *ClientIMPL) GetStorageContainer(ctx context.Context, id string) (resp S
 
 // DeleteStorageContainer deletes existing StorageContainer
 func (c *ClientIMPL) DeleteStorageContainer(ctx context.Context, id string) (resp EmptyResponse, err error) {
+	customHeader := http.Header{}
+	customHeader.Add("DELL-VISIBILITY", "Partner")
+	apiClient := c.APIClient()
+	apiClient.SetCustomHTTPHeaders(customHeader)
+
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{

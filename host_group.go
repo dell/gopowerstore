@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2022 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2022-2023 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,8 +62,8 @@ func (c *ClientIMPL) DetachVolumeFromHostGroup(
 }
 
 // GetHostGroupByName get host by name
-func (c *ClientIMPL) GetHostGroupByName(ctx context.Context, name string) (resp Host, err error) {
-	var hostList []Host
+func (c *ClientIMPL) GetHostGroupByName(ctx context.Context, name string) (resp HostGroup, err error) {
+	var hostList []HostGroup
 	qp := getHostDefaultQueryParams(c)
 	qp.RawArg("name", fmt.Sprintf("eq.%s", name))
 	_, err = c.APIClient().Query(
