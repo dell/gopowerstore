@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2020 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2020-2022 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -286,9 +286,8 @@ func (c *ClientIMPL) PerformanceMetricsNfsv4ByNode(ctx context.Context, entityID
 // GetCapacity return capacity of first appliance
 func (c *ClientIMPL) GetCapacity(ctx context.Context) (int64, error) {
 	var resp []ApplianceMetrics
-	client := c.APIClient()
-	qp := client.QueryParams().Select("physical_total", "physical_used")
-	_, err := client.Query(
+	qp := c.APIClient().QueryParams().Select("physical_total", "physical_used")
+	_, err := c.APIClient().Query(
 		ctx,
 		RequestConfig{
 			Method:      "POST",
