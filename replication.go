@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2021-2022 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2021-2023 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -75,6 +75,23 @@ func (c *ClientIMPL) GetReplicationRuleByName(ctx context.Context,
 	return ruleList[0], nil
 }
 
+// GetReplicationRule query and return specific replication rule by id
+func (c *ClientIMPL) GetReplicationRule(ctx context.Context, id string) (resp ReplicationRule, err error) {
+
+	rule := ReplicationRule{}
+	qp := c.APIClient().QueryParamsWithFields(&rule)
+
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:      "GET",
+			Endpoint:    replicationRuleURL,
+			ID:          id,
+			QueryParams: qp},
+		&resp)
+	return resp, WrapErr(err)
+}
+
 // CreateProtectionPolicy creates new protection policy
 func (c *ClientIMPL) CreateProtectionPolicy(ctx context.Context,
 	createParams *ProtectionPolicyCreate) (resp CreateResponse, err error) {
@@ -84,6 +101,19 @@ func (c *ClientIMPL) CreateProtectionPolicy(ctx context.Context,
 			Method:   "POST",
 			Endpoint: policyURL,
 			Body:     createParams},
+		&resp)
+	return resp, WrapErr(err)
+}
+
+// ModifyProtectionPolicy updates existing protection policy
+func (c *ClientIMPL) ModifyProtectionPolicy(ctx context.Context, modifyParams *ProtectionPolicyCreate, id string) (resp EmptyResponse, err error) {
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:   "PATCH",
+			Endpoint: policyURL,
+			ID:       id,
+			Body:     modifyParams},
 		&resp)
 	return resp, WrapErr(err)
 }
@@ -111,6 +141,21 @@ func (c *ClientIMPL) GetProtectionPolicyByName(ctx context.Context,
 		return resp, protectionPolicyNotExists()
 	}
 	return policyList[0], nil
+}
+
+// GetProtectionPolicy query and return specific protection policy id
+func (c *ClientIMPL) GetProtectionPolicy(ctx context.Context, id string) (resp ProtectionPolicy, err error) {
+	protectionPolicy := ProtectionPolicy{}
+	qc := c.APIClient().QueryParamsWithFields(&protectionPolicy)
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:      "GET",
+			Endpoint:    policyURL,
+			ID:          id,
+			QueryParams: qc},
+		&resp)
+	return resp, WrapErr(err)
 }
 
 func (c *ClientIMPL) GetReplicationSessionByLocalResourceID(ctx context.Context, id string) (resp ReplicationSession, err error) {

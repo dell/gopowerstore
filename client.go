@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2020-2022 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2020-2023 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -113,10 +113,13 @@ type Client interface {
 	ModifyFS(ctx context.Context, modifyParams *FSModify, volID string) (EmptyResponse, error)
 	CloneFS(ctx context.Context, createParams *FsClone, fsID string) (CreateResponse, error)
 	CreateReplicationRule(ctx context.Context, createParams *ReplicationRuleCreate) (CreateResponse, error)
+	GetReplicationRule(ctx context.Context, id string) (resp ReplicationRule, err error)
 	GetReplicationRuleByName(ctx context.Context, name string) (ReplicationRule, error)
 	CreateProtectionPolicy(ctx context.Context, createParams *ProtectionPolicyCreate) (CreateResponse, error)
 	ModifyVolumeGroup(ctx context.Context, modifyParams *VolumeGroupModify, id string) (resp EmptyResponse, err error)
+	GetProtectionPolicy(ctx context.Context, id string) (ProtectionPolicy, error)
 	GetProtectionPolicyByName(ctx context.Context, name string) (ProtectionPolicy, error)
+	ModifyProtectionPolicy(ctx context.Context, modifyParams *ProtectionPolicyCreate, id string) (resp EmptyResponse, err error)
 	GetRemoteSystem(ctx context.Context, id string) (RemoteSystem, error)
 	GetRemoteSystemByName(ctx context.Context, name string) (RemoteSystem, error)
 	GetVolumeGroup(ctx context.Context, id string) (VolumeGroup, error)
@@ -167,6 +170,11 @@ type Client interface {
 	ExecuteActionOnReplicationSession(ctx context.Context, id string, actionType ActionType, params *FailoverParams) (resp EmptyResponse, err error)
 	GetReplicationSessionByID(ctx context.Context, id string) (resp ReplicationSession, err error)
 	RegisterK8sCluster(ctx context.Context, request *K8sCluster) (CreateResponse, error)
+	CreateStorageContainer(ctx context.Context, createParams *StorageContainer) (CreateResponse, error)
+	DeleteStorageContainer(ctx context.Context, id string) (EmptyResponse, error)
+	GetStorageContainer(ctx context.Context, id string) (StorageContainer, error)
+	ModifyStorageContainer(ctx context.Context, modifyParams *StorageContainer, id string) (EmptyResponse, error)
+	GetHostGroupByName(ctx context.Context, name string) (HostGroup, error)
 }
 
 // ClientIMPL provides basic API client implementation

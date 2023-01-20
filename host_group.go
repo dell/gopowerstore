@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2022 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2022-2023 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ package gopowerstore
 
 import (
 	"context"
+	"fmt"
 )
 
 const (
@@ -58,4 +59,26 @@ func (c *ClientIMPL) DetachVolumeFromHostGroup(
 			Body:     detachParams},
 		&resp)
 	return resp, WrapErr(err)
+}
+
+// GetHostGroupByName get host by name
+func (c *ClientIMPL) GetHostGroupByName(ctx context.Context, name string) (resp HostGroup, err error) {
+	var hostList []HostGroup
+	qp := getHostDefaultQueryParams(c)
+	qp.RawArg("name", fmt.Sprintf("eq.%s", name))
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:      "GET",
+			Endpoint:    hostGroupURL,
+			QueryParams: qp},
+		&hostList)
+	err = WrapErr(err)
+	if err != nil {
+		return resp, err
+	}
+	if len(hostList) != 1 {
+		return resp, NewHostIsNotExistError()
+	}
+	return hostList[0], err
 }

@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2021-2022 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2021-2023 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,15 +19,20 @@ package gopowerstore
 import (
 	"context"
 	"fmt"
+	"testing"
+
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 const (
 	policyMockURL             = APIMockURL + policyURL
 	replicationRuleMockURL    = APIMockURL + replicationRuleURL
 	replicationSessionMockURL = APIMockURL + replicationSessionURL
+)
+
+var (
+	protectionPolicyID = "15c03067-c4f2-428b-b637-18b0266979f0"
 )
 
 func TestClientIMPL_CreateProtectionPolicy(t *testing.T) {
@@ -88,6 +93,17 @@ func TestClientIMPL_DeleteReplicationRule(t *testing.T) {
 	assert.Len(t, string(resp), 0)
 }
 
+func TestClientIMPL_GetProtectionPolicy(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	respData := fmt.Sprintf(`{"id": "%s"}`, protectionPolicyID)
+	httpmock.RegisterResponder("GET", fmt.Sprintf("%s/%s", policyMockURL, protectionPolicyID),
+		httpmock.NewStringResponder(200, respData))
+	protectionPolicy, err := C.GetProtectionPolicy(context.Background(), protectionPolicyID)
+	assert.Nil(t, err)
+	assert.Equal(t, protectionPolicyID, protectionPolicy.ID)
+}
+
 func TestClientIMPL_GetProtectionPolicyByName(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
@@ -106,6 +122,21 @@ func TestClientIMPL_GetProtectionPolicyByName(t *testing.T) {
 	assert.NotNil(t, err)
 	apiError := err.(APIError)
 	assert.True(t, apiError.NotFound())
+}
+
+func TestClientIMPL_ModifyProtectionPolicy(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	httpmock.RegisterResponder("PATCH", fmt.Sprintf("%s/%s", policyMockURL, protectionPolicyID),
+		httpmock.NewStringResponder(201, ""))
+
+	modifyParams := ProtectionPolicyCreate{
+		Description: "Test ModifyProtectionPolicy",
+	}
+
+	resp, err := C.ModifyProtectionPolicy(context.Background(), &modifyParams, protectionPolicyID)
+	assert.Nil(t, err)
+	assert.Equal(t, EmptyResponse(""), resp)
 }
 
 func TestClientIMPL_GetReplicationRuleByName(t *testing.T) {

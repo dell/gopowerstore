@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2021-2022 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2021-2023 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -86,9 +86,9 @@ type ProtectionPolicyCreate struct {
 	// Policy description.
 	Description string `json:"description,omitempty"`
 	// IDs of replication rules
-	ReplicationRuleIds []string `json:"replication_rule_ids,omitempty"`
+	ReplicationRuleIds []string `json:"replication_rule_ids"`
 	// IDs of snapshot rules
-	SnapshotRuleIds []string `json:"snapshot_rule_ids,omitempty"`
+	SnapshotRuleIds []string `json:"snapshot_rule_ids"`
 }
 
 // failover params create failover request
@@ -104,13 +104,17 @@ type FailoverParams struct {
 type ProtectionPolicy struct {
 	ID               string            `json:"id"`
 	Name             string            `json:"name"`
+	Description      string            `json:"description"`
+	Type             string            `json:"type"`
+	IsReadOnly       bool              `json:"is_read_only"`
 	ReplicationRules []ReplicationRule `json:"replication_rules"`
+	SnapshotRules    []SnapshotRule    `json:"snapshot_rules"`
 	Volumes          []Volume          `json:"volume"`
 	VolumeGroups     []VolumeGroup     `json:"volume_group"`
 }
 
 func (policy *ProtectionPolicy) Fields() []string {
-	return []string{"id", "name", "replication_rules"}
+	return []string{"*"}
 }
 
 type StorageElementPair struct {

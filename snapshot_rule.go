@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2022 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2023 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ package gopowerstore
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/dell/gopowerstore/api"
 )
@@ -44,6 +45,30 @@ func (c *ClientIMPL) GetSnapshotRule(ctx context.Context, id string) (resp Snaps
 			QueryParams: getSnapshotRuleDefaultQueryParams(c)},
 		&resp)
 	return resp, WrapErr(err)
+}
+
+func (c *ClientIMPL) GetSnapshotRuleByName(ctx context.Context, name string) (resp SnapshotRule, err error) {
+	var ruleList []SnapshotRule
+	rule := SnapshotRule{}
+	qp := c.APIClient().QueryParamsWithFields(&rule)
+	qp.RawArg("name", fmt.Sprintf("eq.%s", name))
+	qp.Select("policies")
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:      "GET",
+			Endpoint:    snapshotRuleURL,
+			QueryParams: qp},
+		&ruleList)
+
+	err = WrapErr(err)
+	if err != nil {
+		return resp, err
+	}
+	if len(ruleList) != 1 {
+		return resp, snapshotRuleNotExists()
+	}
+	return ruleList[0], nil
 }
 
 // GetSnapshotRules returns a list of snapshot rules

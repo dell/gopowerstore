@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2020-2022 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2020-2023 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,16 @@ const (
 	VolumeStateEnumOffline VolumeStateEnum = "Offline"
 	// VolumeStateEnumDestroying - Volume is being deleted. No new operations are allowed
 	VolumeStateEnumDestroying VolumeStateEnum = "Destroying"
+)
+
+type NodeAffinityEnum string
+
+const (
+	NodeAffinityEnumSelectAtAttach NodeAffinityEnum = "System_Select_At_Attach"
+	NodeAffinityEnumSelectNodeA    NodeAffinityEnum = "System_Selected_Node_A"
+	NodeAffinityEnumSelectNodeB    NodeAffinityEnum = "System_Selected_Node_B"
+	NodeAffinityEnumPreferredNodeA NodeAffinityEnum = "Preferred_Node_A"
+	NodeAffinityEnumPreferredNodeB NodeAffinityEnum = "Preferred_Node_B"
 )
 
 // VolumeTypeEnum Type of volume.
@@ -70,6 +80,39 @@ const (
 	StorageTypeEnumFile StorageTypeEnum = "File"
 )
 
+type AppTypeEnum string
+
+const (
+	AppTypeEnumRelationDB                 AppTypeEnum = "Relational_Databases_Other"
+	AppTypeEnumOracle                     AppTypeEnum = "Relational_Databases_Oracle"
+	AppTypeEnumSQLServer                  AppTypeEnum = "Relational_Databases_SQL_Server"
+	AppTypeEnumPostgreSQL                 AppTypeEnum = "Relational_Databases_PostgreSQL"
+	AppTypeEnumMySQL                      AppTypeEnum = "Relational_Databases_MySQL"
+	AppTypeEnumIBMDB2                     AppTypeEnum = "Relational_Databases_IBM_DB2"
+	AppTypeEnumBigData                    AppTypeEnum = "Big_Data_Analytics_Other"
+	AppTypeEnumMongoDB                    AppTypeEnum = "Big_Data_Analytics_MongoDB"
+	AppTypeEnumCassandra                  AppTypeEnum = "Big_Data_Analytics_Cassandra"
+	AppTypeEnumSAPHANA                    AppTypeEnum = "Big_Data_Analytics_SAP_HANA"
+	AppTypeEnumSpark                      AppTypeEnum = "Big_Data_Analytics_Spark"
+	AppTypeEnumSplunk                     AppTypeEnum = "Big_Data_Analytics_Splunk"
+	AppTypeEnumElasticSearch              AppTypeEnum = "Big_Data_Analytics_ElasticSearch"
+	AppTypeEnumExchange                   AppTypeEnum = "Business_Applications_Exchange"
+	AppTypeEnumSharepoint                 AppTypeEnum = "Business_Applications_Sharepoint"
+	AppTypeEnumRBusinessApplicationsOther AppTypeEnum = "Business_Applications_Other"
+	AppTypeEnumRelationERPSAP             AppTypeEnum = "Business_Applications_ERP_SAP"
+	AppTypeEnumCRM                        AppTypeEnum = "Business_Applications_CRM"
+	AppTypeEnumHealthcareOther            AppTypeEnum = "Healthcare_Other"
+	AppTypeEnumEpic                       AppTypeEnum = "Healthcare_Epic"
+	AppTypeEnumMEDITECH                   AppTypeEnum = "Healthcare_MEDITECH"
+	AppTypeEnumAllscripts                 AppTypeEnum = "Healthcare_Allscripts"
+	AppTypeEnumCerner                     AppTypeEnum = "Healthcare_Cerner"
+	AppTypeEnumVirtualization             AppTypeEnum = "Virtualization_Other"
+	AppTypeEnumVirtualServers             AppTypeEnum = "Virtualization_Virtual_Servers_VSI"
+	AppTypeEnumContainers                 AppTypeEnum = "Virtualization_Containers_Kubernetes"
+	AppTypeEnumVirtualDesktops            AppTypeEnum = "Virtualization_Virtual_Desktops_VDI"
+	AppTypeEnumRelationOther              AppTypeEnum = "Other"
+)
+
 // VolumeCreate create volume request
 type VolumeCreate struct {
 	// Unique name for the volume to be created.
@@ -91,7 +134,7 @@ type VolumeCreate struct {
 	// Performance policy to associate the volume with. If not specified, performance policy is not associated to the volume.
 	PerformancePolicyID string `json:"performance_policy_id,omitempty"`
 	// Type of application using the volume
-	AppType string `json:"app_type,omitempty"`
+	AppType AppTypeEnum `json:"app_type,omitempty"`
 	// More details on type of application using the volume
 	AppTypeOther string `json:"app_type_other,omitempty"`
 	// Unique identifier of a host attached to a volume
@@ -159,8 +202,11 @@ type VolumeModify struct {
 	//  Size must be a multiple of 8192.
 	Size int64 `json:"size,omitempty"`
 	// Unique identifier of the protection policy assigned to the volume.
-	ProtectionPolicyID  string `json:"protection_policy_id"`
+	ProtectionPolicyID string `json:"protection_policy_id,omitempty"`
+	// Unique identifier of the performance policy assigned to the volume.
 	PerformancePolicyID string `json:"performance_policy_id,omitempty"`
+	// Description of the volume
+	Description string `json:"description,omitempty"`
 }
 
 // VolumeClone request for cloning snapshot/volume
@@ -226,7 +272,7 @@ type Volume struct {
 	// Current amount of data (in bytes) host has written to a volume without dedupe, compression or sharing.
 	LogicalUsed int64 `json:"logical_used,omitempty"`
 	// It shows which node will be advertised as the optimized IO path to the volume
-	NodeAffinity string `json:"node_affinity,omitempty"`
+	NodeAffinity NodeAffinityEnum `json:"node_affinity,omitempty"`
 	//Unique identifier of the protection policy assigned to the volume. Only applicable to primary and clone volumes.
 	ProtectionPolicyID string `json:"protection_policy_id,omitempty"`
 	// Unique identifier of the performance policy assigned to the volume.
@@ -234,7 +280,7 @@ type Volume struct {
 	// Indicates whether this volume is a replication destination.
 	IsReplicationDestination bool `json:"is_replication_destination,omitempty"`
 	// This attribute indicates the intended use of this volume. It may be null.
-	AppType string `json:"app_type,omitempty"`
+	AppType AppTypeEnum `json:"app_type,omitempty"`
 	// An optional field used to describe application type usage for a volume.
 	AppTypeOther string `json:"app_type_other,omitempty"`
 	// NVMe Namespace unique identifier in the NVME subsystem. Used for volumes attached to NVMEoF hosts.
@@ -242,7 +288,31 @@ type Volume struct {
 	// NVMe Namespace globally unique identifier. Used for volumes attached to NVMEoF hosts.
 	Nguid string `json:"nguid,omitempty"`
 	// Appliance defines the properties of the appliance
-	Appliance ApplianceInstance `json:"appliance"`
+	Appliance ApplianceInstance `json:"Appliance"`
+	// MigrationSessionID is the Unique identifier of the migration session assigned to the volume if it is part of a migration activity.
+	MigrationSessionID string `json:"migration_session_id,omitempty"`
+	// MetroReplicationSessionID id the Unique identifier of the replication session assigned to the volume if it has been configured as a metro volume between two PowerStore clusters
+	MetroReplicationSessionID string `json:"metro_replication_session_id,omitempty"`
+	// TypeL10n Localized message string corresponding to type
+	TypeL10n string `json:"type_l10n,omitempty"`
+	// StateL10n Localized message string corresponding to state
+	StateL10n string `json:"state_l10n,omitempty"`
+	// NodeAffinityL10n Localized message string corresponding to Node Affinity
+	NodeAffinityL10n string `json:"node_affinity_l10n,omitempty"`
+	// AppTypeL10n Localized message string corresponding to App type
+	AppTypeL10n string `json:"app_type_l10n,omitempty"`
+	// LocationHistory contains the storage resource location history.
+	LocationHistory []LocationHistory `json:"location_history,omitempty""`
+	// ProtectionPolicy defines the properties of a policy.
+	ProtectionPolicy ProtectionPolicy `json:"protection_policy,omitempty"`
+	// MigrationSession defines the migration session.
+	MigrationSession MigrationSession `json:"migration_session,omitempty"`
+	// MappedVolumes contains details about a configured host or host group attached to a volume.
+	MappedVolumes []MappedVolumes `json:"mapped_volumes,omitempty"`
+	// VolumeGroup contains information about a volume group.
+	VolumeGroup []VolumeGroup `json:"volume_groups,omitempty"`
+	// Datastores defines properties of a datastore.
+	Datastores []Datastores `json:"datastores,omitempty"`
 }
 
 // ProtectionData is a field that holds meta information about volume creation
@@ -250,12 +320,33 @@ type ProtectionData struct {
 	SourceID string `json:"source_id"`
 }
 
+// LocationHistory of the volume resource
+type LocationHistory struct {
+	FromApplianceId string `json:"from_appliance_id"`
+	ToApplianceId   string `json:"to_appliance_id"`
+}
+
+// MigrationSession details of migration session
+type MigrationSession struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+}
+
+// MappedVolumes provides details about a configured host or host group attached to a volume
+type MappedVolumes struct {
+	ID string `json:"id"`
+}
+
+// Datastores contains properties of datastores.
+type Datastores struct {
+	ID           string `json:"id"`
+	Name         string `json:"name"`
+	InstanceUUID string `json:"istance_uuid"`
+}
+
 // Fields returns fields which must be requested to fill struct
 func (v *Volume) Fields() []string {
-	return []string{"description", "id", "name",
-		"size", "state", "type", "wwn", "appliance_id", "protection_data", "creation_timestamp",
-		"logical_used", "node_affinity", "protection_policy_id", "performance_policy_id",
-		"is_replication_destination", "app_type", "app_type_other", "nsid", "nguid","appliance"}
+	return []string{"*"}
 }
 
 // Fields returns fields which must be requested to fill struct

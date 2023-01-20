@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2022 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2022-2023 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,4 +55,22 @@ func TestClientIMPL_DetachVolumeFromHostGroup(t *testing.T) {
 	detach.VolumeID = &id
 	_, err := C.DetachVolumeFromHostGroup(context.Background(), hostGroupID, &detach)
 	assert.Nil(t, err)
+}
+
+func TestClientIMPL_GetHostGroupByName(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	setResponder := func(respData string) {
+		httpmock.RegisterResponder("GET", hostGroupMockURL,
+			httpmock.NewStringResponder(200, respData))
+	}
+	respData := fmt.Sprintf(`[{"id": "%s"}]`, hostGroupID)
+	setResponder(respData)
+	hostGroup, err := C.GetHostGroupByName(context.Background(), "test")
+	assert.Nil(t, err)
+	assert.Equal(t, hostGroupID, hostGroup.ID)
+	httpmock.Reset()
+	setResponder("")
+	_, err = C.GetHostByName(context.Background(), "test")
+	assert.NotNil(t, err)
 }
