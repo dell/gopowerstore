@@ -21,11 +21,17 @@ package gopowerstore
 import (
 	"context"
 	"fmt"
+	"github.com/dell/gopowerstore/api"
 )
 
 const (
 	hostGroupURL = "host_group"
 )
+
+func getHostGroupDefaultQueryParams(c Client) api.QueryParamsEncoder {
+	host := HostGroup{}
+	return c.APIClient().QueryParamsWithFields(&host)
+}
 
 // AttachVolumeToHost attaches volume to hostGroup
 func (c *ClientIMPL) AttachVolumeToHostGroup(
@@ -64,7 +70,7 @@ func (c *ClientIMPL) DetachVolumeFromHostGroup(
 // GetHostGroupByName get host by name
 func (c *ClientIMPL) GetHostGroupByName(ctx context.Context, name string) (resp HostGroup, err error) {
 	var hostList []HostGroup
-	qp := getHostDefaultQueryParams(c)
+	qp := getHostGroupDefaultQueryParams(c)
 	qp.RawArg("name", fmt.Sprintf("eq.%s", name))
 	_, err = c.APIClient().Query(
 		ctx,

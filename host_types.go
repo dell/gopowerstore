@@ -31,8 +31,8 @@ const (
 )
 
 // InitiatorProtocolTypeEnum  Protocol type of the host initiator.
-//  * iSCSI - An iSCSI initiator.
-//  * FC - A Fibre Channel initiator.
+//   - iSCSI - An iSCSI initiator.
+//   - FC - A Fibre Channel initiator.
 type InitiatorProtocolTypeEnum string
 
 const (
