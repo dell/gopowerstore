@@ -207,6 +207,10 @@ type VolumeModify struct {
 	PerformancePolicyID string `json:"performance_policy_id,omitempty"`
 	// Description of the volume
 	Description string `json:"description,omitempty"`
+	//This attribute indicates the intended use of this volume.
+	AppType string `json:"app_type,omitempty"`
+	//An optional field used to describe application type usage for a volume.
+	AppTypeOther string `json:"app_type_other,omitempty"`
 }
 
 // VolumeClone request for cloning snapshot/volume
