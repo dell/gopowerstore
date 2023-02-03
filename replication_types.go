@@ -114,7 +114,7 @@ type ProtectionPolicy struct {
 }
 
 func (policy *ProtectionPolicy) Fields() []string {
-	return []string{"id", "name", "replication_rules", "description", "snapshot_rules", "type", "is_read_only"}
+	return []string{"*", "replication_rules", "snapshot_rules"}
 }
 
 type StorageElementPair struct {
