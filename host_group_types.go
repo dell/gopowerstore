@@ -27,3 +27,8 @@ type HostGroup struct {
 	// The hostgroup name.
 	Name string `json:"name,omitempty"`
 }
+
+// Fields returns fields which must be requested to fill struct
+func (h *HostGroup) Fields() []string {
+	return []string{"id", "name", "description"}
+}
