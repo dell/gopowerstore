@@ -250,7 +250,7 @@ func (c *ClientIMPL) Query(
 	if err != nil {
 		return meta, err
 	}
-	defer r.Body.Close()
+	defer r.Body.Close() // #nosec G307
 
 	if debug {
 		dump, _ := httputil.DumpResponse(r, true)
