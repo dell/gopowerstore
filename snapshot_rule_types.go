@@ -308,7 +308,7 @@ type SnapshotRule struct {
 
 	ManagedNy_l10n string `json:"managed_by_l10n,omitempty"`
 
-	// todo Policies []PolicyInstance `json:"policies,omitempty"`
+	Policies []ProtectionPolicy `json:"policies,omitempty"`
 }
 
 // Fields returns fields which must be requested to fill struct
@@ -317,6 +317,6 @@ func (s *SnapshotRule) Fields() []string {
 		"interval", "time_of_day", "timezone", "days_of_week", "desired_retention",
 		"is_replica", "nas_access_type", "is_read_only",
 		"managed_by", "managed_by_id",
-		"interval_l10n", "timezone_l10n", "days_of_week_l10n", "nas_access_type_l10n", "managed_by_l10n",
+		"interval_l10n", "timezone_l10n", "days_of_week_l10n", "nas_access_type_l10n", "managed_by_l10n", "policies",
 	}
 }
