@@ -86,13 +86,6 @@ type VirtualMachines struct {
 	Name         string `json:"name"`
 }
 
-// Volumes - Details of volume
-type Volumes struct {
-	ID          string `json:"id"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
-}
-
 // FileSystems - Details of file system
 type FileSystems struct {
 	ID          string `json:"id"`
