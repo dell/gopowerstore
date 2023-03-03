@@ -79,6 +79,34 @@ func (rule *ReplicationRule) Fields() []string {
 	return []string{"id", "name", "rpo", "remote_system_id"}
 }
 
+// VirtualMachines - Details of virtual machine
+type VirtualMachines struct {
+	ID           string `json:"id"`
+	InstanceUUID string `json:"instance_uuid"`
+	Name         string `json:"name"`
+}
+
+// Volumes - Details of volume
+type Volumes struct {
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+}
+
+// FileSystems - Details of file system
+type FileSystems struct {
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+}
+
+// PerformanceRules - Details of performance rule
+type PerformanceRules struct {
+	ID         string `json:"id"`
+	Name       string `json:"name"`
+	IoPriority string `json:"io_priority"`
+}
+
 // ProtectionPolicyCreate create protection policy request
 type ProtectionPolicyCreate struct {
 	// Policy name.
@@ -102,19 +130,27 @@ type FailoverParams struct {
 }
 
 type ProtectionPolicy struct {
-	ID               string            `json:"id"`
-	Name             string            `json:"name"`
-	Description      string            `json:"description"`
-	Type             string            `json:"type"`
-	IsReadOnly       bool              `json:"is_read_only"`
-	ReplicationRules []ReplicationRule `json:"replication_rules"`
-	SnapshotRules    []SnapshotRule    `json:"snapshot_rules"`
-	Volumes          []Volume          `json:"volume"`
-	VolumeGroups     []VolumeGroup     `json:"volume_group"`
+	ID               string             `json:"id"`
+	Name             string             `json:"name"`
+	Description      string             `json:"description"`
+	Type             string             `json:"type"`
+	ManagedBy        string             `json:"managed_by,omitempty"`
+	ManagedByID      string             `json:"managed_by_id"`
+	IsReadOnly       bool               `json:"is_read_only"`
+	IsReplica        bool               `json:"is_replica"`
+	TypeL10          string             `json:"type_l10"`
+	ManagedByL10     string             `json:"managed_by_l10n"`
+	VirtualMachines  []VirtualMachines  `json:"virtual_machines"`
+	FileSystems      []FileSystems      `json:"file_systems"`
+	PerformanceRules []PerformanceRules `json:"performance_rules"`
+	ReplicationRules []ReplicationRule  `json:"replication_rules"`
+	SnapshotRules    []SnapshotRule     `json:"snapshot_rules"`
+	Volumes          []Volume           `json:"volume"`
+	VolumeGroups     []VolumeGroup      `json:"volume_group"`
 }
 
 func (policy *ProtectionPolicy) Fields() []string {
-	return []string{"*", "replication_rules", "snapshot_rules"}
+	return []string{"*", "replication_rules(*)", "snapshot_rules(*)", "virtual_machines(*)", "file_systems(*)", "performance_rules(*)", "volume(*)", "volume_group(*)"}
 }
 
 type StorageElementPair struct {
