@@ -28,6 +28,8 @@ type VolumeGroupCreate struct {
 	Description string `json:"description,omitempty"`
 	// Unique identifier of an optional protection policy to assign to the volume group.
 	ProtectionPolicyID string `json:"protection_policy_id,omitempty"`
+	//For a primary or a clone volume group, this property determines whether snapshot sets of the group will be write order consistent.
+	IsWriteOrderConsistent bool `json:"is_write_order_consistent"`
 	// A list of identifiers of existing volumes that should be added to the volume group.
 	// All the volumes must be on the same Cyclone appliance and should not be part of another volume group.
 	// If a list of volumes is not specified or if the specified list is empty, an
@@ -46,6 +48,8 @@ type VolumeGroup struct {
 	Description string `json:"description,omitempty"`
 	// Unique identifier of the protection policy assigned to the volume.
 	ProtectionPolicyID string `json:"protection_policy_id,omitempty"`
+	//For a primary or a clone volume group, this property determines whether snapshot sets of the group will be write order consistent.
+	IsWriteOrderConsistent bool `json:"is_write_order_consistent,omitempty"`
 	// Volumes provides list of volumes associated to the volume group
 	Volumes []Volume `json:"volume"`
 	// ProtectionPolicy provides snapshot details of the volume or volumeGroup
@@ -56,7 +60,7 @@ type VolumeGroup struct {
 
 // Fields returns fields which must be requested to fill struct
 func (v *VolumeGroup) Fields() []string {
-	return []string{"id", "name", "description", "protection_policy_id", "creation_timestamp"}
+	return []string{"id", "name", "description", "protection_policy_id", "creation_timestamp", "is_write_order_consistent"}
 }
 
 type VolumeGroups struct {
