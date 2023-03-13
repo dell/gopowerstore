@@ -208,6 +208,8 @@ func (c *ClientIMPL) GetCustomHTTPHeaders() http.Header {
 
 // SetCustomHTTPHeaders method register headers which will be sent with every request
 func (c *ClientIMPL) SetCustomHTTPHeaders(headers http.Header) {
+	c.customHTTPHeadersMutex.Lock()
+	defer c.customHTTPHeadersMutex.Unlock()
 	c.customHTTPHeaders = headers
 }
 
