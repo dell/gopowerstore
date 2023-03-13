@@ -35,6 +35,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -111,16 +112,17 @@ type FieldProvider interface {
 
 // ClientIMPL struct holds API client settings
 type ClientIMPL struct {
-	apiURL            string
-	insecure          bool
-	username          string
-	password          string
-	httpClient        *http.Client
-	defaultTimeout    uint64
-	requestIDKey      string
-	customHTTPHeaders http.Header
-	logger            Logger
-	apiThrottle       TimeoutSemaphoreInterface
+	apiURL                 string
+	insecure               bool
+	username               string
+	password               string
+	httpClient             *http.Client
+	defaultTimeout         uint64
+	requestIDKey           string
+	customHTTPHeaders      http.Header
+	customHTTPHeadersMutex sync.Mutex
+	logger                 Logger
+	apiThrottle            TimeoutSemaphoreInterface
 }
 
 // New creates and initialize API client
@@ -345,6 +347,10 @@ func (c *ClientIMPL) prepareRequest(ctx context.Context, method, requestURL, tra
 	}
 	req = req.WithContext(ctx)
 	req.SetBasicAuth(c.username, c.password)
+	// Use a mutex to protect the map while it's being accessed
+	c.customHTTPHeadersMutex.Lock()
+	defer c.customHTTPHeadersMutex.Unlock()
+
 	for key, values := range c.customHTTPHeaders {
 		for _, elem := range values {
 			req.Header.Add(key, elem)
