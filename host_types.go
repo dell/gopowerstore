@@ -30,6 +30,20 @@ const (
 	OSTypeEnumESXi OSTypeEnum = "ESXi"
 )
 
+// HostConnectivityEnum Operating system of the host.
+type HostConnectivityEnum string
+
+const (
+	// HostConnectivityEnumLocalOnly captures enum value "Local_Only"
+	HostConnectivityEnumLocalOnly HostConnectivityEnum = "Local_Only"
+	// HostConnectivityEnumMetroOptimizeBoth captures enum value "Metro_Optimize_Both"
+	HostConnectivityEnumMetroOptimizeBoth HostConnectivityEnum = "Metro_Optimize_Both"
+	// HostConnectivityEnumMetroOptimizeLocal captures enum value "Metro_Optimize_Local"
+	HostConnectivityEnumMetroOptimizeLocal HostConnectivityEnum = "Metro_Optimize_Local"
+	// HostConnectivityEnumMetroOptimizeRemote captures enum value "Metro_Optimize_Remote"
+	HostConnectivityEnumMetroOptimizeRemote HostConnectivityEnum = "Metro_Optimize_Remote"
+)
+
 // InitiatorProtocolTypeEnum  Protocol type of the host initiator.
 //   - iSCSI - An iSCSI initiator.
 //   - FC - A Fibre Channel initiator.
@@ -134,6 +148,8 @@ type HostCreate struct {
 	OsType *OSTypeEnum `json:"os_type"`
 	// Metadata addition for Hosts on array with OE version 3.0 and above
 	Metadata *map[string]string `json:"metadata,omitempty"`
+	// HostConnectivity connectivity type for host and hostGroup.
+	HostConnectivity HostConnectivityEnum `json:"host_connectivity,omitempty"`
 }
 
 // UpdateInitiatorInHost update initiator in host
@@ -170,6 +186,8 @@ type HostModify struct {
 	Name *string `json:"name,omitempty"`
 	// The list of initiator port_names to be removed.
 	RemoveInitiators *[]string `json:"remove_initiators,omitempty"`
+	// HostConnectivity connectivity type for host and hostGroup.
+	HostConnectivity HostConnectivityEnum `json:"host_connectivity,omitempty"`
 }
 
 // Host host instance
@@ -186,12 +204,13 @@ type Host struct {
 	Name string `json:"name,omitempty"`
 	// os type
 	OsType OSTypeEnum `json:"os_type,omitempty"`
+	// HostConnectivity connectivity type for host and hostGroup.
+	HostConnectivity HostConnectivityEnum `json:"host_connectivity,omitempty"`
 }
 
 // Fields returns fields which must be requested to fill struct
 func (h *Host) Fields() []string {
-	return []string{"id", "name", "description", "host_group_id",
-		"os_type", "host_initiators"}
+	return []string{"*"}
 }
 
 // HostVolumeMapping Details about a configured host or host group attached to a volume.
