@@ -74,8 +74,10 @@ type VolumeGroupMembers struct {
 // VolumeGroupModify modifies existing Volume Group
 type VolumeGroupModify struct {
 	// empty to delete
-	ProtectionPolicyId string `json:"protection_policy_id"`
-	Description        string `json:"description,omitempty"`
+	ProtectionPolicyId     string `json:"protection_policy_id"`
+	Description            string `json:"description,omitempty"`
+	Name                   string `json:"name,omitempty"`
+	IsWriteOrderConsistent bool   `json:"is_write_order_consistent"`
 }
 
 type VolumeGroupChangePolicy struct {
