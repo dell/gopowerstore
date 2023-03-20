@@ -16,6 +16,16 @@
 
 package gopowerstore
 
+// VGPlacementRuleEnum - This is set during creation, and determines resource balancer recommendations.
+type VGPlacementRuleEnum string
+
+const (
+	// VGPlacementRuleEnumSameAppliance - All the members of the group should be on the same appliance in the cluster.
+	VGPlacementRuleEnumSameAppliance VolumeStateEnum = "Same_Appliance"
+	// VGPlacementRuleEnumNoPreference - The volumes can be placed on any of the appliances in the cluster.
+	VGPlacementRuleEnumNoPreference VolumeStateEnum = "No_Preference"
+)
+
 // VolumeGroupCreate create volume group request
 type VolumeGroupCreate struct {
 	// Unique name for the volume group.
@@ -51,16 +61,36 @@ type VolumeGroup struct {
 	//For a primary or a clone volume group, this property determines whether snapshot sets of the group will be write order consistent.
 	IsWriteOrderConsistent bool `json:"is_write_order_consistent,omitempty"`
 	// Volumes provides list of volumes associated to the volume group
-	Volumes []Volume `json:"volume"`
+	Volumes []Volume `json:"volumes"`
 	// ProtectionPolicy provides snapshot details of the volume or volumeGroup
 	ProtectionPolicy ProtectionPolicy `json:"protection_policy"`
 	// CreationTimeStamp provides volume group creation time
 	CreationTimeStamp string `json:"creation_timestamp,omitempty"`
+	// IsReplicationDestination indicates whether this volume group is a replication destination.
+	IsReplicationDestination bool `json:"is_replication_destination,omitempty"`
+	// is_importing indicates whether the volume group is being imported.
+	IsImporting bool `json:"is_importing,omitempty"`
+	// TypeL10 localized message string corresponding to type
+	TypeL10 string `json:"type_l10n,omitempty"`
+	// IsProtectable is a derived field that is set internally.
+	IsProtectable bool `json:"is_protectable,omitempty"`
+	// Unique identifier of the migration session assigned to the volume group when it is part of a migration activity.
+	MigrationSessionID string `json:"migration_session_id,omitempty"`
+	// This is set during creation, and determines resource balancer recommendations.
+	PlacementRule VGPlacementRuleEnum `json:"placement_rule,omitempty"`
+	//Type of volume.
+	Type VolumeTypeEnum `json:"type,omitempty"`
+	// Protection data associated with a resource.
+	ProtectionData ProtectionData `json:"protection_data,omitempty"`
+	// A list of locations. The list of locations includes the move to the current appliance.
+	LocationHistory []LocationHistory `json:"location_history,omitempty"`
+	//  This resource type has queriable associations from virtual_volume, volume, volume_group, replication_session
+	MigrationSession MigrationSession `json:"migration_session,omitempty"`
 }
 
 // Fields returns fields which must be requested to fill struct
 func (v *VolumeGroup) Fields() []string {
-	return []string{"id", "name", "description", "protection_policy_id", "creation_timestamp", "is_write_order_consistent"}
+	return []string{"*", "volumes(*)", "protection_policy(*)", "protection_data", "location_history", "migration_session(*)"}
 }
 
 type VolumeGroups struct {
