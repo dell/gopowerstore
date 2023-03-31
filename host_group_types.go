@@ -26,9 +26,21 @@ type HostGroup struct {
 	ID string `json:"id,omitempty"`
 	// The hostgroup name.
 	Name string `json:"name,omitempty"`
+	// Properties of a host.
+	Hosts []Host `json:"hosts,omitempty"`
 }
 
 // Fields returns fields which must be requested to fill struct
 func (h *HostGroup) Fields() []string {
-	return []string{"id", "name", "description"}
+	return []string{"id", "name", "description", "hosts"}
+}
+
+// HostGroupCreate create hostgroup request
+type HostGroupCreate struct {
+	// The hostgroup name.
+	Name string `json:"name,omitempty"`
+	// A description for the hostgroup.
+	Description string `json:"description,omitempty"`
+	// The list of hosts to include in the host group.
+	HostIDs []string `json:"host_ids,omitempty"`
 }

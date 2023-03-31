@@ -21,6 +21,7 @@ package gopowerstore
 import (
 	"context"
 	"fmt"
+
 	"github.com/dell/gopowerstore/api"
 )
 
@@ -87,4 +88,45 @@ func (c *ClientIMPL) GetHostGroupByName(ctx context.Context, name string) (resp 
 		return resp, NewHostIsNotExistError()
 	}
 	return hostList[0], err
+}
+
+// GetHostGroup query and return specific host group id
+func (c *ClientIMPL) GetHostGroup(ctx context.Context, id string) (resp HostGroup, err error) {
+	hostGroup := HostGroup{}
+	qc := c.APIClient().QueryParamsWithFields(&hostGroup)
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:      "GET",
+			Endpoint:    hostGroupURL,
+			ID:          id,
+			QueryParams: qc},
+		&resp)
+	return resp, WrapErr(err)
+}
+
+// CreateHostGroup creates new host group
+func (c *ClientIMPL) CreateHostGroup(ctx context.Context,
+	createParams *HostGroupCreate) (resp CreateResponse, err error) {
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:   "POST",
+			Endpoint: hostGroupURL,
+			Body:     createParams},
+		&resp)
+	return resp, WrapErr(err)
+}
+
+// DeleteHostGroup deletes existing Host Group
+func (c *ClientIMPL) DeleteHostGroup(ctx context.Context, id string) (resp EmptyResponse, err error) {
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:   "DELETE",
+			Endpoint: hostGroupURL,
+			ID:       id,
+		},
+		&resp)
+	return resp, WrapErr(err)
 }
