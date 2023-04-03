@@ -60,13 +60,3 @@ type HostGroupModify struct {
 	// List of hosts to be added to host group.
 	AddHostIDs []string `json:"add_host_ids,omitempty"`
 }
-
-type HostGroupRemoveMembers struct {
-	// List of hosts to be removed from the host group.
-	RemoveHostIDs []string `json:"remove_host_ids,omitempty"`
-}
-
-type HostGroupAddMembers struct {
-	// List of hosts to be added to host group.
-	AddHostIDs []string `json:"add_host_ids,omitempty"`
-}
