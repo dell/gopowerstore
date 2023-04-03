@@ -130,3 +130,16 @@ func (c *ClientIMPL) DeleteHostGroup(ctx context.Context, id string) (resp Empty
 		&resp)
 	return resp, WrapErr(err)
 }
+
+func (c *ClientIMPL) ModifyHostGroup(ctx context.Context,
+	modifyParams *HostGroupModify, id string) (resp EmptyResponse, err error) {
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:   "PATCH",
+			Endpoint: hostGroupURL,
+			ID:       id,
+			Body:     modifyParams},
+		&resp)
+	return resp, WrapErr(err)
+}
