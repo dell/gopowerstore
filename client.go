@@ -120,11 +120,13 @@ type Client interface {
 	GetProtectionPolicy(ctx context.Context, id string) (ProtectionPolicy, error)
 	GetProtectionPolicyByName(ctx context.Context, name string) (ProtectionPolicy, error)
 	ModifyProtectionPolicy(ctx context.Context, modifyParams *ProtectionPolicyCreate, id string) (resp EmptyResponse, err error)
+	GetProtectionPolicies(ctx context.Context) ([]ProtectionPolicy, error)
 	GetRemoteSystem(ctx context.Context, id string) (RemoteSystem, error)
 	GetRemoteSystemByName(ctx context.Context, name string) (RemoteSystem, error)
 	GetVolumeGroup(ctx context.Context, id string) (VolumeGroup, error)
 	GetVolumeGroupByName(ctx context.Context, name string) (VolumeGroup, error)
 	GetVolumeGroupsByVolumeID(ctx context.Context, id string) (VolumeGroups, error)
+	GetVolumeGroups(ctx context.Context) ([]VolumeGroup, error)
 	CreateVolumeGroup(ctx context.Context, createParams *VolumeGroupCreate) (CreateResponse, error)
 	CreateVolumeGroupSnapshot(ctx context.Context, volumeGroupID string, createParams *VolumeGroupSnapshotCreate) (resp CreateResponse, err error)
 	UpdateVolumeGroupProtectionPolicy(ctx context.Context, id string, params *VolumeGroupChangePolicy) (resp EmptyResponse, err error)
@@ -174,7 +176,11 @@ type Client interface {
 	DeleteStorageContainer(ctx context.Context, id string) (EmptyResponse, error)
 	GetStorageContainer(ctx context.Context, id string) (StorageContainer, error)
 	ModifyStorageContainer(ctx context.Context, modifyParams *StorageContainer, id string) (EmptyResponse, error)
+	CreateHostGroup(ctx context.Context, createParams *HostGroupCreate) (CreateResponse, error)
+	GetHostGroup(ctx context.Context, id string) (HostGroup, error)
 	GetHostGroupByName(ctx context.Context, name string) (HostGroup, error)
+	DeleteHostGroup(ctx context.Context, id string) (EmptyResponse, error)
+	ModifyHostGroup(ctx context.Context, modifyParams *HostGroupModify, id string) (EmptyResponse, error)
 }
 
 // ClientIMPL provides basic API client implementation
