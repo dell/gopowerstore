@@ -34,7 +34,7 @@ type HostGroup struct {
 
 // Fields returns fields which must be requested to fill struct
 func (h *HostGroup) Fields() []string {
-	return []string{"id", "name", "description", "hosts", "host_connectivity"}
+	return []string{"*", "hosts(*)"}
 }
 
 // HostGroupCreate create hostgroup request
