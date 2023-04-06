@@ -71,6 +71,31 @@ func (c *ClientIMPL) GetVolumeGroupByName(ctx context.Context, name string) (res
 	return groups[0], err
 }
 
+// GetVolumeGroups returns a list of volume groups
+func (c *ClientIMPL) GetVolumeGroups(ctx context.Context) ([]VolumeGroup, error) {
+	var result []VolumeGroup
+	err := c.readPaginatedData(func(offset int) (api.RespMeta, error) {
+		var page []VolumeGroup
+		volume_group := VolumeGroup{}
+		qp := c.APIClient().QueryParamsWithFields(&volume_group)
+		qp.Order("name")
+		qp.Offset(offset).Limit(paginationDefaultPageSize)
+		meta, err := c.APIClient().Query(
+			ctx,
+			RequestConfig{
+				Method:      "GET",
+				Endpoint:    volumeGroupURL,
+				QueryParams: qp},
+			&page)
+		err = WrapErr(err)
+		if err == nil {
+			result = append(result, page...)
+		}
+		return meta, err
+	})
+	return result, err
+}
+
 // CreateVolumeGroup creates new volume group
 func (c *ClientIMPL) CreateVolumeGroup(ctx context.Context,
 	createParams *VolumeGroupCreate) (resp CreateResponse, err error) {

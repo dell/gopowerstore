@@ -32,7 +32,8 @@ const (
 )
 
 var (
-	protectionPolicyID = "15c03067-c4f2-428b-b637-18b0266979f0"
+	protectionPolicyID  = "15c03067-c4f2-428b-b637-18b0266979f0"
+	protectionPolicyID2 = "3224ff5a-2e83-4a7f-a0c4-009df20e36db"
 )
 
 func TestClientIMPL_CreateProtectionPolicy(t *testing.T) {
@@ -172,4 +173,16 @@ func TestClientIMPL_GetReplicationSessionByLocalResourceID(t *testing.T) {
 	resp, err := C.GetReplicationSessionByLocalResourceID(context.Background(), volID2)
 	assert.Nil(t, err)
 	assert.Equal(t, volID, resp.ID)
+}
+
+func TestClientIMPL_GetProtectionPolicies(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	respData := fmt.Sprintf(`[{"id": "%s"}, {"id": "%s"}]`, protectionPolicyID, protectionPolicyID2)
+	httpmock.RegisterResponder("GET", policyMockURL,
+		httpmock.NewStringResponder(200, respData))
+	policies, err := C.GetProtectionPolicies(context.Background())
+	assert.Nil(t, err)
+	assert.Len(t, policies, 2)
+	assert.Equal(t, protectionPolicyID, policies[0].ID)
 }

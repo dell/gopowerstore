@@ -26,9 +26,37 @@ type HostGroup struct {
 	ID string `json:"id,omitempty"`
 	// The hostgroup name.
 	Name string `json:"name,omitempty"`
+	// Properties of a host.
+	Hosts []Host `json:"hosts,omitempty"`
+	// Connectivity type for hosts and host groups.
+	HostConnectivity HostConnectivityEnum `json:"host_connectivity,omitempty"`
 }
 
 // Fields returns fields which must be requested to fill struct
 func (h *HostGroup) Fields() []string {
-	return []string{"id", "name", "description"}
+	return []string{"*", "hosts(*)"}
+}
+
+// HostGroupCreate create hostgroup request
+type HostGroupCreate struct {
+	// The hostgroup name.
+	Name string `json:"name,omitempty"`
+	// A description for the hostgroup.
+	Description string `json:"description,omitempty"`
+	// The list of hosts to include in the host group.
+	HostIDs []string `json:"host_ids,omitempty"`
+}
+
+// HostGroupModify modifies existing hostgroup
+type HostGroupModify struct {
+	// The hostgroup name.
+	Name string `json:"name,omitempty"`
+	// A description for the hostgroup.
+	Description string `json:"description,omitempty"`
+	// Connectivity type for hosts and host groups.
+	HostConnectivity string `json:"host_connectivity,omitempty"`
+	// List of hosts to be removed from the host group.
+	RemoveHostIDs []string `json:"remove_host_ids,omitempty"`
+	// List of hosts to be added to host group.
+	AddHostIDs []string `json:"add_host_ids,omitempty"`
 }

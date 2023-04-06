@@ -121,6 +121,18 @@ func TestClientIMPL_GetVolumeGroupsByVolumeID(t *testing.T) {
 	assert.Equal(t, volID2, resp.VolumeGroup[0].ID)
 }
 
+func TestClientIMPL_GetVolumeGroups(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	respData := fmt.Sprintf(`[{"id": "%s"}, {"id": "%s"}]`, volID, volID2)
+	httpmock.RegisterResponder("GET", volumeGroupMockURL,
+		httpmock.NewStringResponder(200, respData))
+	volumeGroups, err := C.GetVolumeGroups(context.Background())
+	assert.Nil(t, err)
+	assert.Len(t, volumeGroups, 2)
+	assert.Equal(t, volID, volumeGroups[0].ID)
+}
+
 func TestClientIMPL_ModifyVolumeGroup(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
