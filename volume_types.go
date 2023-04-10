@@ -232,8 +232,15 @@ func (vc *VolumeClone) MetaData() http.Header {
 // SnapshotCreate params for creating 'create snapshot' request
 type SnapshotCreate struct {
 	// Unique name for the snapshot to be created.
-	Name        *string `json:"name,omitempty"`
+	Name *string `json:"name,omitempty"`
+	// Description of the snapshot.
 	Description *string `json:"description,omitempty"`
+	// Unique identifier of the performance policy assigned to the volume.
+	PerformancePolicyID string `json:"performance_policy_id,omitempty"`
+	// ExpirationTimestamp provides volume group creation time
+	ExpirationTimestamp string `json:"expiration_timestamp,omitempty"`
+	// CreatorType provides volume group creation time
+	CreatorType StorageCreatorTypeEnum `json:"creator_type,omitempty"`
 }
 
 // VolumeDelete body for VolumeDelete request
@@ -321,7 +328,9 @@ type Volume struct {
 
 // ProtectionData is a field that holds meta information about volume creation
 type ProtectionData struct {
-	SourceID string `json:"source_id"`
+	SourceID            string `json:"source_id"`
+	ExpirationTimeStamp string `json:"expiration_timestamp"`
+	CreatorType         string `json:"creator_type"`
 }
 
 // LocationHistory of the volume resource
