@@ -120,4 +120,6 @@ type VolumeGroupSnapshotCreate struct {
 	Name string `json:"name"`
 	// Optional description
 	Description string `json:"description,omitempty"`
+	// ExpirationTimestamp provides volume group creation time
+	ExpirationTimestamp string `json:"expiration_timestamp,omitempty"`
 }

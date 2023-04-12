@@ -205,3 +205,17 @@ func (c *ClientIMPL) CreateVolumeGroupSnapshot(ctx context.Context, volumeGroupI
 		&resp)
 	return resp, WrapErr(err)
 }
+
+// GetVolumeGroupSnapshot query and return specific snapshot by id
+func (c *ClientIMPL) GetVolumeGroupSnapshot(ctx context.Context, snapID string) (resVol VolumeGroup, err error) {
+	qp := getVolumeDefaultQueryParams(c)
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:      "GET",
+			Endpoint:    volumeGroupURL,
+			ID:          snapID,
+			QueryParams: qp},
+		&resVol)
+	return resVol, WrapErr(err)
+}
