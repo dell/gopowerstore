@@ -331,6 +331,7 @@ type ProtectionData struct {
 	SourceID            string `json:"source_id"`
 	ExpirationTimeStamp string `json:"expiration_timestamp"`
 	CreatorType         string `json:"creator_type"`
+	ParentID            string `json:"parent_id"`
 }
 
 // LocationHistory of the volume resource
@@ -366,3 +367,4 @@ func (v *Volume) Fields() []string {
 func (n *ApplianceInstance) Fields() []string {
 	return []string{"id", "name", "service_tag"}
 }
+
