@@ -367,4 +367,3 @@ func (v *Volume) Fields() []string {
 func (n *ApplianceInstance) Fields() []string {
 	return []string{"id", "name", "service_tag"}
 }
-
