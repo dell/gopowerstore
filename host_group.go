@@ -105,6 +105,31 @@ func (c *ClientIMPL) GetHostGroup(ctx context.Context, id string) (resp HostGrou
 	return resp, WrapErr(err)
 }
 
+// GetHostGroups returns a list of host groups
+func (c *ClientIMPL) GetHostGroups(ctx context.Context) ([]HostGroup, error) {
+	var result []HostGroup
+	err := c.readPaginatedData(func(offset int) (api.RespMeta, error) {
+		var page []HostGroup
+		host_group := HostGroup{}
+		qp := c.APIClient().QueryParamsWithFields(&host_group)
+		qp.Order("name")
+		qp.Offset(offset).Limit(paginationDefaultPageSize)
+		meta, err := c.APIClient().Query(
+			ctx,
+			RequestConfig{
+				Method:      "GET",
+				Endpoint:    hostGroupURL,
+				QueryParams: qp},
+			&page)
+		err = WrapErr(err)
+		if err == nil {
+			result = append(result, page...)
+		}
+		return meta, err
+	})
+	return result, err
+}
+
 // CreateHostGroup creates new host group
 func (c *ClientIMPL) CreateHostGroup(ctx context.Context,
 	createParams *HostGroupCreate) (resp CreateResponse, err error) {
