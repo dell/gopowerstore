@@ -358,6 +358,12 @@ type Datastores struct {
 	InstanceUUID string `json:"istance_uuid"`
 }
 
+type VirtualVolume struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+	Size string `json:"size"`
+}
+
 // Fields returns fields which must be requested to fill struct
 func (v *Volume) Fields() []string {
 	return []string{"*"}

@@ -40,7 +40,7 @@ type HostGroup struct {
 
 // Fields returns fields which must be requested to fill struct
 func (h *HostGroup) Fields() []string {
-	return []string{"*", "hosts(*)", "mapped_host_groups(*)", "host_virtual_volume_mappings(*)"}
+	return []string{"*", "hosts(*)", "mapped_host_groups(*,volume(*))", "host_virtual_volume_mappings(*,virtual_volume(*))"}
 }
 
 // HostGroupCreate create hostgroup request
@@ -74,6 +74,10 @@ type MappedHostGroup struct {
 	HostID string `json:"host_id,omitempty"`
 	// Unique identifier of a host group attached to a volume.
 	HostGroupID string `json:"host_group_id,omitempty"`
+	// Unique identifier of the volume to which the host is attached.
+	VolumeID string `json:"volume_id,omitempty"`
+	// Details about a volume, including snapshots and clones of volumes.
+	Volume Volume `json:"volume,omitempty"`
 }
 
 type HostVirtualVolumeMapping struct {
@@ -83,4 +87,6 @@ type HostVirtualVolumeMapping struct {
 	HostID string `json:"host_id,omitempty"`
 	// Unique identifier of the virtual volume to which the host is attached.
 	VirtualVolumeID string `json:"virtual_volume_id,omitempty"`
+	// A virtual volume.
+	VirtualVolume VirtualVolume `json:"virtual_volume,omitempty"`
 }
