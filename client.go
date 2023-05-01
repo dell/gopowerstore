@@ -95,6 +95,7 @@ type Client interface {
 	GetNFSExportByName(ctx context.Context, name string) (NFSExport, error)
 	GetNFSExportByFileSystemID(ctx context.Context, fsID string) (NFSExport, error)
 	CreateNAS(ctx context.Context, createParams *NASCreate) (CreateResponse, error)
+	UpdateNASProtectionPolicy(ctx context.Context, id string, params *NASChangePolicy) (EmptyResponse, error)
 	DeleteNAS(ctx context.Context, id string) (EmptyResponse, error)
 	CreateFS(ctx context.Context, createParams *FsCreate) (CreateResponse, error)
 	DeleteFS(ctx context.Context, id string) (EmptyResponse, error)

@@ -117,6 +117,19 @@ func (c *ClientIMPL) DeleteNAS(ctx context.Context, id string) (resp EmptyRespon
 	return resp, WrapErr(err)
 }
 
+func (c *ClientIMPL) UpdateNASProtectionPolicy(ctx context.Context, id string, params *NASChangePolicy) (resp EmptyResponse, err error) {
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:   "PATCH",
+			Endpoint: nasURL,
+			ID:       id,
+			Body:     params,
+		},
+		&resp)
+	return resp, WrapErr(err)
+}
+
 // GetFSByName query and return specific FS by name
 func (c *ClientIMPL) GetFSByName(ctx context.Context, name string) (resp FileSystem, err error) {
 	var fsList []FileSystem

@@ -166,11 +166,19 @@ type NAS struct {
 	CurrentPreferredIPv4InterfaceId string `json:"current_preferred_IPv4_interface_id"`
 	// NfsServers define NFS server instance if nfs exports are present
 	NfsServers []NFSServerInstance `json:"nfs_servers"`
+	// Protection Policy ID defines the ID of the protection policy assigned to the NAS
+	ProtectionPolicyID string `json:"protection_policy_id"`
+	// Filesystems is the list of FS currently on the nas
+	FileSystems []FileSystem `json:"file_systems"`
+}
+
+type NASChangePolicy struct {
+	ProtectionPolicyID string `json:"protection_policy_id"`
 }
 
 // Fields returns fields which must be requested to fill struct
 func (n *NAS) Fields() []string {
-	return []string{"description", "id", "name", "current_node_id", "operational_status", "current_preferred_IPv4_interface_id", "nfs_servers"}
+	return []string{"description", "id", "name", "current_node_id", "operational_status", "current_preferred_IPv4_interface_id", "nfs_servers", "protection_policy_id", "file_systems"}
 }
 
 // Fields returns fields which must be requested to fill struct

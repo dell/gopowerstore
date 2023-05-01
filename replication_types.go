@@ -93,6 +93,12 @@ type FileSystems struct {
 	Description string `json:"description"`
 }
 
+type NasServers struct {
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+}
+
 // PerformanceRules - Details of performance rule
 type PerformanceRules struct {
 	ID         string `json:"id"`
@@ -135,6 +141,7 @@ type ProtectionPolicy struct {
 	ManagedByL10     string             `json:"managed_by_l10n"`
 	VirtualMachines  []VirtualMachines  `json:"virtual_machines"`
 	FileSystems      []FileSystems      `json:"file_systems"`
+	NasServers       []NasServers       `json:"nas_servers"`
 	PerformanceRules []PerformanceRules `json:"performance_rules"`
 	ReplicationRules []ReplicationRule  `json:"replication_rules"`
 	SnapshotRules    []SnapshotRule     `json:"snapshot_rules"`
@@ -143,7 +150,7 @@ type ProtectionPolicy struct {
 }
 
 func (policy *ProtectionPolicy) Fields() []string {
-	return []string{"*", "replication_rules(*)", "snapshot_rules(*)", "virtual_machines(*)", "file_systems(*)", "performance_rules(*)", "volume(*)", "volume_group(*)"}
+	return []string{"*", "replication_rules(*)", "snapshot_rules(*)", "virtual_machines(*)", "file_systems(*)", "nas_servers(*)", "performance_rules(*)", "volume(*)", "volume_group(*)"}
 }
 
 type StorageElementPair struct {
