@@ -211,6 +211,8 @@ type VolumeModify struct {
 	AppType string `json:"app_type,omitempty"`
 	//An optional field used to describe application type usage for a volume.
 	AppTypeOther string `json:"app_type_other,omitempty"`
+	// ExpirationTimestamp provides time at which snapshot will be auto-purged. Valid only for snapshot type.
+	ExpirationTimestamp string `json:"expiration_timestamp,omitempty"`
 }
 
 // VolumeClone request for cloning snapshot/volume
@@ -356,12 +358,6 @@ type Datastores struct {
 	ID           string `json:"id"`
 	Name         string `json:"name"`
 	InstanceUUID string `json:"istance_uuid"`
-}
-
-type VirtualVolume struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
-	Size string `json:"size"`
 }
 
 // Fields returns fields which must be requested to fill struct
