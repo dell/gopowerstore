@@ -182,6 +182,9 @@ type Client interface {
 	GetHostGroupByName(ctx context.Context, name string) (HostGroup, error)
 	DeleteHostGroup(ctx context.Context, id string) (EmptyResponse, error)
 	ModifyHostGroup(ctx context.Context, modifyParams *HostGroupModify, id string) (EmptyResponse, error)
+	GetVolumeGroupSnapshot(ctx context.Context, snapID string) (VolumeGroup, error)
+	GetVolumeGroupSnapshots(ctx context.Context) ([]VolumeGroup, error)
+	GetVolumeGroupSnapshotByName(ctx context.Context, snapName string) (VolumeGroup, error)
 }
 
 // ClientIMPL provides basic API client implementation
