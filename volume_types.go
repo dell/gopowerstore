@@ -206,13 +206,13 @@ type VolumeModify struct {
 	// Unique identifier of the performance policy assigned to the volume.
 	PerformancePolicyID string `json:"performance_policy_id,omitempty"`
 	// Description of the volume
-	Description string `json:"description,omitempty"`
+	Description string `json:"description"`
 	//This attribute indicates the intended use of this volume.
 	AppType string `json:"app_type,omitempty"`
 	//An optional field used to describe application type usage for a volume.
 	AppTypeOther string `json:"app_type_other,omitempty"`
 	// ExpirationTimestamp provides time at which snapshot will be auto-purged. Valid only for snapshot type.
-	ExpirationTimestamp string `json:"expiration_timestamp,omitempty"`
+	ExpirationTimestamp string `json:"expiration_timestamp"`
 }
 
 // VolumeClone request for cloning snapshot/volume

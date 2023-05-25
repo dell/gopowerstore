@@ -108,7 +108,7 @@ type VolumeGroupModify struct {
 	Description            string `json:"description"`
 	Name                   string `json:"name,omitempty"`
 	IsWriteOrderConsistent bool   `json:"is_write_order_consistent,omitempty"`
-	ExpirationTimestamp    string `json:"expiration_timestamp,omitempty"`
+	ExpirationTimestamp    string `json:"expiration_timestamp"`
 }
 
 type VolumeGroupChangePolicy struct {
