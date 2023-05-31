@@ -212,7 +212,7 @@ type VolumeModify struct {
 	//An optional field used to describe application type usage for a volume.
 	AppTypeOther string `json:"app_type_other,omitempty"`
 	// ExpirationTimestamp provides time at which snapshot will be auto-purged. Valid only for snapshot type.
-	ExpirationTimestamp string `json:"expiration_timestamp"`
+	ExpirationTimestamp *string `json:"expiration_timestamp,omitempty"`
 }
 
 // VolumeClone request for cloning snapshot/volume
