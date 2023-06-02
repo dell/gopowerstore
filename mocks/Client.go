@@ -376,6 +376,27 @@ func (_m *Client) CreateHost(ctx context.Context, createParams *gopowerstore.Hos
 	return r0, r1
 }
 
+// CreateHostGroup provides a mock function with given fields: ctx, createParams
+func (_m *Client) CreateHostGroup(ctx context.Context, createParams *gopowerstore.HostGroupCreate) (gopowerstore.CreateResponse, error) {
+	ret := _m.Called(ctx, createParams)
+
+	var r0 gopowerstore.CreateResponse
+	if rf, ok := ret.Get(0).(func(context.Context, *gopowerstore.HostGroupCreate) gopowerstore.CreateResponse); ok {
+		r0 = rf(ctx, createParams)
+	} else {
+		r0 = ret.Get(0).(gopowerstore.CreateResponse)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, *gopowerstore.HostGroupCreate) error); ok {
+		r1 = rf(ctx, createParams)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // CreateNAS provides a mock function with given fields: ctx, createParams
 func (_m *Client) CreateNAS(ctx context.Context, createParams *gopowerstore.NASCreate) (gopowerstore.CreateResponse, error) {
 	ret := _m.Called(ctx, createParams)
@@ -684,6 +705,27 @@ func (_m *Client) DeleteHost(ctx context.Context, deleteParams *gopowerstore.Hos
 	var r1 error
 	if rf, ok := ret.Get(1).(func(context.Context, *gopowerstore.HostDelete, string) error); ok {
 		r1 = rf(ctx, deleteParams, id)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// DeleteHostGroup provides a mock function with given fields: ctx, id
+func (_m *Client) DeleteHostGroup(ctx context.Context, id string) (gopowerstore.EmptyResponse, error) {
+	ret := _m.Called(ctx, id)
+
+	var r0 gopowerstore.EmptyResponse
+	if rf, ok := ret.Get(0).(func(context.Context, string) gopowerstore.EmptyResponse); ok {
+		r0 = rf(ctx, id)
+	} else {
+		r0 = ret.Get(0).(gopowerstore.EmptyResponse)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = rf(ctx, id)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -1282,6 +1324,27 @@ func (_m *Client) GetHostByName(ctx context.Context, name string) (gopowerstore.
 	return r0, r1
 }
 
+// GetHostGroup provides a mock function with given fields: ctx, id
+func (_m *Client) GetHostGroup(ctx context.Context, id string) (gopowerstore.HostGroup, error) {
+	ret := _m.Called(ctx, id)
+
+	var r0 gopowerstore.HostGroup
+	if rf, ok := ret.Get(0).(func(context.Context, string) gopowerstore.HostGroup); ok {
+		r0 = rf(ctx, id)
+	} else {
+		r0 = ret.Get(0).(gopowerstore.HostGroup)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = rf(ctx, id)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // GetHostGroupByName provides a mock function with given fields: ctx, name
 func (_m *Client) GetHostGroupByName(ctx context.Context, name string) (gopowerstore.HostGroup, error) {
 	ret := _m.Called(ctx, name)
@@ -1498,6 +1561,29 @@ func (_m *Client) GetNfsServer(ctx context.Context, id string) (gopowerstore.NFS
 	return r0, r1
 }
 
+// GetProtectionPolicies provides a mock function with given fields: ctx
+func (_m *Client) GetProtectionPolicies(ctx context.Context) ([]gopowerstore.ProtectionPolicy, error) {
+	ret := _m.Called(ctx)
+
+	var r0 []gopowerstore.ProtectionPolicy
+	if rf, ok := ret.Get(0).(func(context.Context) []gopowerstore.ProtectionPolicy); ok {
+		r0 = rf(ctx)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]gopowerstore.ProtectionPolicy)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = rf(ctx)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // GetProtectionPolicy provides a mock function with given fields: ctx, id
 func (_m *Client) GetProtectionPolicy(ctx context.Context, id string) (gopowerstore.ProtectionPolicy, error) {
 	ret := _m.Called(ctx, id)
@@ -1680,6 +1766,27 @@ func (_m *Client) GetSnapshot(ctx context.Context, snapID string) (gopowerstore.
 	var r1 error
 	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
 		r1 = rf(ctx, snapID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetSnapshotByName provides a mock function with given fields: ctx, snapName
+func (_m *Client) GetSnapshotByName(ctx context.Context, snapName string) (gopowerstore.Volume, error) {
+	ret := _m.Called(ctx, snapName)
+
+	var r0 gopowerstore.Volume
+	if rf, ok := ret.Get(0).(func(context.Context, string) gopowerstore.Volume); ok {
+		r0 = rf(ctx, snapName)
+	} else {
+		r0 = ret.Get(0).(gopowerstore.Volume)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = rf(ctx, snapName)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -1949,6 +2056,94 @@ func (_m *Client) GetVolumeGroupByName(ctx context.Context, name string) (gopowe
 	return r0, r1
 }
 
+// GetVolumeGroupSnapshot provides a mock function with given fields: ctx, snapID
+func (_m *Client) GetVolumeGroupSnapshot(ctx context.Context, snapID string) (gopowerstore.VolumeGroup, error) {
+	ret := _m.Called(ctx, snapID)
+
+	var r0 gopowerstore.VolumeGroup
+	if rf, ok := ret.Get(0).(func(context.Context, string) gopowerstore.VolumeGroup); ok {
+		r0 = rf(ctx, snapID)
+	} else {
+		r0 = ret.Get(0).(gopowerstore.VolumeGroup)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = rf(ctx, snapID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetVolumeGroupSnapshotByName provides a mock function with given fields: ctx, snapName
+func (_m *Client) GetVolumeGroupSnapshotByName(ctx context.Context, snapName string) (gopowerstore.VolumeGroup, error) {
+	ret := _m.Called(ctx, snapName)
+
+	var r0 gopowerstore.VolumeGroup
+	if rf, ok := ret.Get(0).(func(context.Context, string) gopowerstore.VolumeGroup); ok {
+		r0 = rf(ctx, snapName)
+	} else {
+		r0 = ret.Get(0).(gopowerstore.VolumeGroup)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = rf(ctx, snapName)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetVolumeGroupSnapshots provides a mock function with given fields: ctx
+func (_m *Client) GetVolumeGroupSnapshots(ctx context.Context) ([]gopowerstore.VolumeGroup, error) {
+	ret := _m.Called(ctx)
+
+	var r0 []gopowerstore.VolumeGroup
+	if rf, ok := ret.Get(0).(func(context.Context) []gopowerstore.VolumeGroup); ok {
+		r0 = rf(ctx)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]gopowerstore.VolumeGroup)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = rf(ctx)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetVolumeGroups provides a mock function with given fields: ctx
+func (_m *Client) GetVolumeGroups(ctx context.Context) ([]gopowerstore.VolumeGroup, error) {
+	ret := _m.Called(ctx)
+
+	var r0 []gopowerstore.VolumeGroup
+	if rf, ok := ret.Get(0).(func(context.Context) []gopowerstore.VolumeGroup); ok {
+		r0 = rf(ctx)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]gopowerstore.VolumeGroup)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = rf(ctx)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // GetVolumeGroupsByVolumeID provides a mock function with given fields: ctx, id
 func (_m *Client) GetVolumeGroupsByVolumeID(ctx context.Context, id string) (gopowerstore.VolumeGroups, error) {
 	ret := _m.Called(ctx, id)
@@ -2027,6 +2222,27 @@ func (_m *Client) ModifyHost(ctx context.Context, modifyParams *gopowerstore.Hos
 
 	var r1 error
 	if rf, ok := ret.Get(1).(func(context.Context, *gopowerstore.HostModify, string) error); ok {
+		r1 = rf(ctx, modifyParams, id)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// ModifyHostGroup provides a mock function with given fields: ctx, modifyParams, id
+func (_m *Client) ModifyHostGroup(ctx context.Context, modifyParams *gopowerstore.HostGroupModify, id string) (gopowerstore.EmptyResponse, error) {
+	ret := _m.Called(ctx, modifyParams, id)
+
+	var r0 gopowerstore.EmptyResponse
+	if rf, ok := ret.Get(0).(func(context.Context, *gopowerstore.HostGroupModify, string) gopowerstore.EmptyResponse); ok {
+		r0 = rf(ctx, modifyParams, id)
+	} else {
+		r0 = ret.Get(0).(gopowerstore.EmptyResponse)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, *gopowerstore.HostGroupModify, string) error); ok {
 		r1 = rf(ctx, modifyParams, id)
 	} else {
 		r1 = ret.Error(1)

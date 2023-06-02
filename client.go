@@ -84,6 +84,7 @@ type Client interface {
 	GetSnapshotsByVolumeID(ctx context.Context, volID string) ([]Volume, error)
 	GetSnapshots(ctx context.Context) ([]Volume, error)
 	GetSnapshot(ctx context.Context, snapID string) (Volume, error)
+	GetSnapshotByName(ctx context.Context, snapName string) (Volume, error)
 	ComputeDifferences(ctx context.Context, snapdiffParams *VolumeComputeDifferences, volID string) (VolumeComputeDifferencesResponse, error)
 	CreateVolumeFromSnapshot(ctx context.Context, createParams *VolumeClone, snapID string) (CreateResponse, error)
 	GetNAS(ctx context.Context, id string) (NAS, error)
@@ -181,6 +182,9 @@ type Client interface {
 	GetHostGroupByName(ctx context.Context, name string) (HostGroup, error)
 	DeleteHostGroup(ctx context.Context, id string) (EmptyResponse, error)
 	ModifyHostGroup(ctx context.Context, modifyParams *HostGroupModify, id string) (EmptyResponse, error)
+	GetVolumeGroupSnapshot(ctx context.Context, snapID string) (VolumeGroup, error)
+	GetVolumeGroupSnapshots(ctx context.Context) ([]VolumeGroup, error)
+	GetVolumeGroupSnapshotByName(ctx context.Context, snapName string) (VolumeGroup, error)
 }
 
 // ClientIMPL provides basic API client implementation

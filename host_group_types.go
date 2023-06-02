@@ -30,11 +30,17 @@ type HostGroup struct {
 	Hosts []Host `json:"hosts,omitempty"`
 	// Connectivity type for hosts and host groups.
 	HostConnectivity HostConnectivityEnum `json:"host_connectivity,omitempty"`
+	// HostConnectivityL10n Localized message string corresponding to host_connectivity
+	HostConnectivityL10n string `json:"host_connectivity_l10n,omitempty"`
+	// MappedHostGroups Details about a configured host or host group attached to a volume.
+	MappedHostGroups []MappedHostGroup `json:"mapped_host_groups,omitempty"`
+	// HostVirtualVolumeMappings Virtual volume mapping details.
+	HostVirtualVolumeMappings []HostVirtualVolumeMapping `json:"host_virtual_volume_mappings,omitempty"`
 }
 
 // Fields returns fields which must be requested to fill struct
 func (h *HostGroup) Fields() []string {
-	return []string{"*", "hosts(*)"}
+	return []string{"*", "hosts(*)", "mapped_host_groups(*,volume(*))", "host_virtual_volume_mappings(*,virtual_volume(*))"}
 }
 
 // HostGroupCreate create hostgroup request
@@ -59,4 +65,28 @@ type HostGroupModify struct {
 	RemoveHostIDs []string `json:"remove_host_ids,omitempty"`
 	// List of hosts to be added to host group.
 	AddHostIDs []string `json:"add_host_ids,omitempty"`
+}
+
+type MappedHostGroup struct {
+	// Unique identifier of a mapping between a host and a volume.
+	ID string `json:"id,omitempty"`
+	// Unique identifier of a host attached to a volume.
+	HostID string `json:"host_id,omitempty"`
+	// Unique identifier of a host group attached to a volume.
+	HostGroupID string `json:"host_group_id,omitempty"`
+	// Unique identifier of the volume to which the host is attached.
+	VolumeID string `json:"volume_id,omitempty"`
+	// Details about a volume, including snapshots and clones of volumes.
+	Volume Volume `json:"volume,omitempty"`
+}
+
+type HostVirtualVolumeMapping struct {
+	// Unique identifier of a mapping between a host and a virtual volume.
+	ID string `json:"id,omitempty"`
+	// Unique identifier of a host attached to a volume.
+	HostID string `json:"host_id,omitempty"`
+	// Unique identifier of the virtual volume to which the host is attached.
+	VirtualVolumeID string `json:"virtual_volume_id,omitempty"`
+	// A virtual volume.
+	VirtualVolume VirtualVolume `json:"virtual_volume,omitempty"`
 }
