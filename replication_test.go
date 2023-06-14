@@ -161,6 +161,7 @@ func TestClientIMPL_GetReplicationRuleByName(t *testing.T) {
 }
 
 func TestClientIMPL_GetReplicationSessionByLocalResourceID(t *testing.T) {
+	// test getting a valid replication session
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 	respData := fmt.Sprintf(`[{
@@ -173,6 +174,17 @@ func TestClientIMPL_GetReplicationSessionByLocalResourceID(t *testing.T) {
 	resp, err := C.GetReplicationSessionByLocalResourceID(context.Background(), volID2)
 	assert.Nil(t, err)
 	assert.Equal(t, volID, resp.ID)
+
+	// test when the replication group does not exist
+	httpmock.Reset()
+
+	httpmock.RegisterResponder("GET", replicationSessionMockURL,
+		httpmock.NewStringResponder(200, ""))
+	_, err = C.GetReplicationSessionByLocalResourceID(context.Background(), volID2)
+
+	assert.NotNil(t, err)
+	apiError := err.(APIError)
+	assert.True(t, apiError.NotFound())
 }
 
 func TestClientIMPL_GetProtectionPolicies(t *testing.T) {

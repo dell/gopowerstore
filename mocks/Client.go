@@ -804,6 +804,7 @@ func (_m *Client) DeleteHostGroup(ctx context.Context, id string) (gopowerstore.
 		r0 = ret.Get(0).(gopowerstore.EmptyResponse)
 	}
 
+	var r1 error
 	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
 		r1 = rf(ctx, id)
 	} else {
@@ -1772,6 +1773,7 @@ func (_m *Client) GetProtectionPolicies(ctx context.Context) ([]gopowerstore.Pro
 		}
 	}
 
+	var r1 error
 	if rf, ok := ret.Get(1).(func(context.Context) error); ok {
 		r1 = rf(ctx)
 	} else {
@@ -1990,6 +1992,27 @@ func (_m *Client) GetSnapshot(ctx context.Context, snapID string) (gopowerstore.
 
 	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
 		r1 = rf(ctx, snapID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetSnapshotByName provides a mock function with given fields: ctx, snapName
+func (_m *Client) GetSnapshotByName(ctx context.Context, snapName string) (gopowerstore.Volume, error) {
+	ret := _m.Called(ctx, snapName)
+
+	var r0 gopowerstore.Volume
+	if rf, ok := ret.Get(0).(func(context.Context, string) gopowerstore.Volume); ok {
+		r0 = rf(ctx, snapName)
+	} else {
+		r0 = ret.Get(0).(gopowerstore.Volume)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = rf(ctx, snapName)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -2304,6 +2327,53 @@ func (_m *Client) GetVolumeGroups(ctx context.Context) ([]gopowerstore.VolumeGro
 	if rf, ok := ret.Get(0).(func(context.Context) ([]gopowerstore.VolumeGroup, error)); ok {
 		return rf(ctx)
 	}
+// GetVolumeGroupSnapshot provides a mock function with given fields: ctx, snapID
+func (_m *Client) GetVolumeGroupSnapshot(ctx context.Context, snapID string) (gopowerstore.VolumeGroup, error) {
+	ret := _m.Called(ctx, snapID)
+
+	var r0 gopowerstore.VolumeGroup
+	if rf, ok := ret.Get(0).(func(context.Context, string) gopowerstore.VolumeGroup); ok {
+		r0 = rf(ctx, snapID)
+	} else {
+		r0 = ret.Get(0).(gopowerstore.VolumeGroup)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = rf(ctx, snapID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetVolumeGroupSnapshotByName provides a mock function with given fields: ctx, snapName
+func (_m *Client) GetVolumeGroupSnapshotByName(ctx context.Context, snapName string) (gopowerstore.VolumeGroup, error) {
+	ret := _m.Called(ctx, snapName)
+
+	var r0 gopowerstore.VolumeGroup
+	if rf, ok := ret.Get(0).(func(context.Context, string) gopowerstore.VolumeGroup); ok {
+		r0 = rf(ctx, snapName)
+	} else {
+		r0 = ret.Get(0).(gopowerstore.VolumeGroup)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = rf(ctx, snapName)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetVolumeGroupSnapshots provides a mock function with given fields: ctx
+func (_m *Client) GetVolumeGroupSnapshots(ctx context.Context) ([]gopowerstore.VolumeGroup, error) {
+	ret := _m.Called(ctx)
+
+	var r0 []gopowerstore.VolumeGroup
 	if rf, ok := ret.Get(0).(func(context.Context) []gopowerstore.VolumeGroup); ok {
 		r0 = rf(ctx)
 	} else {
@@ -2312,6 +2382,30 @@ func (_m *Client) GetVolumeGroups(ctx context.Context) ([]gopowerstore.VolumeGro
 		}
 	}
 
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = rf(ctx)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetVolumeGroups provides a mock function with given fields: ctx
+func (_m *Client) GetVolumeGroups(ctx context.Context) ([]gopowerstore.VolumeGroup, error) {
+	ret := _m.Called(ctx)
+
+	var r0 []gopowerstore.VolumeGroup
+	if rf, ok := ret.Get(0).(func(context.Context) []gopowerstore.VolumeGroup); ok {
+		r0 = rf(ctx)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]gopowerstore.VolumeGroup)
+		}
+	}
+
+	var r1 error
 	if rf, ok := ret.Get(1).(func(context.Context) error); ok {
 		r1 = rf(ctx)
 	} else {

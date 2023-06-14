@@ -115,6 +115,28 @@ func (c *ClientIMPL) GetSnapshot(ctx context.Context, snapID string) (resVol Vol
 	return resVol, WrapErr(err)
 }
 
+// GetSnapshotByName query and return specific snapshot by name
+func (c *ClientIMPL) GetSnapshotByName(ctx context.Context, snapName string) (resVol Volume, err error) {
+	var volList []Volume
+	qp := getVolumeDefaultQueryParams(c)
+	qp.RawArg("name", fmt.Sprintf("eq.%s", snapName))
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:      "GET",
+			Endpoint:    volumeURL,
+			QueryParams: qp},
+		&volList)
+	err = WrapErr(err)
+	if err != nil {
+		return resVol, err
+	}
+	if len(volList) != 1 {
+		return resVol, NewNotFoundError()
+	}
+	return volList[0], err
+}
+
 // GetSnapshots returns all snapshots
 func (c *ClientIMPL) GetSnapshots(ctx context.Context) ([]Volume, error) {
 	var result []Volume

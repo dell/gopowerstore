@@ -206,11 +206,13 @@ type VolumeModify struct {
 	// Unique identifier of the performance policy assigned to the volume.
 	PerformancePolicyID string `json:"performance_policy_id,omitempty"`
 	// Description of the volume
-	Description string `json:"description,omitempty"`
+	Description string `json:"description"`
 	//This attribute indicates the intended use of this volume.
 	AppType string `json:"app_type,omitempty"`
 	//An optional field used to describe application type usage for a volume.
 	AppTypeOther string `json:"app_type_other,omitempty"`
+	// ExpirationTimestamp provides time at which snapshot will be auto-purged. Valid only for snapshot type.
+	ExpirationTimestamp *string `json:"expiration_timestamp,omitempty"`
 }
 
 // VolumeClone request for cloning snapshot/volume
@@ -232,8 +234,15 @@ func (vc *VolumeClone) MetaData() http.Header {
 // SnapshotCreate params for creating 'create snapshot' request
 type SnapshotCreate struct {
 	// Unique name for the snapshot to be created.
-	Name        *string `json:"name,omitempty"`
+	Name *string `json:"name,omitempty"`
+	// Description of the snapshot.
 	Description *string `json:"description,omitempty"`
+	// Unique identifier of the performance policy assigned to the volume.
+	PerformancePolicyID string `json:"performance_policy_id,omitempty"`
+	// ExpirationTimestamp provides volume group creation time
+	ExpirationTimestamp string `json:"expiration_timestamp,omitempty"`
+	// CreatorType provides volume group creation time
+	CreatorType StorageCreatorTypeEnum `json:"creator_type,omitempty"`
 }
 
 // VolumeDelete body for VolumeDelete request
@@ -321,7 +330,10 @@ type Volume struct {
 
 // ProtectionData is a field that holds meta information about volume creation
 type ProtectionData struct {
-	SourceID string `json:"source_id"`
+	SourceID            string `json:"source_id"`
+	ExpirationTimeStamp string `json:"expiration_timestamp"`
+	CreatorType         string `json:"creator_type"`
+	ParentID            string `json:"parent_id"`
 }
 
 // LocationHistory of the volume resource
@@ -346,6 +358,12 @@ type Datastores struct {
 	ID           string `json:"id"`
 	Name         string `json:"name"`
 	InstanceUUID string `json:"istance_uuid"`
+}
+
+type VirtualVolume struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+	Size string `json:"size"`
 }
 
 // Fields returns fields which must be requested to fill struct
