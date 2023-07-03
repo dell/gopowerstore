@@ -47,6 +47,26 @@ func TestClientIMPL_GetSnapshotRule(t *testing.T) {
 	assert.Equal(t, snapshotRuleID, snapshotRule.ID)
 }
 
+func TestClientIMPL_GetSnapshotRuleByName(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	setResponder := func(respData string) {
+		httpmock.RegisterResponder("GET", snapshotRuleMockURL,
+			httpmock.NewStringResponder(200, respData))
+	}
+	respData := fmt.Sprintf(`[{"id": "%s"}]`, snapshotRuleID)
+	setResponder(respData)
+	snapshotRule, err := C.GetSnapshotRuleByName(context.Background(), "test")
+	assert.Nil(t, err)
+	assert.Equal(t, snapshotRuleID, snapshotRule.ID)
+	httpmock.Reset()
+	setResponder("")
+	_, err = C.GetSnapshotRuleByName(context.Background(), "test")
+	assert.NotNil(t, err)
+	apiError := err.(APIError)
+	assert.True(t, apiError.NotFound())
+}
+
 func TestClientIMPL_GetSnapshotRules(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
