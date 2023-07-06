@@ -36,6 +36,7 @@ var volID = "6b930711-46bc-4a4b-9d6a-22c77a7838c4"
 var volID2 = "3765da74-28a7-49db-a693-10cec1de91f8"
 var appID = "A1"
 var volSnapID = "1966782b-60c9-40e2-a1ee-9b2b8f6b98e7"
+var volSnapID2 = "34380c29-2203-4490-aeb7-2853b9a85075"
 
 func TestClientIMPL_GetVolumes(t *testing.T) {
 	httpmock.Activate()
@@ -143,6 +144,29 @@ func TestClientIMPL_GetSnapshotsByVolumeID(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, 1, len(resp))
 	assert.Equal(t, volID2, resp[0].ID)
+}
+
+func TestClientIMPL_GetSnapshot(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	respData := fmt.Sprintf(`{"id": "%s"}`, volSnapID)
+	httpmock.RegisterResponder("GET", fmt.Sprintf("%s/%s", volumeMockURL, volSnapID),
+		httpmock.NewStringResponder(200, respData))
+	snapshot, err := C.GetSnapshot(context.Background(), volSnapID)
+	assert.Nil(t, err)
+	assert.Equal(t, volSnapID, snapshot.ID)
+}
+
+func TestClientIMPL_GetSnapshots(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	respData := fmt.Sprintf(`[{"id": "%s"}, {"id": "%s"}]`, volSnapID, volSnapID2)
+	httpmock.RegisterResponder("GET", volumeMockURL,
+		httpmock.NewStringResponder(200, respData))
+	snapshots, err := C.GetSnapshots(context.Background())
+	assert.Nil(t, err)
+	assert.Len(t, snapshots, 2)
+	assert.Equal(t, volSnapID, snapshots[0].ID)
 }
 
 func TestClientIMPL_GetSnapshotByName(t *testing.T) {
