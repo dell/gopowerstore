@@ -35,6 +35,7 @@ const (
 var volID = "6b930711-46bc-4a4b-9d6a-22c77a7838c4"
 var volID2 = "3765da74-28a7-49db-a693-10cec1de91f8"
 var appID = "A1"
+var volSnapID = "1966782b-60c9-40e2-a1ee-9b2b8f6b98e7"
 
 func TestClientIMPL_GetVolumes(t *testing.T) {
 	httpmock.Activate()
@@ -142,6 +143,26 @@ func TestClientIMPL_GetSnapshotsByVolumeID(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, 1, len(resp))
 	assert.Equal(t, volID2, resp[0].ID)
+}
+
+func TestClientIMPL_GetSnapshotByName(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	setResponder := func(respData string) {
+		httpmock.RegisterResponder("GET", volumeMockURL,
+			httpmock.NewStringResponder(200, respData))
+	}
+	respData := fmt.Sprintf(`[{"id": "%s"}]`, volSnapID)
+	setResponder(respData)
+	snap, err := C.GetSnapshotByName(context.Background(), "test")
+	assert.Nil(t, err)
+	assert.Equal(t, volSnapID, snap.ID)
+	httpmock.Reset()
+	setResponder("")
+	_, err = C.GetSnapshotByName(context.Background(), "test")
+	assert.NotNil(t, err)
+	apiError := err.(APIError)
+	assert.True(t, apiError.NotFound())
 }
 
 func TestClientIMPL_CreateVolume(t *testing.T) {
