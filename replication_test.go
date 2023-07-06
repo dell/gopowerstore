@@ -34,6 +34,7 @@ const (
 var (
 	protectionPolicyID  = "15c03067-c4f2-428b-b637-18b0266979f0"
 	protectionPolicyID2 = "3224ff5a-2e83-4a7f-a0c4-009df20e36db"
+	replicationRuleID   = "6b930711-46bc-4a4b-9d6a-22c77a7838c4"
 )
 
 func TestClientIMPL_CreateProtectionPolicy(t *testing.T) {
@@ -138,6 +139,17 @@ func TestClientIMPL_ModifyProtectionPolicy(t *testing.T) {
 	resp, err := C.ModifyProtectionPolicy(context.Background(), &modifyParams, protectionPolicyID)
 	assert.Nil(t, err)
 	assert.Equal(t, EmptyResponse(""), resp)
+}
+
+func TestClientIMPL_GetReplicationRule(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	respData := fmt.Sprintf(`{"id": "%s"}`, replicationRuleID)
+	httpmock.RegisterResponder("GET", fmt.Sprintf("%s/%s", replicationRuleMockURL, replicationRuleID),
+		httpmock.NewStringResponder(200, respData))
+	replicationRule, err := C.GetReplicationRule(context.Background(), replicationRuleID)
+	assert.Nil(t, err)
+	assert.Equal(t, replicationRuleID, replicationRule.ID)
 }
 
 func TestClientIMPL_GetReplicationRuleByName(t *testing.T) {
