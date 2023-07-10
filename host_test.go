@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2020 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2020-2023 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,10 @@ package gopowerstore
 import (
 	"context"
 	"fmt"
+	"testing"
+
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 const (
@@ -136,6 +137,18 @@ func TestClientIMPL_GetHostVolumeMapping(t *testing.T) {
 	resp, err := C.GetHostVolumeMapping(context.Background(), hostID)
 	assert.Nil(t, err)
 	assert.Equal(t, hostID, resp.ID)
+}
+
+func TestClientIMPL_GetHostVolumeMappingByVolumeID(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	respData := fmt.Sprintf(`[{"id": "%s"}]`, hostID)
+	httpmock.RegisterResponder("GET", hostMappingMockURL,
+		httpmock.NewStringResponder(200, respData))
+	resp, err := C.GetHostVolumeMappingByVolumeID(context.Background(), volID)
+	assert.Nil(t, err)
+	assert.Len(t, resp, 1)
+	assert.Equal(t, hostID, resp[0].ID)
 }
 
 func TestClientIMPL_AttachVolumeToHost(t *testing.T) {

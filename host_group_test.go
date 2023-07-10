@@ -87,6 +87,18 @@ func TestClientIMPL_GetHostGroup(t *testing.T) {
 	assert.Equal(t, hostGroupID, hostGroup.ID)
 }
 
+func TestClientIMPL_GetHostGroups(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	respData := fmt.Sprintf(`[{"id": "%s"}, {"id": "%s"}]`, hostGroupID, hostGroupID2)
+	httpmock.RegisterResponder("GET", hostGroupMockURL,
+		httpmock.NewStringResponder(200, respData))
+	hostGroups, err := C.GetHostGroups(context.Background())
+	assert.Nil(t, err)
+	assert.Len(t, hostGroups, 2)
+	assert.Equal(t, hostGroupID, hostGroups[0].ID)
+}
+
 func TestClientIMPL_CreateHostGroup(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
