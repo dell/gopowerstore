@@ -89,11 +89,11 @@ const (
 	AppTypeEnumPostgreSQL                 AppTypeEnum = "Relational_Databases_PostgreSQL"
 	AppTypeEnumMySQL                      AppTypeEnum = "Relational_Databases_MySQL"
 	AppTypeEnumIBMDB2                     AppTypeEnum = "Relational_Databases_IBM_DB2"
-	AppTypeEnumBigData                    AppTypeEnum = "Big_Data_Analytics_Other"
+	AppTypeEnumBigData                    AppTypeEnum = "Big_Data_Analytics_Other" // #nosec G101
 	AppTypeEnumMongoDB                    AppTypeEnum = "Big_Data_Analytics_MongoDB"
 	AppTypeEnumCassandra                  AppTypeEnum = "Big_Data_Analytics_Cassandra"
 	AppTypeEnumSAPHANA                    AppTypeEnum = "Big_Data_Analytics_SAP_HANA"
-	AppTypeEnumSpark                      AppTypeEnum = "Big_Data_Analytics_Spark"
+	AppTypeEnumSpark                      AppTypeEnum = "Big_Data_Analytics_Spark" // #nosec G101
 	AppTypeEnumSplunk                     AppTypeEnum = "Big_Data_Analytics_Splunk"
 	AppTypeEnumElasticSearch              AppTypeEnum = "Big_Data_Analytics_ElasticSearch"
 	AppTypeEnumExchange                   AppTypeEnum = "Business_Applications_Exchange"
