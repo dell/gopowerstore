@@ -72,7 +72,7 @@ func (suite *ReplicationTestSuite) TearDownSuite() {
 	if len(rr.ProtectionPolicies) != 1 || len(pp.ReplicationRules) != 1 || len(vg.Volumes) != 1 || len(pp.VolumeGroups) != 1 {
 		suite.T().Fail()
 	}
-	C.ModifyVolumeGroup(context.Background(), &gopowerstore.VolumeGroupModify{ProtectionPolicyId: ""}, suite.vg.ID)
+	C.ModifyVolumeGroup(context.Background(), &gopowerstore.VolumeGroupModify{ProtectionPolicyID: ""}, suite.vg.ID)
 	C.RemoveMembersFromVolumeGroup(context.Background(), &gopowerstore.VolumeGroupMembers{VolumeIds: []string{suite.vol.ID}}, suite.vg.ID)
 	C.ModifyVolume(context.Background(), &gopowerstore.VolumeModify{ProtectionPolicyID: ""}, suite.vol.ID)
 	C.DeleteProtectionPolicy(context.Background(), suite.pp.ID)
@@ -142,11 +142,11 @@ func (suite *ReplicationTestSuite) TestReplication() {
 		VolumeGroupID: suite.vg.ID,
 	})
 	assert.NoError(t, err)
-	volId := suite.vol.ID
-	_, err = C.GetVolumeGroupsByVolumeID(context.Background(), volId)
+	volID := suite.vol.ID
+	_, err = C.GetVolumeGroupsByVolumeID(context.Background(), volID)
 	assert.NoError(t, err)
 
-	for tout := 0; tout < 30; tout += 1 {
+	for tout := 0; tout < 30; tout++ {
 		_, err = C.GetReplicationSessionByLocalResourceID(context.Background(), suite.vg.ID)
 		if err == nil {
 			break

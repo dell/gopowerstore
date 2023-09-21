@@ -72,7 +72,7 @@ func TestNew(t *testing.T) {
 	password := "password"
 	timeout := uint64(120)
 	limit := uint64(1000)
-	key := "key"
+	var key Key = "key"
 	var err error
 	var c *ClientIMPL
 	c, err = New(url, user, password, false, timeout, limit, key)

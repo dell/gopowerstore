@@ -338,8 +338,8 @@ type ProtectionData struct {
 
 // LocationHistory of the volume resource
 type LocationHistory struct {
-	FromApplianceId string `json:"from_appliance_id"`
-	ToApplianceId   string `json:"to_appliance_id"`
+	FromApplianceID string `json:"from_appliance_id"`
+	ToApplianceID   string `json:"to_appliance_id"`
 }
 
 // MigrationSession details of migration session

@@ -21,11 +21,11 @@ package gopowerstore
 type NFSExportDefaultAccessEnum string
 
 const (
-	No_Access      NFSExportDefaultAccessEnum = "No_Access"
-	Read_Only      NFSExportDefaultAccessEnum = "Read_Only"
-	Read_Write     NFSExportDefaultAccessEnum = "Read_Write"
-	Root           NFSExportDefaultAccessEnum = "Root"
-	Read_Only_Root NFSExportDefaultAccessEnum = "Read_Only_Root "
+	NoAccess     NFSExportDefaultAccessEnum = "No_Access"
+	ReadOnly     NFSExportDefaultAccessEnum = "Read_Only"
+	ReadWrite    NFSExportDefaultAccessEnum = "Read_Write"
+	Root         NFSExportDefaultAccessEnum = "Root"
+	ReadOnlyRoot NFSExportDefaultAccessEnum = "Read_Only_Root "
 )
 
 // NFSExportCreate details about creation of new NFS export
@@ -123,7 +123,7 @@ type FileInterface struct {
 	// Unique id of the file interface
 	ID string `json:"id"`
 	// Ip address of file interface
-	IpAddress string `json:"ip_address"`
+	IPAddress string `json:"ip_address"`
 }
 
 // Fields returns fields which must be requested to fill struct

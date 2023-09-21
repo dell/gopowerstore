@@ -116,8 +116,8 @@ func (c *ClientIMPL) GetHostGroups(ctx context.Context) ([]HostGroup, error) {
 	var result []HostGroup
 	err := c.readPaginatedData(func(offset int) (api.RespMeta, error) {
 		var page []HostGroup
-		host_group := HostGroup{}
-		qp := c.APIClient().QueryParamsWithFields(&host_group)
+		hostGroup := HostGroup{}
+		qp := c.APIClient().QueryParamsWithFields(&hostGroup)
 		qp.Order("name")
 		qp.Offset(offset).Limit(paginationDefaultPageSize)
 		meta, err := c.APIClient().Query(

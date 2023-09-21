@@ -60,7 +60,7 @@ type FsCreate struct {
 	LockingPolicy            string      `json:"locking_policy,omitempty"`
 	FolderRenamePolicy       string      `json:"folder_rename_policy,omitempty"`
 	IsAsyncMTimeEnabled      bool        `json:"is_async_MTime_enabled,omitempty"`
-	ProtectionPolicyId       string      `json:"protection_policy_id,omitempty"`
+	ProtectionPolicyID       string      `json:"protection_policy_id,omitempty"`
 	FileEventsPublishingMode string      `json:"file_events_publishing_mode,omitempty"`
 	HostIOSize               string      `json:"host_io_size,omitempty"`
 	FlrCreate                interface{} `json:"flr_attributes,omitempty"`
@@ -139,13 +139,13 @@ type FileSystem struct {
 	// Size used, in bytes, for the data and metadata of the file system
 	SizeUsed int64 `json:"size_used,omitempty"`
 	// Id of a parent filesystem
-	ParentId string `json:"parent_id,omitempty"`
+	ParentID string `json:"parent_id,omitempty"`
 }
 
 // NFS server instance in NAS server
 type NFSServerInstance struct {
 	// Unique identifier for NFS server
-	Id string `json:"id"`
+	ID string `json:"id"`
 	// IsNFSv4Enabled is set to true if nfsv4 is enabled on NAS server
 	IsNFSv4Enabled bool `json:"is_nfsv4_enabled,omitempty"`
 }
@@ -159,11 +159,11 @@ type NAS struct {
 	// Name of the NAS server
 	Name string `json:"name,omitempty"`
 	// CurrentNodeId represents on which node the nas server is present
-	CurrentNodeId string `json:"current_node_id,omitempty"`
+	CurrentNodeID string `json:"current_node_id,omitempty"`
 	// NAS server operational status: [ Stopped, Starting, Started, Stopping, Failover, Degraded, Unknown ]
 	OperationalStatus NASServerOperationalStatusEnum `json:"operational_status,omitempty"`
 	// IPv4 file interface id nas server currently uses
-	CurrentPreferredIPv4InterfaceId string `json:"current_preferred_IPv4_interface_id"`
+	CurrentPreferredIPv4InterfaceID string `json:"current_preferred_IPv4_interface_id"`
 	// NfsServers define NFS server instance if nfs exports are present
 	NfsServers []NFSServerInstance `json:"nfs_servers"`
 }

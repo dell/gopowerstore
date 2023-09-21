@@ -42,6 +42,8 @@ var debug = false
 
 const paginationHeader = "content-range"
 
+type Key string
+
 // RequestConfig provide options for the request
 type RequestConfig struct {
 	// http method Name
@@ -88,8 +90,8 @@ type RespMeta struct {
 	Pagination PaginationInfo
 }
 
-// ApiClient is PowerStore API client interface
-type ApiClient interface {
+// APIClient is PowerStore API client interface
+type Client interface {
 	Traceable
 	Query(
 		ctx context.Context,
@@ -115,7 +117,7 @@ type ClientIMPL struct {
 	password          string
 	httpClient        *http.Client
 	defaultTimeout    uint64
-	requestIDKey      string
+	requestIDKey      Key
 	customHTTPHeaders http.Header
 	logger            Logger
 	apiThrottle       TimeoutSemaphoreInterface
@@ -123,7 +125,7 @@ type ClientIMPL struct {
 
 // New creates and initialize API client
 func New(apiURL string, username string,
-	password string, insecure bool, defaultTimeout, rateLimit uint64, requestIDKey string,
+	password string, insecure bool, defaultTimeout, rateLimit uint64, requestIDKey Key,
 ) (*ClientIMPL, error) {
 	debug, _ = strconv.ParseBool(os.Getenv("GOPOWERSTORE_DEBUG"))
 	if apiURL == "" || username == "" || password == "" {

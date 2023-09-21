@@ -40,7 +40,7 @@ const (
 
 // ApiClient defines gopowerstore client interface
 type Client interface {
-	APIClient() api.ApiClient
+	APIClient() api.Client
 	SetTraceID(ctx context.Context, value string) context.Context
 	SetCustomHTTPHeaders(headers http.Header)
 	GetCustomHTTPHeaders() http.Header
@@ -191,7 +191,7 @@ type Client interface {
 
 // ClientIMPL provides basic API client implementation
 type ClientIMPL struct {
-	API api.ApiClient
+	API api.Client
 }
 
 // SetTraceID method allows to set tracing ID to context which will be used in log messages
@@ -217,7 +217,7 @@ func (c *ClientIMPL) SetLogger(logger Logger) {
 }
 
 // APIClient method returns powerstore API client may be useful for doing raw API requests
-func (c *ClientIMPL) APIClient() api.ApiClient {
+func (c *ClientIMPL) APIClient() api.Client {
 	return c.API
 }
 
@@ -277,7 +277,7 @@ func NewClientWithArgs(
 	username, password string, options *ClientOptions,
 ) (Client, error) {
 	client, err := api.New(apiURL, username, password,
-		options.Insecure(), options.DefaultTimeout(), options.RateLimit(), options.RequestIDKey())
+		options.Insecure(), options.DefaultTimeout(), options.RateLimit(), api.Key(options.RequestIDKey()))
 	if err != nil {
 		return nil, err
 	}

@@ -36,27 +36,27 @@ func (e *TimeoutSemaphoreError) Error() string {
 	return e.msg
 }
 
-type timeoutSemaphore struct {
+type TimeoutSemaphore struct {
 	timeout   time.Duration
 	semaphore chan struct{}
 	logger    Logger
 }
 
-func NewTimeoutSemaphore(timeout, rateLimit int, logger Logger) *timeoutSemaphore {
+func NewTimeoutSemaphore(timeout, rateLimit int, logger Logger) *TimeoutSemaphore {
 	log := logger
 
 	if log == nil {
 		log = &defaultLogger{}
 	}
 
-	return &timeoutSemaphore{
+	return &TimeoutSemaphore{
 		timeout:   time.Duration(timeout) * time.Second,
 		semaphore: make(chan struct{}, rateLimit),
 		logger:    log,
 	}
 }
 
-func (ts *timeoutSemaphore) Acquire(ctx context.Context) error {
+func (ts *TimeoutSemaphore) Acquire(ctx context.Context) error {
 	var cancelFunc func()
 	ctx, cancelFunc = context.WithTimeout(ctx, ts.timeout)
 	defer cancelFunc()
@@ -73,12 +73,12 @@ func (ts *timeoutSemaphore) Acquire(ctx context.Context) error {
 	}
 }
 
-func (ts *timeoutSemaphore) Release(ctx context.Context) {
+func (ts *TimeoutSemaphore) Release(ctx context.Context) {
 	<-ts.semaphore
 	ts.logger.Debug(ctx, "release a lock")
 }
 
-func (ts *timeoutSemaphore) SetLogger(logger Logger) TimeoutSemaphoreInterface {
+func (ts *TimeoutSemaphore) SetLogger(logger Logger) TimeoutSemaphoreInterface {
 	ts.logger = logger
 	return ts
 }

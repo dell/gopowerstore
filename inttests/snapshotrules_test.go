@@ -33,7 +33,7 @@ func createSnapshotRule(t *testing.T) (string, string) {
 	createParams := gopowerstore.SnapshotRuleCreate{
 		Name:             snapshotRuleName,
 		DesiredRetention: 8,
-		Interval:         gopowerstore.SnapshotRuleIntervalEnumFour_Hours,
+		Interval:         gopowerstore.SnapshotRuleIntervalEnumFourHours,
 	}
 	createResp, err := C.CreateSnapshotRule(context.Background(), &createParams)
 	checkAPIErr(t, err)
