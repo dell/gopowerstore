@@ -315,7 +315,7 @@ type Volume struct {
 	// AppTypeL10n Localized message string corresponding to App type
 	AppTypeL10n string `json:"app_type_l10n,omitempty"`
 	// LocationHistory contains the storage resource location history.
-	LocationHistory []LocationHistory `json:"location_history,omitempty""`
+	LocationHistory []LocationHistory `json:"location_history,omitempty"`
 	// ProtectionPolicy defines the properties of a policy.
 	ProtectionPolicy ProtectionPolicy `json:"protection_policy,omitempty"`
 	// MigrationSession defines the migration session.
