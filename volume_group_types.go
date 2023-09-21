@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2021-2022 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2021-2023 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -103,8 +103,7 @@ type VolumeGroupMembers struct {
 
 // VolumeGroupModify modifies existing Volume Group
 type VolumeGroupModify struct {
-	// empty to delete
-	ProtectionPolicyId     string  `json:"protection_policy_id,omitempty"`
+	ProtectionPolicyId     string  `json:"protection_policy_id"` // empty to unassign
 	Description            string  `json:"description"`
 	Name                   string  `json:"name,omitempty"`
 	IsWriteOrderConsistent bool    `json:"is_write_order_consistent,omitempty"`
