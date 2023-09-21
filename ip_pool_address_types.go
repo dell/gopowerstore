@@ -80,8 +80,10 @@ type IPPoolAddress struct {
 
 // Fields returns fields which must be requested to fill struct
 func (ip *IPPoolAddress) Fields() []string {
-	return []string{"address", "appliance_id", "id", "ip_port_id",
-		"ip_port(target_iqn, id)", "network_id", "node_id", "purposes"}
+	return []string{
+		"address", "appliance_id", "id", "ip_port_id",
+		"ip_port(target_iqn, id)", "network_id", "node_id", "purposes",
+	}
 }
 
 // IPPortInstance ip port instance

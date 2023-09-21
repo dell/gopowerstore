@@ -18,8 +18,10 @@ package gopowerstore
 
 import "errors"
 
-type RPOEnum string
-type RSStateEnum string
+type (
+	RPOEnum     string
+	RSStateEnum string
+)
 
 const (
 	RpoFiveMinutes                         RPOEnum     = "Five_Minutes"

@@ -25,6 +25,7 @@ type CopySessionTypeEnum string
 
 /*
 Intervals of which metrics can be provided
+
 	Enum:
 		[ Twenty_Sec, Five_Mins, One_Hour, One_Day ]
 */

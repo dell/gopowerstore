@@ -38,7 +38,8 @@ func getHostGroupDefaultQueryParams(c Client) api.QueryParamsEncoder {
 func (c *ClientIMPL) AttachVolumeToHostGroup(
 	ctx context.Context,
 	hostGroupID string,
-	attachParams *HostVolumeAttach) (resp EmptyResponse, err error) {
+	attachParams *HostVolumeAttach,
+) (resp EmptyResponse, err error) {
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{
@@ -46,7 +47,8 @@ func (c *ClientIMPL) AttachVolumeToHostGroup(
 			Endpoint: hostGroupURL,
 			ID:       hostGroupID,
 			Action:   "attach",
-			Body:     attachParams},
+			Body:     attachParams,
+		},
 		&resp)
 	return resp, WrapErr(err)
 }
@@ -55,7 +57,8 @@ func (c *ClientIMPL) AttachVolumeToHostGroup(
 func (c *ClientIMPL) DetachVolumeFromHostGroup(
 	ctx context.Context,
 	hostGroupID string,
-	detachParams *HostVolumeDetach) (resp EmptyResponse, err error) {
+	detachParams *HostVolumeDetach,
+) (resp EmptyResponse, err error) {
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{
@@ -63,7 +66,8 @@ func (c *ClientIMPL) DetachVolumeFromHostGroup(
 			Endpoint: hostGroupURL,
 			ID:       hostGroupID,
 			Action:   "detach",
-			Body:     detachParams},
+			Body:     detachParams,
+		},
 		&resp)
 	return resp, WrapErr(err)
 }
@@ -78,7 +82,8 @@ func (c *ClientIMPL) GetHostGroupByName(ctx context.Context, name string) (resp 
 		RequestConfig{
 			Method:      "GET",
 			Endpoint:    hostGroupURL,
-			QueryParams: qp},
+			QueryParams: qp,
+		},
 		&hostList)
 	err = WrapErr(err)
 	if err != nil {
@@ -100,7 +105,8 @@ func (c *ClientIMPL) GetHostGroup(ctx context.Context, id string) (resp HostGrou
 			Method:      "GET",
 			Endpoint:    hostGroupURL,
 			ID:          id,
-			QueryParams: qc},
+			QueryParams: qc,
+		},
 		&resp)
 	return resp, WrapErr(err)
 }
@@ -119,7 +125,8 @@ func (c *ClientIMPL) GetHostGroups(ctx context.Context) ([]HostGroup, error) {
 			RequestConfig{
 				Method:      "GET",
 				Endpoint:    hostGroupURL,
-				QueryParams: qp},
+				QueryParams: qp,
+			},
 			&page)
 		err = WrapErr(err)
 		if err == nil {
@@ -132,13 +139,15 @@ func (c *ClientIMPL) GetHostGroups(ctx context.Context) ([]HostGroup, error) {
 
 // CreateHostGroup creates new host group
 func (c *ClientIMPL) CreateHostGroup(ctx context.Context,
-	createParams *HostGroupCreate) (resp CreateResponse, err error) {
+	createParams *HostGroupCreate,
+) (resp CreateResponse, err error) {
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{
 			Method:   "POST",
 			Endpoint: hostGroupURL,
-			Body:     createParams},
+			Body:     createParams,
+		},
 		&resp)
 	return resp, WrapErr(err)
 }
@@ -157,14 +166,16 @@ func (c *ClientIMPL) DeleteHostGroup(ctx context.Context, id string) (resp Empty
 }
 
 func (c *ClientIMPL) ModifyHostGroup(ctx context.Context,
-	modifyParams *HostGroupModify, id string) (resp EmptyResponse, err error) {
+	modifyParams *HostGroupModify, id string,
+) (resp EmptyResponse, err error) {
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{
 			Method:   "PATCH",
 			Endpoint: hostGroupURL,
 			ID:       id,
-			Body:     modifyParams},
+			Body:     modifyParams,
+		},
 		&resp)
 	return resp, WrapErr(err)
 }

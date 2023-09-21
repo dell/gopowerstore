@@ -38,9 +38,7 @@ import (
 	"time"
 )
 
-var (
-	debug = false
-)
+var debug = false
 
 const paginationHeader = "content-range"
 
@@ -125,7 +123,8 @@ type ClientIMPL struct {
 
 // New creates and initialize API client
 func New(apiURL string, username string,
-	password string, insecure bool, defaultTimeout, rateLimit uint64, requestIDKey string) (*ClientIMPL, error) {
+	password string, insecure bool, defaultTimeout, rateLimit uint64, requestIDKey string,
+) (*ClientIMPL, error) {
 	debug, _ = strconv.ParseBool(os.Getenv("GOPOWERSTORE_DEBUG"))
 	if apiURL == "" || username == "" || password == "" {
 		return nil, errors.New("API ApiClient can't be initialized: " +
@@ -191,8 +190,10 @@ func buildError(r *http.Response) *ErrorMsg {
 			s := buf.String()
 			errMsg = fmt.Sprintf("%s: %s", errMsg, s)
 		}
-		return &ErrorMsg{StatusCode: r.StatusCode, Severity: errorSeverity,
-			Message: errMsg}
+		return &ErrorMsg{
+			StatusCode: r.StatusCode, Severity: errorSeverity,
+			Message: errMsg,
+		}
 	}
 	firstErrMsg := (*apiErrorMsg.Messages)[0]
 	firstErrMsg.StatusCode = r.StatusCode
@@ -219,8 +220,8 @@ func (c *ClientIMPL) SetLogger(logger Logger) {
 func (c *ClientIMPL) Query(
 	ctx context.Context,
 	cfg RequestConfigRenderer,
-	resp interface{}) (RespMeta, error) {
-
+	resp interface{},
+) (RespMeta, error) {
 	config := cfg.RenderRequestConfig()
 	meta := RespMeta{}
 	var cancelFuncPtr *func()
@@ -271,7 +272,6 @@ func (c *ClientIMPL) Query(
 	default:
 		return meta, buildError(r)
 	}
-
 }
 
 func addMetaData(req *http.Request, body interface{}) {
@@ -303,7 +303,8 @@ func (c *ClientIMPL) QueryParamsWithFields(fp FieldProvider) QueryParamsEncoder 
 }
 
 func (c *ClientIMPL) prepareRequestURL(endpoint, id string, action string,
-	queryParams QueryParamsEncoder) (string, error) {
+	queryParams QueryParamsEncoder,
+) (string, error) {
 	requestURL, err := url.Parse(c.apiURL)
 	if err != nil {
 		return "", err
@@ -325,7 +326,8 @@ func (c *ClientIMPL) prepareRequestURL(endpoint, id string, action string,
 }
 
 func (c *ClientIMPL) prepareRequest(ctx context.Context, method, requestURL, traceMsg string,
-	body interface{}) (*http.Request, error) {
+	body interface{},
+) (*http.Request, error) {
 	var req *http.Request
 	var err error
 	if body != nil && !(reflect.ValueOf(body).Kind() == reflect.Ptr && reflect.ValueOf(body).IsNil()) {

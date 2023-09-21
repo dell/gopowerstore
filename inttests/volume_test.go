@@ -27,9 +27,11 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-const TestVolumePrefix = "test_vol_"
-const DefaultVolSize int64 = 1048576
-const DefaultChunkSize int64 = 1048576
+const (
+	TestVolumePrefix       = "test_vol_"
+	DefaultVolSize   int64 = 1048576
+	DefaultChunkSize int64 = 1048576
+)
 
 func createVol(t *testing.T) (string, string) {
 	volName := TestVolumePrefix + randString(8)

@@ -31,8 +31,10 @@ const (
 	storageContainerMockURL = APIMockURL + storageContainerURL
 )
 
-var scID = "435669ba-28f5-4395-b5ca-6a7455726eaa"
-var scID2 = "3765da74-28a7-49db-a693-10cec1de91f8"
+var (
+	scID  = "435669ba-28f5-4395-b5ca-6a7455726eaa"
+	scID2 = "3765da74-28a7-49db-a693-10cec1de91f8"
+)
 
 func TestClientIMPL_CreateStorageContainer(t *testing.T) {
 	httpmock.Activate()

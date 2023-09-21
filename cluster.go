@@ -84,7 +84,8 @@ func (c *ClientIMPL) GetRemoteSystemByName(ctx context.Context, name string) (re
 		RequestConfig{
 			Method:      "GET",
 			Endpoint:    remoteSystemURL,
-			QueryParams: qp},
+			QueryParams: qp,
+		},
 		&systemList)
 	err = WrapErr(err)
 	if err != nil {

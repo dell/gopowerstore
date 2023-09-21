@@ -30,12 +30,13 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-const errResponseFile = "test_data/err_response.json"
-const unknownErrResponseFile = "test_data/unknown_error.txt"
+const (
+	errResponseFile        = "test_data/err_response.json"
+	unknownErrResponseFile = "test_data/unknown_error.txt"
+)
 
 func buildResp(t *testing.T, path string, statusCode int) *http.Response {
 	data, err := os.Open(path)
-
 	if err != nil {
 		t.FailNow()
 	}
@@ -115,7 +116,8 @@ func TestClient_Query(t *testing.T) {
 	reqBody["foo"] = "bar"
 	resp := &testResp{}
 	_, err := c.Query(ctx, RequestConfig{
-		Method: "POST", Endpoint: testURL, ID: id, Action: action, QueryParams: &qp, Body: reqBody}, resp)
+		Method: "POST", Endpoint: testURL, ID: id, Action: action, QueryParams: &qp, Body: reqBody,
+	}, resp)
 	assert.Nil(t, err)
 	assert.Equal(t, resp.Name, "Foo")
 }
@@ -163,7 +165,6 @@ func TestClientIMPL_updatePaginationInfoInMeta(t *testing.T) {
 	header.Set(paginationHeader, "b-bb/aaa")
 	c.updatePaginationInfoInMeta(&meta, resp)
 	assert.False(t, meta.Pagination.IsPaginate)
-
 }
 
 type qpTest struct{}
@@ -247,7 +248,7 @@ func (s stubTypeWithMetaData) MetaData() http.Header {
 }
 
 func Test_addMetaData(t *testing.T) {
-	var tests = []struct {
+	tests := []struct {
 		name            string
 		givenRequest    *http.Request
 		expectedRequest *http.Request

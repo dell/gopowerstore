@@ -18,9 +18,10 @@ package api
 
 import (
 	"context"
-	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestSemaphore(t *testing.T) {

@@ -42,7 +42,8 @@ func (c *ClientIMPL) GetSnapshotRule(ctx context.Context, id string) (resp Snaps
 			Method:      "GET",
 			Endpoint:    snapshotRuleURL,
 			ID:          id,
-			QueryParams: getSnapshotRuleDefaultQueryParams(c)},
+			QueryParams: getSnapshotRuleDefaultQueryParams(c),
+		},
 		&resp)
 	return resp, WrapErr(err)
 }
@@ -58,7 +59,8 @@ func (c *ClientIMPL) GetSnapshotRuleByName(ctx context.Context, name string) (re
 		RequestConfig{
 			Method:      "GET",
 			Endpoint:    snapshotRuleURL,
-			QueryParams: qp},
+			QueryParams: qp,
+		},
 		&ruleList)
 
 	err = WrapErr(err)
@@ -84,7 +86,8 @@ func (c *ClientIMPL) GetSnapshotRules(ctx context.Context) ([]SnapshotRule, erro
 			RequestConfig{
 				Method:      "GET",
 				Endpoint:    snapshotRuleURL,
-				QueryParams: qp},
+				QueryParams: qp,
+			},
 			&page)
 		err = WrapErr(err)
 		if err == nil {
@@ -97,13 +100,15 @@ func (c *ClientIMPL) GetSnapshotRules(ctx context.Context) ([]SnapshotRule, erro
 
 // CreateSnapshotRule creates new snapshot rule
 func (c *ClientIMPL) CreateSnapshotRule(ctx context.Context,
-	createParams *SnapshotRuleCreate) (resp CreateResponse, err error) {
+	createParams *SnapshotRuleCreate,
+) (resp CreateResponse, err error) {
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{
 			Method:   "POST",
 			Endpoint: snapshotRuleURL,
-			Body:     createParams},
+			Body:     createParams,
+		},
 		&resp)
 	return resp, WrapErr(err)
 }
@@ -118,21 +123,24 @@ func (c *ClientIMPL) ModifySnapshotRule(ctx context.Context, modifyParams *Snaps
 			Method:   "PATCH",
 			Endpoint: snapshotRuleURL,
 			ID:       id,
-			Body:     modifyParams},
+			Body:     modifyParams,
+		},
 		&resp)
 	return resp, WrapErr(err)
 }
 
 // DeleteSnapshotRule deletes existing snapshot rule
 func (c *ClientIMPL) DeleteSnapshotRule(ctx context.Context,
-	deleteParams *SnapshotRuleDelete, id string) (resp EmptyResponse, err error) {
+	deleteParams *SnapshotRuleDelete, id string,
+) (resp EmptyResponse, err error) {
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{
 			Method:   "DELETE",
 			Endpoint: snapshotRuleURL,
 			ID:       id,
-			Body:     deleteParams},
+			Body:     deleteParams,
+		},
 		&resp)
 	return resp, WrapErr(err)
 }

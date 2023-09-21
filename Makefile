@@ -43,3 +43,6 @@ mocks:
 
 gosec:
 	gosec -quiet -log gosec.log -out=gosecresults.csv -fmt=csv ./...
+	
+gofumpt-format:
+	( find . -name "*.go" -exec gofumpt -w {} \; )

@@ -20,10 +20,11 @@ package inttests
 
 import (
 	"context"
-	"github.com/stretchr/testify/assert"
 	"log"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestTimeout(t *testing.T) {

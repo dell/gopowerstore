@@ -48,7 +48,8 @@ func (c *ClientIMPL) GetVolume(ctx context.Context, id string) (resp Volume, err
 			Method:      "GET",
 			Endpoint:    volumeURL,
 			ID:          id,
-			QueryParams: getVolumeDefaultQueryParams(c)},
+			QueryParams: getVolumeDefaultQueryParams(c),
+		},
 		&resp)
 	return resp, WrapErr(err)
 }
@@ -63,7 +64,8 @@ func (c *ClientIMPL) GetVolumeByName(ctx context.Context, name string) (resp Vol
 		RequestConfig{
 			Method:      "GET",
 			Endpoint:    volumeURL,
-			QueryParams: qp},
+			QueryParams: qp,
+		},
 		&volList)
 	err = WrapErr(err)
 	if err != nil {
@@ -89,7 +91,8 @@ func (c *ClientIMPL) GetVolumes(ctx context.Context) ([]Volume, error) {
 			RequestConfig{
 				Method:      "GET",
 				Endpoint:    volumeURL,
-				QueryParams: qp},
+				QueryParams: qp,
+			},
 			&page)
 		err = WrapErr(err)
 		if err == nil {
@@ -110,7 +113,8 @@ func (c *ClientIMPL) GetSnapshot(ctx context.Context, snapID string) (resVol Vol
 			Method:      "GET",
 			Endpoint:    volumeURL,
 			ID:          snapID,
-			QueryParams: qp},
+			QueryParams: qp,
+		},
 		&resVol)
 	return resVol, WrapErr(err)
 }
@@ -125,7 +129,8 @@ func (c *ClientIMPL) GetSnapshotByName(ctx context.Context, snapName string) (re
 		RequestConfig{
 			Method:      "GET",
 			Endpoint:    volumeURL,
-			QueryParams: qp},
+			QueryParams: qp,
+		},
 		&volList)
 	err = WrapErr(err)
 	if err != nil {
@@ -151,7 +156,8 @@ func (c *ClientIMPL) GetSnapshots(ctx context.Context) ([]Volume, error) {
 			RequestConfig{
 				Method:      "GET",
 				Endpoint:    volumeURL,
-				QueryParams: qp},
+				QueryParams: qp,
+			},
 			&page)
 		err = WrapErr(err)
 		if err == nil {
@@ -177,7 +183,8 @@ func (c *ClientIMPL) GetSnapshotsByVolumeID(ctx context.Context, volID string) (
 			RequestConfig{
 				Method:      "GET",
 				Endpoint:    volumeURL,
-				QueryParams: qp},
+				QueryParams: qp,
+			},
 			&page)
 		err = WrapErr(err)
 		if err == nil {
@@ -190,27 +197,31 @@ func (c *ClientIMPL) GetSnapshotsByVolumeID(ctx context.Context, volID string) (
 
 // CreateVolume creates new volume
 func (c *ClientIMPL) CreateVolume(ctx context.Context,
-	createParams *VolumeCreate) (resp CreateResponse, err error) {
+	createParams *VolumeCreate,
+) (resp CreateResponse, err error) {
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{
 			Method:   "POST",
 			Endpoint: volumeURL,
-			Body:     createParams},
+			Body:     createParams,
+		},
 		&resp)
 	return resp, WrapErr(err)
 }
 
 // ModifyVolume changes some volumes properties. Used for volume expansion
 func (c *ClientIMPL) ModifyVolume(ctx context.Context,
-	modifyParams *VolumeModify, volID string) (resp EmptyResponse, err error) {
+	modifyParams *VolumeModify, volID string,
+) (resp EmptyResponse, err error) {
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{
 			Method:   "PATCH",
 			Endpoint: volumeURL,
 			ID:       volID,
-			Body:     modifyParams},
+			Body:     modifyParams,
+		},
 		&resp)
 	return resp, WrapErr(err)
 }
@@ -218,7 +229,8 @@ func (c *ClientIMPL) ModifyVolume(ctx context.Context,
 // ComputeDifferences a) finds allocated nonzero blocks or b) computes differences between
 // two snapshots from the same volume
 func (c *ClientIMPL) ComputeDifferences(ctx context.Context,
-	computeDiffParams *VolumeComputeDifferences, volID string) (resp VolumeComputeDifferencesResponse, err error) {
+	computeDiffParams *VolumeComputeDifferences, volID string,
+) (resp VolumeComputeDifferencesResponse, err error) {
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{
@@ -226,14 +238,16 @@ func (c *ClientIMPL) ComputeDifferences(ctx context.Context,
 			Endpoint: volumeURL,
 			ID:       volID,
 			Action:   "compute_differences",
-			Body:     computeDiffParams},
+			Body:     computeDiffParams,
+		},
 		&resp)
 	return resp, WrapErr(err)
 }
 
 // CreateVolumeFromSnapshot creates a new volume by cloning a snapshot
 func (c *ClientIMPL) CreateVolumeFromSnapshot(ctx context.Context,
-	createParams *VolumeClone, snapID string) (resp CreateResponse, err error) {
+	createParams *VolumeClone, snapID string,
+) (resp CreateResponse, err error) {
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{
@@ -249,7 +263,8 @@ func (c *ClientIMPL) CreateVolumeFromSnapshot(ctx context.Context,
 
 // CreateSnapshot creates a new snapshot
 func (c *ClientIMPL) CreateSnapshot(ctx context.Context,
-	createSnapParams *SnapshotCreate, id string) (resp CreateResponse, err error) {
+	createSnapParams *SnapshotCreate, id string,
+) (resp CreateResponse, err error) {
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{
@@ -257,34 +272,39 @@ func (c *ClientIMPL) CreateSnapshot(ctx context.Context,
 			Endpoint: volumeURL,
 			ID:       id,
 			Action:   "snapshot",
-			Body:     createSnapParams},
+			Body:     createSnapParams,
+		},
 		&resp)
 	return resp, WrapErr(err)
 }
 
 // DeleteVolume deletes existing volume
 func (c *ClientIMPL) DeleteVolume(ctx context.Context,
-	deleteParams *VolumeDelete, id string) (resp EmptyResponse, err error) {
+	deleteParams *VolumeDelete, id string,
+) (resp EmptyResponse, err error) {
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{
 			Method:   "DELETE",
 			Endpoint: volumeURL,
 			ID:       id,
-			Body:     deleteParams},
+			Body:     deleteParams,
+		},
 		&resp)
 	return resp, WrapErr(err)
 }
 
 // DeleteSnapshot is an alias for delete volume, because snapshots are essentially -- volumes
 func (c *ClientIMPL) DeleteSnapshot(ctx context.Context,
-	deleteParams *VolumeDelete, id string) (resp EmptyResponse, err error) {
+	deleteParams *VolumeDelete, id string,
+) (resp EmptyResponse, err error) {
 	return c.DeleteVolume(ctx, deleteParams, id)
 }
 
 // CloneVolume creates a new volume by cloning a snapshot
 func (c *ClientIMPL) CloneVolume(ctx context.Context,
-	createParams *VolumeClone, volID string) (resp CreateResponse, err error) {
+	createParams *VolumeClone, volID string,
+) (resp CreateResponse, err error) {
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{
@@ -306,7 +326,8 @@ func (c *ClientIMPL) GetAppliance(ctx context.Context, id string) (resp Applianc
 			Method:      "GET",
 			Endpoint:    applianceURL,
 			ID:          id,
-			QueryParams: getApplianceDefaultQueryParams(c)},
+			QueryParams: getApplianceDefaultQueryParams(c),
+		},
 		&resp)
 	return resp, WrapErr(err)
 }
@@ -321,7 +342,8 @@ func (c *ClientIMPL) GetApplianceByName(ctx context.Context, name string) (resp 
 		RequestConfig{
 			Method:      "GET",
 			Endpoint:    applianceURL,
-			QueryParams: qp},
+			QueryParams: qp,
+		},
 		&appList)
 	err = WrapErr(err)
 	if err != nil {

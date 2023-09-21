@@ -20,9 +20,10 @@ package gopowerstore
 
 import (
 	"context"
-	"github.com/stretchr/testify/assert"
 	"os"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 var C Client

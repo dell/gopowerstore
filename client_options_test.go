@@ -19,8 +19,9 @@
 package gopowerstore
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestClientOptions_Insecure(t *testing.T) {

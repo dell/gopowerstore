@@ -533,6 +533,7 @@ func TestClientIMPL_WearMetricsByDrive(t *testing.T) {
 	assert.Equal(t, "wear_metrics_by_drive", resp[0].Entity)
 	assert.Equal(t, float32(72.0), resp[0].PercentEnduranceRemaining)
 }
+
 func TestClientIMPL_SpaceMetricsByCluster(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
@@ -592,6 +593,7 @@ func TestClientIMPL_SpaceMetricsByVolume(t *testing.T) {
 	assert.Equal(t, "space_metrics_by_volume", resp[0].Entity)
 	assert.Equal(t, float32(72.0), resp[0].MaxThinSavings)
 }
+
 func TestClientIMPL_SpaceMetricsByVolumeFamily(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
@@ -611,6 +613,7 @@ func TestClientIMPL_SpaceMetricsByVolumeFamily(t *testing.T) {
 	assert.Equal(t, "space_metrics_by_volume_family", resp[0].Entity)
 	assert.Equal(t, float32(72.0), resp[0].SnapshotSavings)
 }
+
 func TestClientIMPL_SpaceMetricsByVM(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
@@ -630,6 +633,7 @@ func TestClientIMPL_SpaceMetricsByVM(t *testing.T) {
 	assert.Equal(t, "space_metrics_by_vm", resp[0].Entity)
 	assert.Equal(t, float32(72.0), resp[0].SnapshotSavings)
 }
+
 func TestClientIMPL_SpaceMetricsByStorageContainer(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
@@ -649,6 +653,7 @@ func TestClientIMPL_SpaceMetricsByStorageContainer(t *testing.T) {
 	assert.Equal(t, "space_metrics_by_storage_container", resp[0].Entity)
 	assert.Equal(t, float32(72.0), resp[0].SnapshotSavings)
 }
+
 func TestClientIMPL_SpaceMetricsByVolumeGroup(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
@@ -688,6 +693,7 @@ func TestClientIMPL_CopyMetricsByAppliance(t *testing.T) {
 	assert.Equal(t, "copy_metrics_by_appliance", resp[0].Entity)
 	assert.Equal(t, int32(987654431), *resp[0].RepeatCount)
 }
+
 func TestClientIMPL_CopyMetricsByCluster(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
@@ -706,6 +712,7 @@ func TestClientIMPL_CopyMetricsByCluster(t *testing.T) {
 	assert.Equal(t, "copy_metrics_by_cluster", resp[0].Entity)
 	assert.Equal(t, int32(987654431), *resp[0].RepeatCount)
 }
+
 func TestClientIMPL_CopyMetricsByVolumeGroup(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
@@ -725,6 +732,7 @@ func TestClientIMPL_CopyMetricsByVolumeGroup(t *testing.T) {
 	assert.Equal(t, "copy_metrics_by_vg", resp[0].Entity)
 	assert.Equal(t, int32(987654431), *resp[0].RepeatCount)
 }
+
 func TestClientIMPL_CopyMetricsByRemoteSystem(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
@@ -744,6 +752,7 @@ func TestClientIMPL_CopyMetricsByRemoteSystem(t *testing.T) {
 	assert.Equal(t, "copy_metrics_by_remote_system", resp[0].Entity)
 	assert.Equal(t, int32(987654431), *resp[0].RepeatCount)
 }
+
 func TestClientIMPL_CopyMetricsByVolume(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()

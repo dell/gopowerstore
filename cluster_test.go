@@ -19,9 +19,10 @@ package gopowerstore
 import (
 	"context"
 	"fmt"
+	"testing"
+
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 const (
