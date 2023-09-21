@@ -23,6 +23,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/dell/gopowerstore/api"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -59,5 +60,5 @@ func TestNewClient(t *testing.T) {
 func TestClientIMPL_SetTraceID(t *testing.T) {
 	ctx := context.Background()
 	ctx = C.SetTraceID(ctx, "123")
-	assert.Equal(t, "123", ctx.Value(clientOptionsDefaultRequestIDKey))
+	assert.Equal(t, "123", ctx.Value(api.Key(clientOptionsDefaultRequestIDKey)))
 }
