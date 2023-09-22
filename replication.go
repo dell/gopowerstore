@@ -19,6 +19,8 @@ package gopowerstore
 import (
 	"context"
 	"fmt"
+
+	"github.com/dell/gopowerstore/api"
 )
 
 type ActionType string
@@ -123,7 +125,6 @@ func (c *ClientIMPL) GetProtectionPolicyByName(ctx context.Context,
 	var policyList []ProtectionPolicy
 	policy := ProtectionPolicy{}
 	qp := c.APIClient().QueryParamsWithFields(&policy)
-	qp.Select("name,id,replication_rules(id),volume(id,name),volume_group(id,name)")
 	qp.RawArg("name", fmt.Sprintf("eq.%s", policyName))
 	qp.RawArg("type", fmt.Sprintf("eq.%s", "Protection"))
 	_, err = c.APIClient().Query(
@@ -156,6 +157,31 @@ func (c *ClientIMPL) GetProtectionPolicy(ctx context.Context, id string) (resp P
 			QueryParams: qc},
 		&resp)
 	return resp, WrapErr(err)
+}
+
+// GetProtectionPolicies returns a list of protection policies
+func (c *ClientIMPL) GetProtectionPolicies(ctx context.Context) ([]ProtectionPolicy, error) {
+	var result []ProtectionPolicy
+	err := c.readPaginatedData(func(offset int) (api.RespMeta, error) {
+		var page []ProtectionPolicy
+		policy := ProtectionPolicy{}
+		qp := c.APIClient().QueryParamsWithFields(&policy)
+		qp.Order("name")
+		qp.Offset(offset).Limit(paginationDefaultPageSize)
+		meta, err := c.APIClient().Query(
+			ctx,
+			RequestConfig{
+				Method:      "GET",
+				Endpoint:    policyURL,
+				QueryParams: qp},
+			&page)
+		err = WrapErr(err)
+		if err == nil {
+			result = append(result, page...)
+		}
+		return meta, err
+	})
+	return result, err
 }
 
 func (c *ClientIMPL) GetReplicationSessionByLocalResourceID(ctx context.Context, id string) (resp ReplicationSession, err error) {

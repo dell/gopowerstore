@@ -48,9 +48,11 @@ type Cluster struct {
 	State string `json:"state,omitempty"`
 	// NVMe Subsystem NQN for cluster
 	NVMeNQN string `json:"nvm_subsystem_nqn,omitempty"`
+	// Current clock time for the system in UTC format.
+	SystemTime string `json:"system_time,omitempty"`
 }
 
 // Fields returns fields which must be requested to fill struct
 func (r *Cluster) Fields() []string {
-	return []string{"id", "name", "management_address", "state"}
+	return []string{"id", "name", "management_address", "state", "system_time"}
 }

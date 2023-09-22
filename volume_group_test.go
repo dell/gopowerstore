@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2021-2022 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2021-2023 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,9 @@ const (
 	volumeGroupMockURL         = APIMockURL + volumeGroupURL
 	volumeGroupSnapshotMockURL = APIMockURL + volumeGroupURL + "/test-id" + snapshotURL
 )
+
+var volGroupSnapID = "1966782b-60c9-40e2-a1ee-9b2b8f6b98e7"
+var volGroupSnapID2 = "34380c29-2203-4490-aeb7-2853b9a85075"
 
 func TestClientIMPL_CreateVolumeGroup(t *testing.T) {
 	httpmock.Activate()
@@ -119,6 +122,61 @@ func TestClientIMPL_GetVolumeGroupsByVolumeID(t *testing.T) {
 	assert.NotNil(t, resp.VolumeGroup)
 	assert.NotEqual(t, len(resp.VolumeGroup), 0)
 	assert.Equal(t, volID2, resp.VolumeGroup[0].ID)
+}
+
+func TestClientIMPL_GetVolumeGroups(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	respData := fmt.Sprintf(`[{"id": "%s"}, {"id": "%s"}]`, volID, volID2)
+	httpmock.RegisterResponder("GET", volumeGroupMockURL,
+		httpmock.NewStringResponder(200, respData))
+	volumeGroups, err := C.GetVolumeGroups(context.Background())
+	assert.Nil(t, err)
+	assert.Len(t, volumeGroups, 2)
+	assert.Equal(t, volID, volumeGroups[0].ID)
+}
+
+func TestClientIMPL_GetVolumeGroupSnapshot(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	respData := fmt.Sprintf(`{"id": "%s"}`, volGroupSnapID)
+	httpmock.RegisterResponder("GET", fmt.Sprintf("%s/%s", volumeGroupMockURL, volGroupSnapID),
+		httpmock.NewStringResponder(200, respData))
+	snapshot, err := C.GetVolumeGroupSnapshot(context.Background(), volGroupSnapID)
+	assert.Nil(t, err)
+	assert.Equal(t, volGroupSnapID, snapshot.ID)
+}
+
+func TestClientIMPL_GetVolumeGroupSnapshots(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	respData := fmt.Sprintf(`[{"id": "%s"}, {"id": "%s"}]`, volGroupSnapID, volGroupSnapID2)
+	httpmock.RegisterResponder("GET", volumeGroupMockURL,
+		httpmock.NewStringResponder(200, respData))
+	snapshots, err := C.GetVolumeGroupSnapshots(context.Background())
+	assert.Nil(t, err)
+	assert.Len(t, snapshots, 2)
+	assert.Equal(t, volGroupSnapID, snapshots[0].ID)
+}
+
+func TestClientIMPL_GetVolumeGroupSnapshotByName(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	setResponder := func(respData string) {
+		httpmock.RegisterResponder("GET", volumeGroupMockURL,
+			httpmock.NewStringResponder(200, respData))
+	}
+	respData := fmt.Sprintf(`[{"id": "%s"}]`, volGroupSnapID)
+	setResponder(respData)
+	snapshot, err := C.GetVolumeGroupSnapshotByName(context.Background(), "test")
+	assert.Nil(t, err)
+	assert.Equal(t, volGroupSnapID, snapshot.ID)
+	httpmock.Reset()
+	setResponder("")
+	_, err = C.GetVolumeGroupSnapshotByName(context.Background(), "test")
+	assert.NotNil(t, err)
+	apiError := err.(APIError)
+	assert.True(t, apiError.NotFound())
 }
 
 func TestClientIMPL_ModifyVolumeGroup(t *testing.T) {

@@ -21,9 +21,10 @@ package gopowerstore
 import (
 	"context"
 	"fmt"
+	"testing"
+
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 const (
@@ -73,4 +74,72 @@ func TestClientIMPL_GetHostGroupByName(t *testing.T) {
 	setResponder("")
 	_, err = C.GetHostByName(context.Background(), "test")
 	assert.NotNil(t, err)
+}
+
+func TestClientIMPL_GetHostGroup(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	respData := fmt.Sprintf(`{"id": "%s"}`, hostGroupID)
+	httpmock.RegisterResponder("GET", fmt.Sprintf("%s/%s", hostGroupMockURL, hostGroupID),
+		httpmock.NewStringResponder(200, respData))
+	hostGroup, err := C.GetHostGroup(context.Background(), hostGroupID)
+	assert.Nil(t, err)
+	assert.Equal(t, hostGroupID, hostGroup.ID)
+}
+
+func TestClientIMPL_GetHostGroups(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	respData := fmt.Sprintf(`[{"id": "%s"}, {"id": "%s"}]`, hostGroupID, hostGroupID2)
+	httpmock.RegisterResponder("GET", hostGroupMockURL,
+		httpmock.NewStringResponder(200, respData))
+	hostGroups, err := C.GetHostGroups(context.Background())
+	assert.Nil(t, err)
+	assert.Len(t, hostGroups, 2)
+	assert.Equal(t, hostGroupID, hostGroups[0].ID)
+}
+
+func TestClientIMPL_CreateHostGroup(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	respData := fmt.Sprintf(`{"id": "%s"}`, hostGroupID)
+	httpmock.RegisterResponder("POST", hostGroupMockURL,
+		httpmock.NewStringResponder(201, respData))
+
+	createReq := HostGroupCreate{
+		Name:        "hg-test",
+		Description: "create hg-test",
+		HostIDs:     []string{hostID},
+	}
+
+	resp, err := C.CreateHostGroup(context.Background(), &createReq)
+	assert.Nil(t, err)
+	assert.Equal(t, hostGroupID, resp.ID)
+}
+
+func TestClientIMPL_DeleteHostGroup(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	httpmock.RegisterResponder("DELETE", fmt.Sprintf("%s/%s", hostGroupMockURL, hostGroupID),
+		httpmock.NewStringResponder(204, ""))
+
+	resp, err := C.DeleteHostGroup(context.Background(), hostGroupID)
+	assert.Nil(t, err)
+	assert.Len(t, string(resp), 0)
+}
+
+func TestClientIMPL_ModifyHostGroup(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	respData := fmt.Sprintf(``)
+	httpmock.RegisterResponder("PATCH", fmt.Sprintf("%s/%s", hostGroupMockURL, hostGroupID),
+		httpmock.NewStringResponder(201, respData))
+
+	modifyParams := HostGroupModify{
+		AddHostIDs: []string{hostID2},
+	}
+
+	resp, err := C.ModifyHostGroup(context.Background(), &modifyParams, hostGroupID)
+	assert.Nil(t, err)
+	assert.Equal(t, EmptyResponse(""), resp)
 }
