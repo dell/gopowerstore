@@ -164,7 +164,7 @@ func New(apiURL string, username string,
 
 const errorSeverity = "Error"
 
-var m *sync.Mutex
+var m sync.Mutex
 
 type apiErrorMsg struct {
 	Messages *[]ErrorMsg `json:"messages"`
