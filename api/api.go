@@ -35,6 +35,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -163,6 +164,8 @@ func New(apiURL string, username string,
 
 const errorSeverity = "Error"
 
+var m *sync.Mutex
+
 type apiErrorMsg struct {
 	Messages *[]ErrorMsg `json:"messages"`
 }
@@ -206,7 +209,9 @@ func (c *ClientIMPL) GetCustomHTTPHeaders() http.Header {
 
 // SetCustomHTTPHeaders method register headers which will be sent with every request
 func (c *ClientIMPL) SetCustomHTTPHeaders(headers http.Header) {
+	m.Lock()
 	c.customHTTPHeaders = headers
+	m.Unlock()
 }
 
 // SetLogger set logger for use by gopowerstore
