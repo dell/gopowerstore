@@ -350,11 +350,13 @@ func (c *ClientIMPL) prepareRequest(ctx context.Context, method, requestURL, tra
 	}
 	req = req.WithContext(ctx)
 	req.SetBasicAuth(c.username, c.password)
+	m.Lock()
 	for key, values := range c.customHTTPHeaders {
 		for _, elem := range values {
 			req.Header.Add(key, elem)
 		}
 	}
+	m.Unlock()
 	addMetaData(req, body)
 	if debug {
 		if requestData, err := httputil.DumpRequest(req, true); err == nil {
