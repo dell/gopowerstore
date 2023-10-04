@@ -164,7 +164,8 @@ func New(apiURL string, username string,
 
 const errorSeverity = "Error"
 
-var m sync.Mutex
+// var m sync.Mutex
+var m = &sync.RWMutex{}
 
 type apiErrorMsg struct {
 	Messages *[]ErrorMsg `json:"messages"`
@@ -350,13 +351,13 @@ func (c *ClientIMPL) prepareRequest(ctx context.Context, method, requestURL, tra
 	}
 	req = req.WithContext(ctx)
 	req.SetBasicAuth(c.username, c.password)
-	m.Lock()
+	m.RLock()
 	for key, values := range c.customHTTPHeaders {
 		for _, elem := range values {
 			req.Header.Add(key, elem)
 		}
 	}
-	m.Unlock()
+	m.RUnlock()
 	addMetaData(req, body)
 	if debug {
 		if requestData, err := httputil.DumpRequest(req, true); err == nil {
