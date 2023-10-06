@@ -120,7 +120,7 @@ type ClientIMPL struct {
 	defaultTimeout         uint64
 	requestIDKey           string
 	customHTTPHeaders      http.Header
-	customHTTPHeadersMutex sync.Mutex
+	CustomHTTPHeadersMutex sync.Mutex
 	logger                 Logger
 	apiThrottle            TimeoutSemaphoreInterface
 }
@@ -208,8 +208,8 @@ func (c *ClientIMPL) GetCustomHTTPHeaders() http.Header {
 
 // SetCustomHTTPHeaders method register headers which will be sent with every request
 func (c *ClientIMPL) SetCustomHTTPHeaders(headers http.Header) {
-	c.customHTTPHeadersMutex.Lock()
-	defer c.customHTTPHeadersMutex.Unlock()
+	c.CustomHTTPHeadersMutex.Lock()
+	defer c.CustomHTTPHeadersMutex.Unlock()
 	c.customHTTPHeaders = headers
 }
 
@@ -350,8 +350,8 @@ func (c *ClientIMPL) prepareRequest(ctx context.Context, method, requestURL, tra
 	req = req.WithContext(ctx)
 	req.SetBasicAuth(c.username, c.password)
 	// Use a mutex to protect the map while it's being accessed
-	c.customHTTPHeadersMutex.Lock()
-	defer c.customHTTPHeadersMutex.Unlock()
+	c.CustomHTTPHeadersMutex.Lock()
+	defer c.CustomHTTPHeadersMutex.Unlock()
 
 	for key, values := range c.customHTTPHeaders {
 		for _, elem := range values {
