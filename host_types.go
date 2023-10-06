@@ -30,6 +30,30 @@ const (
 	OSTypeEnumESXi OSTypeEnum = "ESXi"
 )
 
+// HostTypeEnum gives type of host.
+type HostTypeEnum string
+
+const (
+	// HostTypeEnumExternal captures enum value "External"
+	HostTypeEnumExternal HostTypeEnum = "External"
+	// HostTypeEnumInternal captures enum value "Internal"
+	HostTypeEnumInternal HostTypeEnum = "Internal"
+)
+
+// HostConnectivityEnum Operating system of the host.
+type HostConnectivityEnum string
+
+const (
+	// HostConnectivityEnumLocalOnly captures enum value "Local_Only"
+	HostConnectivityEnumLocalOnly HostConnectivityEnum = "Local_Only"
+	// HostConnectivityEnumMetroOptimizeBoth captures enum value "Metro_Optimize_Both"
+	HostConnectivityEnumMetroOptimizeBoth HostConnectivityEnum = "Metro_Optimize_Both"
+	// HostConnectivityEnumMetroOptimizeLocal captures enum value "Metro_Optimize_Local"
+	HostConnectivityEnumMetroOptimizeLocal HostConnectivityEnum = "Metro_Optimize_Local"
+	// HostConnectivityEnumMetroOptimizeRemote captures enum value "Metro_Optimize_Remote"
+	HostConnectivityEnumMetroOptimizeRemote HostConnectivityEnum = "Metro_Optimize_Remote"
+)
+
 // InitiatorProtocolTypeEnum  Protocol type of the host initiator.
 //   - iSCSI - An iSCSI initiator.
 //   - FC - A Fibre Channel initiator.
@@ -134,6 +158,8 @@ type HostCreate struct {
 	OsType *OSTypeEnum `json:"os_type"`
 	// Metadata addition for Hosts on array with OE version 3.0 and above
 	Metadata *map[string]string `json:"metadata,omitempty"`
+	// HostConnectivity connectivity type for host and hostGroup.
+	HostConnectivity HostConnectivityEnum `json:"host_connectivity,omitempty"`
 }
 
 // UpdateInitiatorInHost update initiator in host
@@ -170,6 +196,8 @@ type HostModify struct {
 	Name *string `json:"name,omitempty"`
 	// The list of initiator port_names to be removed.
 	RemoveInitiators *[]string `json:"remove_initiators,omitempty"`
+	// HostConnectivity connectivity type for host and hostGroup.
+	HostConnectivity HostConnectivityEnum `json:"host_connectivity,omitempty"`
 }
 
 // Host host instance
@@ -186,12 +214,31 @@ type Host struct {
 	Name string `json:"name,omitempty"`
 	// os type
 	OsType OSTypeEnum `json:"os_type,omitempty"`
+	// HostConnectivity connectivity type for host and hostGroup.
+	HostConnectivity HostConnectivityEnum `json:"host_connectivity,omitempty"`
+	// Type of the host
+	Type HostTypeEnum `json:"type,omitempty"`
+	// Localized message string corresponding to type
+	TypeL10n string `json:"type_l10n,omitempty"`
+	// Localized message string corresponding to os_type
+	OSTypeL10n string `json:"os_type_l10n,omitempty"`
+	// Localized message string corresponding to host_connectivity
+	HostConnectivityL10n string `json:"host_connectivity_l10n,omitempty"`
+	// Properties of a host group
+	HostGroup HostGroup `json:"host_group,omitempty"`
+	// Details about an import host system.
+	ImportHostSystem ImportHostSystem `json:"import_host_system,omitempty"`
+	// Details about a configured host or host group attached to a volume.
+	MappedHosts []MappedHosts `json:"mapped_hosts,omitempty"`
+	// Virtual volume mapping details.
+	HostVirtualVolumeMappings []HostVirtualVolumeMappings `json:"host_virtual_volume_mappings,omitempty"`
+	// Properties of a vsphere_host.
+	VsphereHosts []VsphereHosts `json:"vsphere_hosts,omitempty"`
 }
 
 // Fields returns fields which must be requested to fill struct
 func (h *Host) Fields() []string {
-	return []string{"id", "name", "description", "host_group_id",
-		"os_type", "host_initiators"}
+	return []string{"*"}
 }
 
 // HostVolumeMapping Details about a configured host or host group attached to a volume.
@@ -231,4 +278,40 @@ type HostVolumeAttach struct {
 type HostVolumeDetach struct {
 	// Volume to detach.
 	VolumeID *string `json:"volume_id"`
+}
+
+// ImportHostSystem - Details about an import host system.
+type ImportHostSystem struct {
+	// Unique identifier of the import host system.
+	ID string `json:"id"`
+	// Hostname or IPv4 address of the import host system.
+	AgentAddress string `json:"agent_address"`
+}
+
+// MappedHosts - Details about a configured host or host group attached to a volume.
+type MappedHosts struct {
+	// Unique identifier of a mapping between a host and a volume.
+	ID string `json:"id"`
+	// Unique identifier of a host attached to a volume.
+	HostID string `json:"host_id"`
+	// Unique identifier of the volume to which the host is attached.
+	VolumeID string `json:"volume_id"`
+}
+
+// HostVirtualVolumeMappings - Virtual volume mapping details.
+type HostVirtualVolumeMappings struct {
+	// Unique identifier of a mapping between a host and a virtual volume.
+	ID string `json:"id"`
+	// Unique identifier of a host attached to a virtual volume.
+	HostID string `json:"host_id"`
+	// Unique identifier of the virtual volume to which the host is attached.
+	VirtualVolumeID string `json:"virtual_volume_id"`
+}
+
+// VsphereHosts - Properties of a vsphere_host.
+type VsphereHosts struct {
+	// Unique identifier of the vsphere_host instance.
+	ID string `json:"id"`
+	// User-assigned name of the ESXi host in vCenter
+	Name string `json:"name"`
 }

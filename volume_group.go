@@ -71,6 +71,31 @@ func (c *ClientIMPL) GetVolumeGroupByName(ctx context.Context, name string) (res
 	return groups[0], err
 }
 
+// GetVolumeGroups returns a list of volume groups
+func (c *ClientIMPL) GetVolumeGroups(ctx context.Context) ([]VolumeGroup, error) {
+	var result []VolumeGroup
+	err := c.readPaginatedData(func(offset int) (api.RespMeta, error) {
+		var page []VolumeGroup
+		volume_group := VolumeGroup{}
+		qp := c.APIClient().QueryParamsWithFields(&volume_group)
+		qp.Order("name")
+		qp.Offset(offset).Limit(paginationDefaultPageSize)
+		meta, err := c.APIClient().Query(
+			ctx,
+			RequestConfig{
+				Method:      "GET",
+				Endpoint:    volumeGroupURL,
+				QueryParams: qp},
+			&page)
+		err = WrapErr(err)
+		if err == nil {
+			result = append(result, page...)
+		}
+		return meta, err
+	})
+	return result, err
+}
+
 // CreateVolumeGroup creates new volume group
 func (c *ClientIMPL) CreateVolumeGroup(ctx context.Context,
 	createParams *VolumeGroupCreate) (resp CreateResponse, err error) {
@@ -179,4 +204,65 @@ func (c *ClientIMPL) CreateVolumeGroupSnapshot(ctx context.Context, volumeGroupI
 			Body:     createParams},
 		&resp)
 	return resp, WrapErr(err)
+}
+
+// GetVolumeGroupSnapshot query and return specific snapshot by id
+func (c *ClientIMPL) GetVolumeGroupSnapshot(ctx context.Context, snapID string) (resVol VolumeGroup, err error) {
+	qp := getVolumeGroupDefaultQueryParams(c)
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:      "GET",
+			Endpoint:    volumeGroupURL,
+			ID:          snapID,
+			QueryParams: qp},
+		&resVol)
+	return resVol, WrapErr(err)
+}
+
+// GetVolumeGroupSnapshots returns all volume group snapshots
+func (c *ClientIMPL) GetVolumeGroupSnapshots(ctx context.Context) ([]VolumeGroup, error) {
+	var result []VolumeGroup
+	err := c.readPaginatedData(func(offset int) (api.RespMeta, error) {
+		var page []VolumeGroup
+		qp := getVolumeGroupDefaultQueryParams(c)
+		qp.RawArg("type", fmt.Sprintf("eq.%s", VolumeTypeEnumSnapshot))
+		qp.Order("name")
+		qp.Offset(offset).Limit(paginationDefaultPageSize)
+		meta, err := c.APIClient().Query(
+			ctx,
+			RequestConfig{
+				Method:      "GET",
+				Endpoint:    volumeGroupURL,
+				QueryParams: qp},
+			&page)
+		err = WrapErr(err)
+		if err == nil {
+			result = append(result, page...)
+		}
+		return meta, err
+	})
+	return result, err
+}
+
+// GetVolumeGroupSnapshotByName fetches volume group snapshots by name
+func (c *ClientIMPL) GetVolumeGroupSnapshotByName(ctx context.Context, name string) (resVol VolumeGroup, err error) {
+	var volGroupList []VolumeGroup
+	qp := getVolumeGroupDefaultQueryParams(c)
+	qp.RawArg("name", fmt.Sprintf("eq.%s", name))
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:      "GET",
+			Endpoint:    volumeGroupURL,
+			QueryParams: qp},
+		&volGroupList)
+	err = WrapErr(err)
+	if err != nil {
+		return resVol, err
+	}
+	if len(volGroupList) != 1 {
+		return resVol, NewNotFoundError()
+	}
+	return volGroupList[0], err
 }

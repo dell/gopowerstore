@@ -21,6 +21,7 @@ package gopowerstore
 import (
 	"context"
 	"fmt"
+
 	"github.com/dell/gopowerstore/api"
 )
 
@@ -87,4 +88,83 @@ func (c *ClientIMPL) GetHostGroupByName(ctx context.Context, name string) (resp 
 		return resp, NewHostIsNotExistError()
 	}
 	return hostList[0], err
+}
+
+// GetHostGroup query and return specific host group id
+func (c *ClientIMPL) GetHostGroup(ctx context.Context, id string) (resp HostGroup, err error) {
+	hostGroup := HostGroup{}
+	qc := c.APIClient().QueryParamsWithFields(&hostGroup)
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:      "GET",
+			Endpoint:    hostGroupURL,
+			ID:          id,
+			QueryParams: qc},
+		&resp)
+	return resp, WrapErr(err)
+}
+
+// GetHostGroups returns a list of host groups
+func (c *ClientIMPL) GetHostGroups(ctx context.Context) ([]HostGroup, error) {
+	var result []HostGroup
+	err := c.readPaginatedData(func(offset int) (api.RespMeta, error) {
+		var page []HostGroup
+		host_group := HostGroup{}
+		qp := c.APIClient().QueryParamsWithFields(&host_group)
+		qp.Order("name")
+		qp.Offset(offset).Limit(paginationDefaultPageSize)
+		meta, err := c.APIClient().Query(
+			ctx,
+			RequestConfig{
+				Method:      "GET",
+				Endpoint:    hostGroupURL,
+				QueryParams: qp},
+			&page)
+		err = WrapErr(err)
+		if err == nil {
+			result = append(result, page...)
+		}
+		return meta, err
+	})
+	return result, err
+}
+
+// CreateHostGroup creates new host group
+func (c *ClientIMPL) CreateHostGroup(ctx context.Context,
+	createParams *HostGroupCreate) (resp CreateResponse, err error) {
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:   "POST",
+			Endpoint: hostGroupURL,
+			Body:     createParams},
+		&resp)
+	return resp, WrapErr(err)
+}
+
+// DeleteHostGroup deletes existing Host Group
+func (c *ClientIMPL) DeleteHostGroup(ctx context.Context, id string) (resp EmptyResponse, err error) {
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:   "DELETE",
+			Endpoint: hostGroupURL,
+			ID:       id,
+		},
+		&resp)
+	return resp, WrapErr(err)
+}
+
+func (c *ClientIMPL) ModifyHostGroup(ctx context.Context,
+	modifyParams *HostGroupModify, id string) (resp EmptyResponse, err error) {
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:   "PATCH",
+			Endpoint: hostGroupURL,
+			ID:       id,
+			Body:     modifyParams},
+		&resp)
+	return resp, WrapErr(err)
 }
