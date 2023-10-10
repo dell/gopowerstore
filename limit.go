@@ -18,29 +18,45 @@
 
 package gopowerstore
 
-import "context"
+import (
+	"context"
+	"strings"
 
-const (
-	limitURL      = "limit"
-	maxVolumeSize = "Max_Volume_Size"
+	"github.com/dell/gopowerstore/api"
 )
 
-func (c *ClientIMPL) callGetLimit(ctx context.Context) (resp map[string]int64, err error) {
+const (
+	limitURL = "limit"
+)
+
+func (c *ClientIMPL) callGetLimit(ctx context.Context) (resp []Limit, err error) {
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{
-			Method:   "GET",
-			Endpoint: limitURL,
+			Method:      "GET",
+			Endpoint:    limitURL,
+			QueryParams: getLimitDefaultQueryParams(c),
 		},
 		&resp)
 	return resp, WrapErr(err)
 }
 
+// GetMaxVolumeSize - Returns the max size of a volume supported by the array
 func (c *ClientIMPL) GetMaxVolumeSize(ctx context.Context) (int64, error) {
 	resp, err := c.callGetLimit(ctx)
-	limit, ok := resp[maxVolumeSize]
-	if !ok {
-		limit = -1
+
+	limit := int64(-1)
+	for _, entry := range resp {
+		if strings.EqualFold(entry.ID, string(MaxVolumeSize)) {
+			limit = entry.Limit
+			break
+		}
 	}
+
 	return limit, err
+}
+
+func getLimitDefaultQueryParams(c Client) api.QueryParamsEncoder {
+	limit := Limit{}
+	return c.APIClient().QueryParamsWithFields(&limit)
 }
