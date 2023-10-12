@@ -36,6 +36,10 @@ func TestGetMaxVolumeSize(t *testing.T) {
 
 	limit, err := C.GetMaxVolumeSize(context.Background())
 
+	// reset custom header
+	customHeaders.Del("DELL-VISIBILITY")
+	C.SetCustomHTTPHeaders(customHeaders)
+
 	checkAPIErr(t, err)
 	assert.Positive(t, limit)
 }
