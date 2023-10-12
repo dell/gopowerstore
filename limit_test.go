@@ -71,7 +71,8 @@ func TestClientIMPL_GetMaxVolumeSize(t *testing.T) {
 			httpmock.Activate()
 			defer httpmock.DeactivateAndReset()
 			if tt.wantErr {
-				httpmock.RegisterResponder("GET", limitMockURL, httpmock.NewErrorResponder(errors.New("REST endpoint [GET /api/rest/limit?select=id%2Climit] cannot be found.")))
+				//nolint:revive
+				httpmock.RegisterResponder("GET", limitMockURL, httpmock.NewErrorResponder(errors.New("The REST endpoint [GET /api/rest/limit?select=id%2Climit] cannot be found.")))
 			} else {
 				httpmock.RegisterResponder("GET", limitMockURL, httpmock.NewStringResponder(200, tt.mockResponse))
 			}
