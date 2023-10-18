@@ -26,7 +26,9 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
+	"net/http/cookiejar"
 	"net/http/httputil"
 	"net/url"
 	"os"
@@ -36,13 +38,19 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"golang.org/x/net/publicsuffix"
 )
 
 var (
 	debug = false
+	token string
 )
 
-const paginationHeader = "content-range"
+const (
+	paginationHeader = "content-range"
+	dellEmcToken     = "DELL-EMC-TOKEN" // #nosec G101
+)
 
 // RequestConfig provide options for the request
 type RequestConfig struct {
@@ -125,7 +133,8 @@ type ClientIMPL struct {
 
 // New creates and initialize API client
 func New(apiURL string, username string,
-	password string, insecure bool, defaultTimeout, rateLimit uint64, requestIDKey string) (*ClientIMPL, error) {
+	password string, insecure bool, defaultTimeout, rateLimit uint64, requestIDKey string,
+) (*ClientIMPL, error) {
 	debug, _ = strconv.ParseBool(os.Getenv("GOPOWERSTORE_DEBUG"))
 	if apiURL == "" || username == "" || password == "" {
 		return nil, errors.New("API ApiClient can't be initialized: " +
@@ -144,6 +153,16 @@ func New(apiURL string, username string,
 		}
 	} else {
 		client = &http.Client{}
+	}
+
+	// Set cookie jar to enable session management via auth_cookie
+	jar, err := cookiejar.New(&cookiejar.Options{PublicSuffixList: publicsuffix.List})
+	if err != nil {
+		log.Printf("Failed to set cookie jar. error: %s", err)
+		log.Print("Session management is disabled.")
+	} else {
+		client.Jar = jar
+		log.Print("Session management is enabled.")
 	}
 
 	throttle := NewTimeoutSemaphore(int(defaultTimeout), int(rateLimit), &defaultLogger{})
@@ -191,8 +210,10 @@ func buildError(r *http.Response) *ErrorMsg {
 			s := buf.String()
 			errMsg = fmt.Sprintf("%s: %s", errMsg, s)
 		}
-		return &ErrorMsg{StatusCode: r.StatusCode, Severity: errorSeverity,
-			Message: errMsg}
+		return &ErrorMsg{
+			StatusCode: r.StatusCode, Severity: errorSeverity,
+			Message: errMsg,
+		}
 	}
 	firstErrMsg := (*apiErrorMsg.Messages)[0]
 	firstErrMsg.StatusCode = r.StatusCode
@@ -219,8 +240,8 @@ func (c *ClientIMPL) SetLogger(logger Logger) {
 func (c *ClientIMPL) Query(
 	ctx context.Context,
 	cfg RequestConfigRenderer,
-	resp interface{}) (RespMeta, error) {
-
+	resp interface{},
+) (RespMeta, error) {
 	config := cfg.RenderRequestConfig()
 	meta := RespMeta{}
 	var cancelFuncPtr *func()
@@ -252,6 +273,7 @@ func (c *ClientIMPL) Query(
 	}
 	defer r.Body.Close() // #nosec G307
 
+	token = r.Header.Get(dellEmcToken)
 	if debug {
 		dump, _ := httputil.DumpResponse(r, true)
 		replacedHeader := prepareHTTPDump(dump) // Replace sensitive parts of response headers
@@ -271,7 +293,6 @@ func (c *ClientIMPL) Query(
 	default:
 		return meta, buildError(r)
 	}
-
 }
 
 func addMetaData(req *http.Request, body interface{}) {
@@ -303,7 +324,8 @@ func (c *ClientIMPL) QueryParamsWithFields(fp FieldProvider) QueryParamsEncoder 
 }
 
 func (c *ClientIMPL) prepareRequestURL(endpoint, id string, action string,
-	queryParams QueryParamsEncoder) (string, error) {
+	queryParams QueryParamsEncoder,
+) (string, error) {
 	requestURL, err := url.Parse(c.apiURL)
 	if err != nil {
 		return "", err
@@ -325,7 +347,8 @@ func (c *ClientIMPL) prepareRequestURL(endpoint, id string, action string,
 }
 
 func (c *ClientIMPL) prepareRequest(ctx context.Context, method, requestURL, traceMsg string,
-	body interface{}) (*http.Request, error) {
+	body interface{},
+) (*http.Request, error) {
 	var req *http.Request
 	var err error
 	if body != nil && !(reflect.ValueOf(body).Kind() == reflect.Ptr && reflect.ValueOf(body).IsNil()) {
@@ -345,6 +368,7 @@ func (c *ClientIMPL) prepareRequest(ctx context.Context, method, requestURL, tra
 	}
 	req = req.WithContext(ctx)
 	req.SetBasicAuth(c.username, c.password)
+	req.Header.Add(dellEmcToken, token)
 	for key, values := range c.customHTTPHeaders {
 		for _, elem := range values {
 			req.Header.Add(key, elem)
@@ -415,8 +439,8 @@ func (c *ClientIMPL) updatePaginationInfoInMeta(meta *RespMeta, r *http.Response
 }
 
 func prepareHTTPDump(dump []byte) string {
-	content := replaceSensitiveHeaderInfo(dump)
-	return newlineRegexp.ReplaceAllString(content, " ")
+	// content := replaceSensitiveHeaderInfo(dump)
+	return newlineRegexp.ReplaceAllString(string(dump), " ")
 }
 
 var newlineRegexp = regexp.MustCompile(`\r?\n`)
