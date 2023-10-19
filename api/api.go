@@ -273,7 +273,6 @@ func (c *ClientIMPL) Query(
 	}
 	defer r.Body.Close() // #nosec G307
 
-	token = r.Header.Get(dellEmcToken)
 	if debug {
 		dump, _ := httputil.DumpResponse(r, true)
 		replacedHeader := prepareHTTPDump(dump) // Replace sensitive parts of response headers
@@ -284,6 +283,9 @@ func (c *ClientIMPL) Query(
 	case resp == nil:
 		return meta, nil
 	case r.StatusCode >= 200 && r.StatusCode < 300:
+		// Save DELL-EMC-TOKEN if it was a successful response.
+		token = r.Header.Get(dellEmcToken)
+
 		c.updatePaginationInfoInMeta(&meta, r)
 		err = json.NewDecoder(r.Body).Decode(resp)
 		if err == io.EOF {
