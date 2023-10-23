@@ -43,10 +43,7 @@ import (
 	"golang.org/x/net/publicsuffix"
 )
 
-var (
-	debug = false
-	token string
-)
+var debug = false
 
 const (
 	paginationHeader = "content-range"
@@ -131,6 +128,7 @@ type ClientIMPL struct {
 	logger            Logger
 	apiThrottle       TimeoutSemaphoreInterface
 	loginMutex        sync.Mutex
+	token             string
 }
 
 // New creates and initialize API client
@@ -292,7 +290,7 @@ func (c *ClientIMPL) Query(
 	case r.StatusCode >= 200 && r.StatusCode < 300:
 		// Save DELL-EMC-TOKEN if it was a successful response.
 		if len(r.Header.Get(dellEmcToken)) != 0 {
-			token = r.Header.Get(dellEmcToken)
+			c.token = r.Header.Get(dellEmcToken)
 		}
 
 		c.updatePaginationInfoInMeta(&meta, r)
@@ -406,8 +404,8 @@ func (c *ClientIMPL) prepareRequest(ctx context.Context, method, requestURL, tra
 	}
 	req = req.WithContext(ctx)
 	req.SetBasicAuth(c.username, c.password)
-	if len(token) != 0 {
-		req.Header.Add(dellEmcToken, token)
+	if len(c.token) != 0 {
+		req.Header.Add(dellEmcToken, c.token)
 	}
 	for key, values := range c.customHTTPHeaders {
 		for _, elem := range values {
