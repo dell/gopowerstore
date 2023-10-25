@@ -477,8 +477,8 @@ func (c *ClientIMPL) updatePaginationInfoInMeta(meta *RespMeta, r *http.Response
 }
 
 func prepareHTTPDump(dump []byte) string {
-	// content := replaceSensitiveHeaderInfo(dump)
-	return newlineRegexp.ReplaceAllString(string(dump), " ")
+	content := replaceSensitiveHeaderInfo(dump)
+	return newlineRegexp.ReplaceAllString(content, " ")
 }
 
 var newlineRegexp = regexp.MustCompile(`\r?\n`)
