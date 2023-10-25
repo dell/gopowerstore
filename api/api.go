@@ -39,8 +39,6 @@ import (
 	"strings"
 	"sync"
 	"time"
-
-	"golang.org/x/net/publicsuffix"
 )
 
 var debug = false
@@ -156,7 +154,7 @@ func New(apiURL string, username string,
 	}
 
 	// Set cookie jar to enable session management via auth_cookie
-	jar, err := cookiejar.New(&cookiejar.Options{PublicSuffixList: publicsuffix.List})
+	jar, err := cookiejar.New(&cookiejar.Options{PublicSuffixList: nil})
 	if err != nil {
 		log.Printf("Failed to set cookie jar. error: %s", err)
 		log.Print("Session management is disabled.")
