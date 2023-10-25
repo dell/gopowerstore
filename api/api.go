@@ -180,7 +180,7 @@ func New(apiURL string, username string,
 	}
 
 	// Create a login session after the client is initialized
-	clientImpl.login(context.Background())
+	clientImpl.login(context.Background()) // #nosec G104
 
 	return clientImpl, nil
 }
@@ -300,7 +300,7 @@ func (c *ClientIMPL) Query(
 		}
 		return meta, err
 	case r.StatusCode == http.StatusForbidden:
-		loginResp, _ := c.login(ctx)
+		loginResp, err := c.login(ctx)
 		// Invalid credentials - No need to retry if response of login api was 401 Unauthorized.
 		if err != nil || loginResp.Status == http.StatusUnauthorized {
 			return meta, buildError(r)
