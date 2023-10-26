@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2020-2022 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2020-2023 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -287,8 +287,9 @@ func (c *ClientIMPL) Query(
 		return meta, nil
 	case r.StatusCode >= 200 && r.StatusCode < 300:
 		// Save DELL-EMC-TOKEN if it was a successful response.
-		if len(r.Header.Get(dellEmcToken)) != 0 {
-			c.token = r.Header.Get(dellEmcToken)
+		token := r.Header.Get(dellEmcToken)
+		if len(token) != 0 {
+			c.token = token
 		}
 
 		c.updatePaginationInfoInMeta(&meta, r)
