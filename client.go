@@ -275,7 +275,8 @@ func NewClient() (Client, error) {
 // NewClientWithArgs returns new PowerStore API client initialized from args
 func NewClientWithArgs(
 	apiURL string,
-	username, password string, options *ClientOptions) (Client, error) {
+	username, password string, options *ClientOptions,
+) (Client, error) {
 	client, err := api.New(apiURL, username, password,
 		options.Insecure(), options.DefaultTimeout(), options.RateLimit(), options.RequestIDKey())
 	if err != nil {

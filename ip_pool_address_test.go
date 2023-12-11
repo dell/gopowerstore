@@ -57,5 +57,4 @@ func TestClientIMPL_GetIPPoolAddress_NotFound(t *testing.T) {
 
 	_, err := C.GetStorageISCSITargetAddresses(context.Background())
 	assert.NotNil(t, err)
-
 }

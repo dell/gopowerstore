@@ -21,9 +21,10 @@ package gopowerstore
 import (
 	"context"
 	"fmt"
+	"testing"
+
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 const (
@@ -31,8 +32,10 @@ const (
 	nfsServerMockURL = APIMockURL + nfsServerURL
 )
 
-var nfsID = "3765da74-28a7-49db-a693-10cec1de91f8"
-var nfsServerID = "5e8d8e8e-671b-336f-db4e-cee0fbdc981e"
+var (
+	nfsID       = "3765da74-28a7-49db-a693-10cec1de91f8"
+	nfsServerID = "5e8d8e8e-671b-336f-db4e-cee0fbdc981e"
+)
 
 func TestClientIMPL_GetNFSExportByName(t *testing.T) {
 	httpmock.Activate()

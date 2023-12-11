@@ -41,19 +41,22 @@ const (
 
 // CreateReplicationRule creates new replication rule
 func (c *ClientIMPL) CreateReplicationRule(ctx context.Context,
-	createParams *ReplicationRuleCreate) (resp CreateResponse, err error) {
+	createParams *ReplicationRuleCreate,
+) (resp CreateResponse, err error) {
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{
 			Method:   "POST",
 			Endpoint: replicationRuleURL,
-			Body:     createParams},
+			Body:     createParams,
+		},
 		&resp)
 	return resp, WrapErr(err)
 }
 
 func (c *ClientIMPL) GetReplicationRuleByName(ctx context.Context,
-	ruleName string) (resp ReplicationRule, err error) {
+	ruleName string,
+) (resp ReplicationRule, err error) {
 	var ruleList []ReplicationRule
 	rule := ReplicationRule{}
 	qp := c.APIClient().QueryParamsWithFields(&rule)
@@ -64,7 +67,8 @@ func (c *ClientIMPL) GetReplicationRuleByName(ctx context.Context,
 		RequestConfig{
 			Method:      "GET",
 			Endpoint:    replicationRuleURL,
-			QueryParams: qp},
+			QueryParams: qp,
+		},
 		&ruleList)
 
 	err = WrapErr(err)
@@ -79,7 +83,6 @@ func (c *ClientIMPL) GetReplicationRuleByName(ctx context.Context,
 
 // GetReplicationRule query and return specific replication rule by id
 func (c *ClientIMPL) GetReplicationRule(ctx context.Context, id string) (resp ReplicationRule, err error) {
-
 	rule := ReplicationRule{}
 	qp := c.APIClient().QueryParamsWithFields(&rule)
 
@@ -89,20 +92,23 @@ func (c *ClientIMPL) GetReplicationRule(ctx context.Context, id string) (resp Re
 			Method:      "GET",
 			Endpoint:    replicationRuleURL,
 			ID:          id,
-			QueryParams: qp},
+			QueryParams: qp,
+		},
 		&resp)
 	return resp, WrapErr(err)
 }
 
 // CreateProtectionPolicy creates new protection policy
 func (c *ClientIMPL) CreateProtectionPolicy(ctx context.Context,
-	createParams *ProtectionPolicyCreate) (resp CreateResponse, err error) {
+	createParams *ProtectionPolicyCreate,
+) (resp CreateResponse, err error) {
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{
 			Method:   "POST",
 			Endpoint: policyURL,
-			Body:     createParams},
+			Body:     createParams,
+		},
 		&resp)
 	return resp, WrapErr(err)
 }
@@ -115,13 +121,15 @@ func (c *ClientIMPL) ModifyProtectionPolicy(ctx context.Context, modifyParams *P
 			Method:   "PATCH",
 			Endpoint: policyURL,
 			ID:       id,
-			Body:     modifyParams},
+			Body:     modifyParams,
+		},
 		&resp)
 	return resp, WrapErr(err)
 }
 
 func (c *ClientIMPL) GetProtectionPolicyByName(ctx context.Context,
-	policyName string) (resp ProtectionPolicy, err error) {
+	policyName string,
+) (resp ProtectionPolicy, err error) {
 	var policyList []ProtectionPolicy
 	policy := ProtectionPolicy{}
 	qp := c.APIClient().QueryParamsWithFields(&policy)
@@ -132,7 +140,8 @@ func (c *ClientIMPL) GetProtectionPolicyByName(ctx context.Context,
 		RequestConfig{
 			Method:      "GET",
 			Endpoint:    policyURL,
-			QueryParams: qp},
+			QueryParams: qp,
+		},
 		&policyList)
 	err = WrapErr(err)
 	if err != nil {
@@ -154,7 +163,8 @@ func (c *ClientIMPL) GetProtectionPolicy(ctx context.Context, id string) (resp P
 			Method:      "GET",
 			Endpoint:    policyURL,
 			ID:          id,
-			QueryParams: qc},
+			QueryParams: qc,
+		},
 		&resp)
 	return resp, WrapErr(err)
 }
@@ -173,7 +183,8 @@ func (c *ClientIMPL) GetProtectionPolicies(ctx context.Context) ([]ProtectionPol
 			RequestConfig{
 				Method:      "GET",
 				Endpoint:    policyURL,
-				QueryParams: qp},
+				QueryParams: qp,
+			},
 			&page)
 		err = WrapErr(err)
 		if err == nil {
@@ -194,7 +205,8 @@ func (c *ClientIMPL) GetReplicationSessionByLocalResourceID(ctx context.Context,
 		RequestConfig{
 			Method:      "GET",
 			Endpoint:    replicationSessionURL,
-			QueryParams: qp},
+			QueryParams: qp,
+		},
 		&sessionList)
 	err = WrapErr(err)
 	if err != nil {
@@ -205,6 +217,7 @@ func (c *ClientIMPL) GetReplicationSessionByLocalResourceID(ctx context.Context,
 	}
 	return sessionList[0], err
 }
+
 func (c *ClientIMPL) GetReplicationSessionByID(ctx context.Context, id string) (resp ReplicationSession, err error) {
 	var session ReplicationSession
 	ses := ReplicationSession{}
@@ -215,7 +228,8 @@ func (c *ClientIMPL) GetReplicationSessionByID(ctx context.Context, id string) (
 			Method:      "GET",
 			Endpoint:    replicationSessionURL,
 			QueryParams: qp,
-			ID:          id},
+			ID:          id,
+		},
 		&session)
 	err = WrapErr(err)
 	if err != nil {

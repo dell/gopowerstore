@@ -21,8 +21,9 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/dell/gopowerstore"
 	"os"
+
+	"github.com/dell/gopowerstore"
 )
 
 func initClient() gopowerstore.Client {
@@ -61,15 +62,16 @@ func (myc *MyClient) GetMyFavoriteVolume(ctx context.Context) (resp gopowerstore
 			Method:      "GET",
 			Endpoint:    "volume",
 			ID:          favVolID,
-			QueryParams: qp},
+			QueryParams: qp,
+		},
 		&resp)
 	return
-
 }
 
 // GetVolumesByNamePrefix returns list of volumes witch names start from prefix
 func (myc *MyClient) GetVolumesByNamePrefix(ctx context.Context,
-	prefix string) (resp []gopowerstore.Volume, err error) {
+	prefix string,
+) (resp []gopowerstore.Volume, err error) {
 	apiClient := myc.APIClient()
 	qp := apiClient.QueryParams()
 	qp.Select("id", "name")
@@ -79,7 +81,8 @@ func (myc *MyClient) GetVolumesByNamePrefix(ctx context.Context,
 		gopowerstore.RequestConfig{
 			Method:      "GET",
 			Endpoint:    "volume",
-			QueryParams: qp},
+			QueryParams: qp,
+		},
 		&resp)
 	return
 }

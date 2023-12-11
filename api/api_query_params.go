@@ -119,7 +119,7 @@ func (qp *QueryParams) Async(value bool) QueryParamsEncoder {
 	return qp
 }
 
-// Encode encodes the values into ``URL encoded'' form
+// Encode encodes the values into “URL encoded” form
 // ("bar=baz&foo=quux") sorted by key.
 func (qp *QueryParams) Encode() string {
 	q := make(url.Values)

@@ -20,6 +20,7 @@ package gopowerstore
 
 import (
 	"context"
+
 	"github.com/dell/gopowerstore/api"
 
 	log "github.com/sirupsen/logrus"
@@ -34,7 +35,8 @@ func getFCPortDefaultQueryParams(c Client) api.QueryParamsEncoder {
 
 // GetFCPorts returns a list of fc ports for array
 func (c *ClientIMPL) GetFCPorts(
-	ctx context.Context) (resp []FcPort, err error) {
+	ctx context.Context,
+) (resp []FcPort, err error) {
 	err = c.readPaginatedData(func(offset int) (api.RespMeta, error) {
 		var page []FcPort
 		qp := getFCPortDefaultQueryParams(c)
@@ -55,7 +57,8 @@ func (c *ClientIMPL) GetFCPorts(
 			RequestConfig{
 				Method:      "GET",
 				Endpoint:    apiFCPortURL,
-				QueryParams: qp},
+				QueryParams: qp,
+			},
 			&page)
 		err = WrapErr(err)
 		if err == nil {
@@ -74,7 +77,8 @@ func (c *ClientIMPL) GetFCPort(ctx context.Context, id string) (resp FcPort, err
 			Method:      "GET",
 			Endpoint:    apiFCPortURL,
 			ID:          id,
-			QueryParams: getFCPortDefaultQueryParams(c)},
+			QueryParams: getFCPortDefaultQueryParams(c),
+		},
 		&resp)
 	return resp, WrapErr(err)
 }

@@ -85,6 +85,7 @@ func (suite *ReplicationTestSuite) TearDownSuite() {
 	suite.remoteClient.DeleteVolumeGroup(context.Background(), vgid.ID)
 	C.DeleteVolume(context.Background(), nil, suite.vol.ID)
 }
+
 func getRemoteSystem(t *testing.T, suite *ReplicationTestSuite) (string, string) {
 	resp, err := C.GetAllRemoteSystems(context.Background())
 	skipTestOnError(t, err)
@@ -161,6 +162,7 @@ func TestGetCluster(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, resp.ID, "0")
 }
+
 func TestReplicationSuite(t *testing.T) {
 	suite.Run(t, new(ReplicationTestSuite))
 }

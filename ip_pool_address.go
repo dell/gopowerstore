@@ -28,7 +28,8 @@ const apiPoolAddressURL = "ip_pool_address"
 
 // GetStorageISCSITargetAddresses returns a list of PowerStore iSCSI targets ip addresses
 func (c *ClientIMPL) GetStorageISCSITargetAddresses(
-	ctx context.Context) (resp []IPPoolAddress, err error) {
+	ctx context.Context,
+) (resp []IPPoolAddress, err error) {
 	var ipPoolAddress IPPoolAddress
 	qp := c.APIClient().QueryParamsWithFields(&ipPoolAddress)
 	qp.RawArg("purposes", fmt.Sprintf("cs.{%s}", IPPurposeTypeEnumStorageIscsiTarget))
@@ -38,7 +39,8 @@ func (c *ClientIMPL) GetStorageISCSITargetAddresses(
 		RequestConfig{
 			Method:      "GET",
 			Endpoint:    apiPoolAddressURL,
-			QueryParams: qp},
+			QueryParams: qp,
+		},
 		&resp)
 	err = WrapErr(err)
 	if err != nil {

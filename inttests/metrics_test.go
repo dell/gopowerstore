@@ -165,7 +165,6 @@ func Test_PerformanceMetricsNfsByNode(t *testing.T) {
 	checkAPIErr(t, err)
 	assert.NotEmpty(t, resp)
 	assert.Equal(t, "performance_metrics_nfs_by_node", resp[0].Entity)
-
 }
 
 func Test_PerformanceMetricsNfsv3ByNode(t *testing.T) {
@@ -185,18 +184,21 @@ func Test_PerformanceMetricsNfsv4ByNode(t *testing.T) {
 func Test_WearMetricsByDrive(t *testing.T) {
 	t.Skip("no API available to get a drive ID")
 }
+
 func Test_SpaceMetricsByCluster(t *testing.T) {
 	resp, err := C.SpaceMetricsByCluster(context.Background(), "0", gopowerstore.FiveMins)
 	checkAPIErr(t, err)
 	assert.NotEmpty(t, resp)
 	assert.Equal(t, "space_metrics_by_cluster", resp[0].Entity)
 }
+
 func Test_SpaceMetricsByAppliance(t *testing.T) {
 	resp, err := C.SpaceMetricsByAppliance(context.Background(), "A1", gopowerstore.FiveMins)
 	checkAPIErr(t, err)
 	assert.NotEmpty(t, resp)
 	assert.Equal(t, "space_metrics_by_appliance", resp[0].Entity)
 }
+
 func Test_SpaceMetricsByVolume(t *testing.T) {
 	volumesResp, err := C.GetVolumes(context.Background())
 	checkAPIErr(t, err)
@@ -209,6 +211,7 @@ func Test_SpaceMetricsByVolume(t *testing.T) {
 	assert.NotEmpty(t, resp)
 	assert.Equal(t, "space_metrics_by_volume", resp[0].Entity)
 }
+
 func Test_SpaceMetricsByVolumeFamily(t *testing.T) {
 	volumesResp, err := C.GetVolumes(context.Background())
 	if len(volumesResp) == 0 {
@@ -221,6 +224,7 @@ func Test_SpaceMetricsByVolumeFamily(t *testing.T) {
 	assert.NotEmpty(t, resp)
 	assert.Equal(t, "space_metrics_by_volume_family", resp[0].Entity)
 }
+
 func Test_SpaceMetricsByVM(t *testing.T) {
 	t.Skip("no API available to get a VM ID")
 }

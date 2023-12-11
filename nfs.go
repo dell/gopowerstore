@@ -21,6 +21,7 @@ package gopowerstore
 import (
 	"context"
 	"fmt"
+
 	"github.com/dell/gopowerstore/api"
 )
 
@@ -50,7 +51,8 @@ func (c *ClientIMPL) GetNFSExportByName(ctx context.Context, name string) (resp 
 		RequestConfig{
 			Method:      "GET",
 			Endpoint:    nfsURL,
-			QueryParams: qp},
+			QueryParams: qp,
+		},
 		&nfsList)
 	err = WrapErr(err)
 	if err != nil {
@@ -72,7 +74,8 @@ func (c *ClientIMPL) GetNFSExportByFileSystemID(ctx context.Context, fsID string
 		RequestConfig{
 			Method:      "GET",
 			Endpoint:    nfsURL,
-			QueryParams: qp},
+			QueryParams: qp,
+		},
 		&nfsList)
 	err = WrapErr(err)
 	if err != nil {
@@ -91,7 +94,8 @@ func (c *ClientIMPL) CreateNFSExport(ctx context.Context, createParams *NFSExpor
 		RequestConfig{
 			Method:   "POST",
 			Endpoint: nfsURL,
-			Body:     createParams},
+			Body:     createParams,
+		},
 		&resp)
 	return resp, WrapErr(err)
 }
@@ -103,34 +107,39 @@ func (c *ClientIMPL) DeleteNFSExport(ctx context.Context, id string) (resp Empty
 		RequestConfig{
 			Method:   "DELETE",
 			Endpoint: nfsURL,
-			ID:       id},
+			ID:       id,
+		},
 		&resp)
 	return resp, WrapErr(err)
 }
 
 // ModifyNFSExport patches existing NFS export, adding or removing new hosts
 func (c *ClientIMPL) ModifyNFSExport(ctx context.Context,
-	modifyParams *NFSExportModify, id string) (resp CreateResponse, err error) {
+	modifyParams *NFSExportModify, id string,
+) (resp CreateResponse, err error) {
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{
 			Method:   "PATCH",
 			Endpoint: nfsURL,
 			ID:       id,
-			Body:     modifyParams},
+			Body:     modifyParams,
+		},
 		&resp)
 	return resp, WrapErr(err)
 }
 
 // CreateNFSServer creates new NFS server on storage array
 func (c *ClientIMPL) CreateNFSServer(ctx context.Context,
-	createParams *NFSServerCreate) (resp CreateResponse, err error) {
+	createParams *NFSServerCreate,
+) (resp CreateResponse, err error) {
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{
 			Method:   "POST",
 			Endpoint: nfsServerURL,
-			Body:     createParams},
+			Body:     createParams,
+		},
 		&resp)
 	return resp, WrapErr(err)
 }
@@ -143,7 +152,8 @@ func (c *ClientIMPL) GetFileInterface(ctx context.Context, id string) (resp File
 			Method:      "GET",
 			Endpoint:    fileInterfaceURL,
 			ID:          id,
-			QueryParams: getFileInterfaceDefaultQueryParams(c)},
+			QueryParams: getFileInterfaceDefaultQueryParams(c),
+		},
 		&resp)
 	return resp, WrapErr(err)
 }

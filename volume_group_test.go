@@ -30,8 +30,10 @@ const (
 	volumeGroupSnapshotMockURL = APIMockURL + volumeGroupURL + "/test-id" + snapshotURL
 )
 
-var volGroupSnapID = "1966782b-60c9-40e2-a1ee-9b2b8f6b98e7"
-var volGroupSnapID2 = "34380c29-2203-4490-aeb7-2853b9a85075"
+var (
+	volGroupSnapID  = "1966782b-60c9-40e2-a1ee-9b2b8f6b98e7"
+	volGroupSnapID2 = "34380c29-2203-4490-aeb7-2853b9a85075"
+)
 
 func TestClientIMPL_CreateVolumeGroup(t *testing.T) {
 	httpmock.Activate()
@@ -68,6 +70,7 @@ func TestClientIMPL_CreateVolumeGroupSnapshot(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, volID, resp.ID)
 }
+
 func TestClientIMPL_DeleteVolumeGroup(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()

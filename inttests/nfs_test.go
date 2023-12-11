@@ -20,9 +20,10 @@ package inttests
 
 import (
 	"context"
+	"testing"
+
 	"github.com/dell/gopowerstore"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 const TestNFSPrefix = "test_nfs_"

@@ -55,7 +55,8 @@ func (c *ClientIMPL) GetNASByName(ctx context.Context, name string) (resp NAS, e
 		RequestConfig{
 			Method:      "GET",
 			Endpoint:    nasURL,
-			QueryParams: qp},
+			QueryParams: qp,
+		},
 		&nasList)
 	err = WrapErr(err)
 	if err != nil {
@@ -75,7 +76,8 @@ func (c *ClientIMPL) GetNAS(ctx context.Context, id string) (resp NAS, err error
 			Method:      "GET",
 			Endpoint:    nasURL,
 			ID:          id,
-			QueryParams: getNASDefaultQueryParams(c)},
+			QueryParams: getNASDefaultQueryParams(c),
+		},
 		&resp)
 	return resp, WrapErr(err)
 }
@@ -88,7 +90,8 @@ func (c *ClientIMPL) GetNfsServer(ctx context.Context, id string) (resp NFSServe
 			Method:      "GET",
 			Endpoint:    nfsServerURL,
 			ID:          id,
-			QueryParams: getNfsServerDefaultQueryParams(c)},
+			QueryParams: getNfsServerDefaultQueryParams(c),
+		},
 		&resp)
 	return resp, WrapErr(err)
 }
@@ -100,7 +103,8 @@ func (c *ClientIMPL) CreateNAS(ctx context.Context, createParams *NASCreate) (re
 		RequestConfig{
 			Method:   "POST",
 			Endpoint: nasURL,
-			Body:     createParams},
+			Body:     createParams,
+		},
 		&resp)
 	return resp, WrapErr(err)
 }
@@ -112,7 +116,8 @@ func (c *ClientIMPL) DeleteNAS(ctx context.Context, id string) (resp EmptyRespon
 		RequestConfig{
 			Method:   "DELETE",
 			Endpoint: nasURL,
-			ID:       id},
+			ID:       id,
+		},
 		&resp)
 	return resp, WrapErr(err)
 }
@@ -127,7 +132,8 @@ func (c *ClientIMPL) GetFSByName(ctx context.Context, name string) (resp FileSys
 		RequestConfig{
 			Method:      "GET",
 			Endpoint:    fsURL,
-			QueryParams: qp},
+			QueryParams: qp,
+		},
 		&fsList)
 	err = WrapErr(err)
 	if err != nil {
@@ -147,7 +153,8 @@ func (c *ClientIMPL) GetFS(ctx context.Context, id string) (resp FileSystem, err
 			Method:      "GET",
 			Endpoint:    fsURL,
 			ID:          id,
-			QueryParams: getFSDefaultQueryParams(c)},
+			QueryParams: getFSDefaultQueryParams(c),
+		},
 		&resp)
 	return resp, WrapErr(err)
 }
@@ -159,7 +166,8 @@ func (c *ClientIMPL) CreateFS(ctx context.Context, createParams *FsCreate) (resp
 		RequestConfig{
 			Method:   "POST",
 			Endpoint: fsURL,
-			Body:     createParams},
+			Body:     createParams,
+		},
 		&resp)
 	return resp, WrapErr(err)
 }
@@ -171,14 +179,16 @@ func (c *ClientIMPL) DeleteFS(ctx context.Context, id string) (resp EmptyRespons
 		RequestConfig{
 			Method:   "DELETE",
 			Endpoint: fsURL,
-			ID:       id},
+			ID:       id,
+		},
 		&resp)
 	return resp, WrapErr(err)
 }
 
 // CreateSnapshot creates a new snapshot
 func (c *ClientIMPL) CreateFsSnapshot(ctx context.Context,
-	createSnapFSParams *SnapshotFSCreate, id string) (resp CreateResponse, err error) {
+	createSnapFSParams *SnapshotFSCreate, id string,
+) (resp CreateResponse, err error) {
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{
@@ -186,7 +196,8 @@ func (c *ClientIMPL) CreateFsSnapshot(ctx context.Context,
 			Endpoint: fsURL,
 			ID:       id,
 			Action:   "snapshot",
-			Body:     createSnapFSParams},
+			Body:     createSnapFSParams,
+		},
 		&resp)
 	return resp, WrapErr(err)
 }
@@ -206,7 +217,8 @@ func (c *ClientIMPL) GetFsSnapshot(ctx context.Context, snapID string) (resVol F
 			Method:      "GET",
 			Endpoint:    fsURL,
 			ID:          snapID,
-			QueryParams: qp},
+			QueryParams: qp,
+		},
 		&resVol)
 	return resVol, WrapErr(err)
 }
@@ -225,7 +237,8 @@ func (c *ClientIMPL) GetFsSnapshots(ctx context.Context) ([]FileSystem, error) {
 			RequestConfig{
 				Method:      "GET",
 				Endpoint:    fsURL,
-				QueryParams: qp},
+				QueryParams: qp,
+			},
 			&page)
 		err = WrapErr(err)
 		if err == nil {
@@ -251,7 +264,8 @@ func (c *ClientIMPL) GetFsSnapshotsByVolumeID(ctx context.Context, volID string)
 			RequestConfig{
 				Method:      "GET",
 				Endpoint:    fsURL,
-				QueryParams: qp},
+				QueryParams: qp,
+			},
 			&page)
 		err = WrapErr(err)
 		if err == nil {
@@ -263,21 +277,24 @@ func (c *ClientIMPL) GetFsSnapshotsByVolumeID(ctx context.Context, volID string)
 }
 
 func (c *ClientIMPL) ModifyFS(ctx context.Context,
-	modifyParams *FSModify, id string) (resp EmptyResponse, err error) {
+	modifyParams *FSModify, id string,
+) (resp EmptyResponse, err error) {
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{
 			Method:   "PATCH",
 			Endpoint: fsURL,
 			ID:       id,
-			Body:     modifyParams},
+			Body:     modifyParams,
+		},
 		&resp)
 	return resp, WrapErr(err)
 }
 
 // CreateFsFromSnapshot creates a new fs by cloning a snapshot
 func (c *ClientIMPL) CreateFsFromSnapshot(ctx context.Context,
-	createParams *FsClone, snapID string) (resp CreateResponse, err error) {
+	createParams *FsClone, snapID string,
+) (resp CreateResponse, err error) {
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{
@@ -293,7 +310,8 @@ func (c *ClientIMPL) CreateFsFromSnapshot(ctx context.Context,
 
 // CloneFS creates a new fs by cloning a existing fs
 func (c *ClientIMPL) CloneFS(ctx context.Context,
-	createParams *FsClone, fsID string) (resp CreateResponse, err error) {
+	createParams *FsClone, fsID string,
+) (resp CreateResponse, err error) {
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{

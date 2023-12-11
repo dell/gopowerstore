@@ -21,6 +21,7 @@ package gopowerstore
 import (
 	"context"
 	"fmt"
+
 	"github.com/dell/gopowerstore/api"
 )
 
@@ -52,7 +53,8 @@ func (c *ClientIMPL) GetHosts(ctx context.Context) (resp []Host, err error) {
 			RequestConfig{
 				Method:      "GET",
 				Endpoint:    hostURL,
-				QueryParams: qp},
+				QueryParams: qp,
+			},
 			&page)
 		err = WrapErr(err)
 		if err == nil {
@@ -71,7 +73,8 @@ func (c *ClientIMPL) GetHost(ctx context.Context, id string) (resp Host, err err
 			Method:      "GET",
 			Endpoint:    hostURL,
 			ID:          id,
-			QueryParams: getHostDefaultQueryParams(c)},
+			QueryParams: getHostDefaultQueryParams(c),
+		},
 		&resp)
 	return resp, WrapErr(err)
 }
@@ -86,7 +89,8 @@ func (c *ClientIMPL) GetHostByName(ctx context.Context, name string) (resp Host,
 		RequestConfig{
 			Method:      "GET",
 			Endpoint:    hostURL,
-			QueryParams: qp},
+			QueryParams: qp,
+		},
 		&hostList)
 	err = WrapErr(err)
 	if err != nil {
@@ -105,35 +109,40 @@ func (c *ClientIMPL) CreateHost(ctx context.Context, createParams *HostCreate) (
 		RequestConfig{
 			Method:   "POST",
 			Endpoint: hostURL,
-			Body:     createParams},
+			Body:     createParams,
+		},
 		&resp)
 	return resp, WrapErr(err)
 }
 
 // DeleteHost removes host registration
 func (c *ClientIMPL) DeleteHost(ctx context.Context,
-	deleteParams *HostDelete, id string) (resp EmptyResponse, err error) {
+	deleteParams *HostDelete, id string,
+) (resp EmptyResponse, err error) {
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{
 			Method:   "DELETE",
 			Endpoint: hostURL,
 			ID:       id,
-			Body:     deleteParams},
+			Body:     deleteParams,
+		},
 		&resp)
 	return resp, WrapErr(err)
 }
 
 // ModifyHost update host info
 func (c *ClientIMPL) ModifyHost(ctx context.Context,
-	modifyParams *HostModify, id string) (resp CreateResponse, err error) {
+	modifyParams *HostModify, id string,
+) (resp CreateResponse, err error) {
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{
 			Method:   "PATCH",
 			Endpoint: hostURL,
 			ID:       id,
-			Body:     modifyParams},
+			Body:     modifyParams,
+		},
 		&resp)
 	return resp, WrapErr(err)
 }
@@ -151,7 +160,8 @@ func (c *ClientIMPL) GetHostVolumeMappings(ctx context.Context) (resp []HostVolu
 			RequestConfig{
 				Method:      "GET",
 				Endpoint:    hostMappingURL,
-				QueryParams: qp},
+				QueryParams: qp,
+			},
 			&page)
 		err = WrapErr(err)
 		if err == nil {
@@ -171,14 +181,16 @@ func (c *ClientIMPL) GetHostVolumeMapping(ctx context.Context, id string) (resp 
 			Method:      "GET",
 			Endpoint:    hostMappingURL,
 			ID:          id,
-			QueryParams: getHostVolumeMappingQueryParams(c)},
+			QueryParams: getHostVolumeMappingQueryParams(c),
+		},
 		&resp)
 	return resp, WrapErr(err)
 }
 
 // GetHostVolumeMappingByVolumeID returns volume mapping by volumeID
 func (c *ClientIMPL) GetHostVolumeMappingByVolumeID(
-	ctx context.Context, volumeID string) (resp []HostVolumeMapping, err error) {
+	ctx context.Context, volumeID string,
+) (resp []HostVolumeMapping, err error) {
 	err = c.readPaginatedData(func(offset int) (api.RespMeta, error) {
 		var page []HostVolumeMapping
 		qp := getHostVolumeMappingQueryParams(c)
@@ -191,7 +203,8 @@ func (c *ClientIMPL) GetHostVolumeMappingByVolumeID(
 			RequestConfig{
 				Method:      "GET",
 				Endpoint:    hostMappingURL,
-				QueryParams: qp},
+				QueryParams: qp,
+			},
 			&page)
 		err = WrapErr(err)
 		if err == nil {
@@ -206,7 +219,8 @@ func (c *ClientIMPL) GetHostVolumeMappingByVolumeID(
 func (c *ClientIMPL) AttachVolumeToHost(
 	ctx context.Context,
 	hostID string,
-	attachParams *HostVolumeAttach) (resp EmptyResponse, err error) {
+	attachParams *HostVolumeAttach,
+) (resp EmptyResponse, err error) {
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{
@@ -214,7 +228,8 @@ func (c *ClientIMPL) AttachVolumeToHost(
 			Endpoint: hostURL,
 			ID:       hostID,
 			Action:   "attach",
-			Body:     attachParams},
+			Body:     attachParams,
+		},
 		&resp)
 	return resp, WrapErr(err)
 }
@@ -223,7 +238,8 @@ func (c *ClientIMPL) AttachVolumeToHost(
 func (c *ClientIMPL) DetachVolumeFromHost(
 	ctx context.Context,
 	hostID string,
-	detachParams *HostVolumeDetach) (resp EmptyResponse, err error) {
+	detachParams *HostVolumeDetach,
+) (resp EmptyResponse, err error) {
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{
@@ -231,7 +247,8 @@ func (c *ClientIMPL) DetachVolumeFromHost(
 			Endpoint: hostURL,
 			ID:       hostID,
 			Action:   "detach",
-			Body:     detachParams},
+			Body:     detachParams,
+		},
 		&resp)
 	return resp, WrapErr(err)
 }

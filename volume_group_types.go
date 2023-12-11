@@ -38,7 +38,7 @@ type VolumeGroupCreate struct {
 	Description string `json:"description,omitempty"`
 	// Unique identifier of an optional protection policy to assign to the volume group.
 	ProtectionPolicyID string `json:"protection_policy_id,omitempty"`
-	//For a primary or a clone volume group, this property determines whether snapshot sets of the group will be write order consistent.
+	// For a primary or a clone volume group, this property determines whether snapshot sets of the group will be write order consistent.
 	IsWriteOrderConsistent bool `json:"is_write_order_consistent"`
 	// A list of identifiers of existing volumes that should be added to the volume group.
 	// All the volumes must be on the same Cyclone appliance and should not be part of another volume group.
@@ -58,7 +58,7 @@ type VolumeGroup struct {
 	Description string `json:"description,omitempty"`
 	// Unique identifier of the protection policy assigned to the volume.
 	ProtectionPolicyID string `json:"protection_policy_id,omitempty"`
-	//For a primary or a clone volume group, this property determines whether snapshot sets of the group will be write order consistent.
+	// For a primary or a clone volume group, this property determines whether snapshot sets of the group will be write order consistent.
 	IsWriteOrderConsistent bool `json:"is_write_order_consistent,omitempty"`
 	// Volumes provides list of volumes associated to the volume group
 	Volumes []Volume `json:"volumes"`
@@ -78,7 +78,7 @@ type VolumeGroup struct {
 	MigrationSessionID string `json:"migration_session_id,omitempty"`
 	// This is set during creation, and determines resource balancer recommendations.
 	PlacementRule VGPlacementRuleEnum `json:"placement_rule,omitempty"`
-	//Type of volume.
+	// Type of volume.
 	Type VolumeTypeEnum `json:"type,omitempty"`
 	// Protection data associated with a resource.
 	ProtectionData ProtectionData `json:"protection_data,omitempty"`

@@ -21,17 +21,20 @@ package gopowerstore
 import (
 	"context"
 	"fmt"
+	"testing"
+
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 const (
 	fcPortMockURL = APIMockURL + apiFCPortURL
 )
 
-var fcPortID = "9197cba085b04a86b63a17267b11d1e6"
-var fcPortID2 = "5c8af4bd7e4542418b9a5ec857912a28"
+var (
+	fcPortID  = "9197cba085b04a86b63a17267b11d1e6"
+	fcPortID2 = "5c8af4bd7e4542418b9a5ec857912a28"
+)
 
 func TestClientIMPL_GetFCPorts(t *testing.T) {
 	httpmock.Activate()

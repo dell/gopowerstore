@@ -20,14 +20,17 @@ package inttests
 
 import (
 	"context"
+	"testing"
+
 	"github.com/dell/gopowerstore"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
-	"testing"
 )
 
-const TestFSPrefix = "test_fs_"
-const TestNASPrefix = "test_nas_"
+const (
+	TestFSPrefix  = "test_fs_"
+	TestNASPrefix = "test_nas_"
+)
 
 const DefaultFSSize int64 = 3221225472
 
@@ -188,6 +191,7 @@ func (suite *FsTestSuite) TestFsSnapshotAlreadyExist() {
 	_, err = C.DeleteFsSnapshot(context.Background(), snap.ID)
 	assert.NotEmpty(t, snap.ID)
 }
+
 func (suite *FsTestSuite) TestModifyFS() {
 	t := suite.T()
 	fsID, _ := createFS(t, suite.nasID)
@@ -202,8 +206,8 @@ func (suite *FsTestSuite) TestModifyFS() {
 	gotVol, err := C.GetFS(context.Background(), fsID)
 	assert.Equal(t, int64(3221225472*2), gotVol.SizeTotal)
 	assert.Equal(t, "New Description", gotVol.Description)
-
 }
+
 func TestFsTestSuite(t *testing.T) {
 	suite.Run(t, new(FsTestSuite))
 }

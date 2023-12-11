@@ -19,9 +19,10 @@
 package gopowerstore
 
 import (
-	"github.com/stretchr/testify/assert"
 	"net/http"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestAPIError_VolumeNameIsAlreadyUse(t *testing.T) {
