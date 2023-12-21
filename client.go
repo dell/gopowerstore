@@ -38,7 +38,7 @@ const (
 	paginationDefaultPageSize = 1000
 )
 
-// ApiClient defines gopowerstore client interface
+// APIClient defines gopowerstore client interface
 type Client interface {
 	APIClient() api.Client
 	SetTraceID(ctx context.Context, value string) context.Context

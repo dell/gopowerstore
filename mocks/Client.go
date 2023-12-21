@@ -43,8 +43,8 @@ func (_m *Client) APIClient() api.Client {
 		panic("no return value specified for APIClient")
 	}
 
-	var r0 api.ApiClient
-	if rf, ok := ret.Get(0).(func() api.ApiClient); ok {
+	var r0 api.APIClient
+	if rf, ok := ret.Get(0).(func() api.APIClient); ok {
 		r0 = rf()
 	} else {
 		if ret.Get(0) != nil {

@@ -25,7 +25,7 @@ type APIClient struct {
 }
 
 // GetCustomHTTPHeaders provides a mock function with given fields:
-func (_m *ApiClient) GetCustomHTTPHeaders() http.Header {
+func (_m *APIClient) GetCustomHTTPHeaders() http.Header {
 	ret := _m.Called()
 
 	if len(ret) == 0 {
@@ -160,13 +160,13 @@ func (_m *APIClient) TraceID(ctx context.Context) string {
 	return r0
 }
 
-// NewApiClient creates a new instance of ApiClient. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
+// NewAPIClient creates a new instance of APIClient. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
 // The first argument is typically a *testing.T value.
-func NewApiClient(t interface {
+func NewAPIClient(t interface {
 	mock.TestingT
 	Cleanup(func())
-}) *ApiClient {
-	mock := &ApiClient{}
+}) *APIClient {
+	mock := &APIClient{}
 	mock.Mock.Test(t)
 
 	t.Cleanup(func() { mock.AssertExpectations(t) })
