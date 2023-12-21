@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2020-2022 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2020-2023 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,9 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
+	"net/http/cookiejar"
 	"net/http/httputil"
 	"net/url"
 	"os"
@@ -35,12 +37,16 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 )
 
 var debug = false
 
-const paginationHeader = "content-range"
+const (
+	paginationHeader = "content-range"
+	dellEmcToken     = "DELL-EMC-TOKEN" // #nosec G101
+)
 
 type Key string
 
@@ -121,6 +127,8 @@ type ClientIMPL struct {
 	customHTTPHeaders http.Header
 	logger            Logger
 	apiThrottle       TimeoutSemaphoreInterface
+	loginMutex        sync.Mutex
+	token             string
 }
 
 // New creates and initialize API client
@@ -147,9 +155,19 @@ func New(apiURL string, username string,
 		client = &http.Client{}
 	}
 
+	// Set cookie jar to enable session management via auth_cookie
+	jar, err := cookiejar.New(&cookiejar.Options{PublicSuffixList: nil})
+	if err != nil {
+		log.Printf("Failed to set cookie jar. error: %s", err)
+		log.Print("Session management is disabled.")
+	} else {
+		client.Jar = jar
+		log.Print("Session management is enabled.")
+	}
+
 	throttle := NewTimeoutSemaphore(int(defaultTimeout), int(rateLimit), &defaultLogger{})
 
-	return &ClientIMPL{
+	clientImpl := &ClientIMPL{
 		apiURL:         apiURL,
 		insecure:       insecure,
 		username:       username,
@@ -159,7 +177,12 @@ func New(apiURL string, username string,
 		requestIDKey:   requestIDKey,
 		logger:         &defaultLogger{},
 		apiThrottle:    throttle,
-	}, nil
+	}
+
+	// Create a login session after the client is initialized
+	clientImpl.login(context.Background()) // #nosec G104
+
+	return clientImpl, nil
 }
 
 const errorSeverity = "Error"
@@ -265,15 +288,48 @@ func (c *ClientIMPL) Query(
 	case resp == nil:
 		return meta, nil
 	case r.StatusCode >= 200 && r.StatusCode < 300:
+		// Save DELL-EMC-TOKEN if it was a successful response.
+		token := r.Header.Get(dellEmcToken)
+		if len(token) != 0 {
+			c.token = token
+		}
+
 		c.updatePaginationInfoInMeta(&meta, r)
 		err = json.NewDecoder(r.Body).Decode(resp)
 		if err == io.EOF {
 			return meta, nil
 		}
 		return meta, err
+	case r.StatusCode == http.StatusForbidden:
+		loginResp, err := c.login(ctx)
+		// Invalid credentials - No need to retry if response of login api was 401 Unauthorized.
+		if err != nil || loginResp.Status == http.StatusUnauthorized {
+			return meta, buildError(r)
+		}
+
+		// login successful - resend the failed request
+		return c.Query(ctx, cfg, resp)
 	default:
 		return meta, buildError(r)
 	}
+}
+
+func (c *ClientIMPL) login(ctx context.Context) (RespMeta, error) {
+	c.loginMutex.Lock()
+	defer c.loginMutex.Unlock()
+
+	type loginDetails []struct {
+		ID string `json:"id"`
+	}
+	var login loginDetails
+
+	resp, err := c.Query(ctx,
+		RequestConfig{
+			Method:   "GET",
+			Endpoint: "login_session",
+		}, &login)
+
+	return resp, err
 }
 
 func addMetaData(req *http.Request, body interface{}) {
@@ -349,6 +405,9 @@ func (c *ClientIMPL) prepareRequest(ctx context.Context, method, requestURL, tra
 	}
 	req = req.WithContext(ctx)
 	req.SetBasicAuth(c.username, c.password)
+	if len(c.token) != 0 {
+		req.Header.Add(dellEmcToken, c.token)
+	}
 	for key, values := range c.customHTTPHeaders {
 		for _, elem := range values {
 			req.Header.Add(key, elem)
