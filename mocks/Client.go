@@ -36,7 +36,7 @@ type Client struct {
 }
 
 // APIClient provides a mock function with given fields:
-func (_m *Client) APIClient() api.Client {
+func (_m *Client) APIClient() api.APIClient {
 	ret := _m.Called()
 
 	if len(ret) == 0 {
@@ -48,7 +48,7 @@ func (_m *Client) APIClient() api.Client {
 		r0 = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(api.Client)
+			r0 = ret.Get(0).(api.APIClient)
 		}
 	}
 
