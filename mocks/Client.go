@@ -35,12 +35,12 @@ type Client struct {
 	mock.Mock
 }
 
-// APIClient provides a mock function with given fields:
-func (_m *Client) APIClient() api.ApiClient {
+// ApiClient provides a mock function with given fields:
+func (_m *Client) ApiClient() api.ApiClient {
 	ret := _m.Called()
 
 	if len(ret) == 0 {
-		panic("no return value specified for APIClient")
+		panic("no return value specified for ApiClient")
 	}
 
 	var r0 api.ApiClient
