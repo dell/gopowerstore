@@ -78,8 +78,8 @@ func (c *ClientIMPL) GetVolumeGroups(ctx context.Context) ([]VolumeGroup, error)
 	var result []VolumeGroup
 	err := c.readPaginatedData(func(offset int) (api.RespMeta, error) {
 		var page []VolumeGroup
-		volumeGroup := VolumeGroup{}
-		qp := c.APIClient().QueryParamsWithFields(&volumeGroup)
+		volumegroup := VolumeGroup{}
+		qp := c.APIClient().QueryParamsWithFields(&volumegroup)
 		qp.Order("name")
 		qp.Offset(offset).Limit(paginationDefaultPageSize)
 		meta, err := c.APIClient().Query(
