@@ -190,7 +190,7 @@ func TestClientIMPL_ModifyVolumeGroup(t *testing.T) {
 		httpmock.NewStringResponder(201, respData))
 
 	modifyParams := VolumeGroupModify{
-		ProtectionPolicyId: "new-id",
+		ProtectionPolicyID: "new-id",
 	}
 
 	resp, err := C.ModifyVolumeGroup(context.Background(), &modifyParams, volID)

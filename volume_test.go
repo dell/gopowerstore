@@ -247,13 +247,13 @@ func TestClientIMPL_ComputeDifferences(t *testing.T) {
 	httpmock.RegisterResponder("POST", fmt.Sprintf("%s/%s/compute_differences", volumeMockURL, volID),
 		httpmock.NewStringResponder(201, respData))
 
-	base_snapshot_id := ""
+	baseSnapshotID := ""
 	offset := int64(0)
-	chunk_size := int64(1048576)
+	chunkSize := int64(1048576)
 	length := int64(4194304)
 	computeDiffParams := VolumeComputeDifferences{
-		BaseSnapshotID: &base_snapshot_id,
-		ChunkSize:      &chunk_size,
+		BaseSnapshotID: &baseSnapshotID,
+		ChunkSize:      &chunkSize,
 		Length:         &length,
 		Offset:         &offset,
 	}

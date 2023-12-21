@@ -26,11 +26,11 @@ import (
 type ActionType string
 
 const (
-	RS_ACTION_FAILOVER  ActionType = "failover"
-	RS_ACTION_REPROTECT ActionType = "reprotect"
-	RS_ACTION_RESUME    ActionType = "resume"
-	RS_ACTION_PAUSE     ActionType = "pause"
-	RS_ACTION_SYNC      ActionType = "sync"
+	RsActionFailover  ActionType = "failover"
+	RsActionReprotect ActionType = "reprotect"
+	RsActionResume    ActionType = "resume"
+	RsActionPause     ActionType = "pause"
+	RsActionSync      ActionType = "sync"
 )
 
 const (

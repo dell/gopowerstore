@@ -256,13 +256,13 @@ func TestComputeDifferences(t *testing.T) {
 	assert.NotEmpty(t, snap2.ID)
 	// Run snap diff and validate there are no differences
 
-	base_snapshot_id := snap2.ID
+	basesnapShotID := snap2.ID
 	offset := int64(0)
-	chunk_size := int64(DefaultChunkSize)
+	chunkSize := int64(DefaultChunkSize)
 	length := int64(DefaultVolSize)
 	snapdiffParams := gopowerstore.VolumeComputeDifferences{
-		BaseSnapshotID: &base_snapshot_id,
-		ChunkSize:      &chunk_size,
+		BaseSnapshotID: &basesnapShotID,
+		ChunkSize:      &chunkSize,
 		Length:         &length,
 		Offset:         &offset,
 	}

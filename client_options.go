@@ -18,6 +18,10 @@
 
 package gopowerstore
 
+import (
+	"github.com/dell/gopowerstore/api"
+)
+
 // ClientOptions defaults
 const (
 	clientOptionsDefaultInsecure     = false
@@ -37,7 +41,7 @@ type ClientOptions struct {
 	defaultTimeout *uint64
 	rateLimit      *uint64
 	// define field name in context which will be used for tracing
-	requestIDKey *string
+	requestIDKey *api.ContextKey
 }
 
 // Insecure returns insecure client option
@@ -65,7 +69,7 @@ func (co *ClientOptions) RateLimit() uint64 {
 }
 
 // RequestIDKey returns client requestIDKey
-func (co *ClientOptions) RequestIDKey() string {
+func (co *ClientOptions) RequestIDKey() api.ContextKey {
 	if co.requestIDKey == nil {
 		return clientOptionsDefaultRequestIDKey
 	}
@@ -91,7 +95,7 @@ func (co *ClientOptions) SetRateLimit(value uint64) *ClientOptions {
 }
 
 // SetRequestIDKey sets requestIdKey value
-func (co *ClientOptions) SetRequestIDKey(value string) *ClientOptions {
+func (co *ClientOptions) SetRequestIDKey(value api.ContextKey) *ClientOptions {
 	co.requestIDKey = &value
 	return co
 }

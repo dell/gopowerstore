@@ -39,7 +39,7 @@ func TestClientIMPL_GetMaxVolumeSize(t *testing.T) {
 	}
 	tests := []struct {
 		name         string
-		API          api.ApiClient
+		API          api.Client
 		args         args
 		mockResponse string
 		want         int64

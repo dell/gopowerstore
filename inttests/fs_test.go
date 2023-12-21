@@ -140,10 +140,10 @@ func (suite *FsTestSuite) TestGetFsSnapshots() {
 
 func (suite *FsTestSuite) TestGetNonExistingFsSnapshot() {
 	t := suite.T()
-	fsId, fsName := createFS(t, suite.nasID)
-	defer deleteFS(t, fsId)
+	fsID, fsName := createFS(t, suite.nasID)
+	defer deleteFS(t, fsID)
 
-	snap := createFsSnap(t, fsId, fsName)
+	snap := createFsSnap(t, fsID, fsName)
 	assert.NotEmpty(t, snap.ID)
 
 	_, err := C.DeleteFsSnapshot(context.Background(), snap.ID)

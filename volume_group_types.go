@@ -103,7 +103,7 @@ type VolumeGroupMembers struct {
 
 // VolumeGroupModify modifies existing Volume Group
 type VolumeGroupModify struct {
-	ProtectionPolicyId     string  `json:"protection_policy_id"` // empty to unassign
+	ProtectionPolicyID     string  `json:"protection_policy_id"` // empty to unassign
 	Description            string  `json:"description"`
 	Name                   string  `json:"name,omitempty"`
 	IsWriteOrderConsistent bool    `json:"is_write_order_consistent,omitempty"`
