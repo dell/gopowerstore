@@ -20,9 +20,10 @@ package gopowerstore
 
 import (
 	"context"
-	"github.com/dell/gopowerstore/api"
 	"strconv"
 	"strings"
+
+	"github.com/dell/gopowerstore/api"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -36,7 +37,8 @@ func getSoftwareInstalledDefaultQueryParams(c Client) api.QueryParamsEncoder {
 
 // GetSoftwareInstalled queries the software packages that are installed on each appliance, or on the cluster as a whole
 func (c *ClientIMPL) GetSoftwareInstalled(
-	ctx context.Context) (resp []SoftwareInstalled, err error) {
+	ctx context.Context,
+) (resp []SoftwareInstalled, err error) {
 	err = c.readPaginatedData(func(offset int) (api.RespMeta, error) {
 		var page []SoftwareInstalled
 		qp := getSoftwareInstalledDefaultQueryParams(c)
@@ -48,7 +50,8 @@ func (c *ClientIMPL) GetSoftwareInstalled(
 			RequestConfig{
 				Method:      "GET",
 				Endpoint:    apiSoftwareInstalledURL,
-				QueryParams: qp},
+				QueryParams: qp,
+			},
 			&page)
 		err = WrapErr(err)
 		if err == nil {
@@ -60,8 +63,8 @@ func (c *ClientIMPL) GetSoftwareInstalled(
 }
 
 func (c *ClientIMPL) GetSoftwareMajorMinorVersion(
-	ctx context.Context) (majorMinorVersion float32, err error) {
-
+	ctx context.Context,
+) (majorMinorVersion float32, err error) {
 	resp, err := c.GetSoftwareInstalled(ctx)
 	if err != nil {
 		log.Errorf("couldn't find the softwares installed on the Powerstore array %s", err.Error())

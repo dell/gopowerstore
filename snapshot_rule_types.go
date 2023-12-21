@@ -242,7 +242,6 @@ type SnapshotRuleDelete struct {
 
 // SnapshotRule Details about a snapshot rule
 type SnapshotRule struct {
-
 	// Unique identifier of the snapshot rule
 	ID string `json:"id,omitempty"`
 
@@ -313,7 +312,8 @@ type SnapshotRule struct {
 
 // Fields returns fields which must be requested to fill struct
 func (s *SnapshotRule) Fields() []string {
-	return []string{"id", "name",
+	return []string{
+		"id", "name",
 		"interval", "time_of_day", "timezone", "days_of_week", "desired_retention",
 		"is_replica", "nas_access_type", "is_read_only",
 		"managed_by", "managed_by_id",

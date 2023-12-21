@@ -262,8 +262,10 @@ type HostVolumeMapping struct {
 
 // Fields returns fields which must be requested to fill struct
 func (h *HostVolumeMapping) Fields() []string {
-	return []string{"volume(appliance_id)", "host_group_id", "host_id",
-		"id", "logical_unit_number", "volume_id"}
+	return []string{
+		"volume(appliance_id)", "host_group_id", "host_id",
+		"id", "logical_unit_number", "volume_id",
+	}
 }
 
 // HostVolumeAttach Volume id and optional logical unit number for attaching to host.

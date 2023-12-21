@@ -33,13 +33,24 @@ int-test:
 gocover:
 	go tool cover -html=c.out
 
-check: mock-test gosec
+check: mocks gosec
 	gofmt -w ./.
 	golint ./...
 	go vet
 
 mocks:
+ifeq (, $(shell which mockery))
+	go install github.com/vektra/mockery/v2@latest
+	$(shell $(GOBIN)/mockery --all)
+else
 	mockery --all
-
+endif
 gosec:
-	gosec -quiet -log gosec.log -out=gosecresults.csv -fmt=csv ./...
+ifeq (, $(shell which gosec))
+	go install github.com/securego/gosec/v2/cmd/gosec@latest
+	$(shell $(GOBIN)/gosec -quiet -log gosec.log -out=gosecresults.csv -fmt=csv ./...)
+else
+	$(shell gosec -quiet -log gosec.log -out=gosecresults.csv -fmt=csv ./...)
+endif
+	@echo "Logs are stored at gosec.log, Outputfile at gosecresults.csv"
+

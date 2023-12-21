@@ -32,11 +32,13 @@ const (
 	applianceMockURL = APIMockURL + applianceURL
 )
 
-var volID = "6b930711-46bc-4a4b-9d6a-22c77a7838c4"
-var volID2 = "3765da74-28a7-49db-a693-10cec1de91f8"
-var appID = "A1"
-var volSnapID = "1966782b-60c9-40e2-a1ee-9b2b8f6b98e7"
-var volSnapID2 = "34380c29-2203-4490-aeb7-2853b9a85075"
+var (
+	volID      = "6b930711-46bc-4a4b-9d6a-22c77a7838c4"
+	volID2     = "3765da74-28a7-49db-a693-10cec1de91f8"
+	appID      = "A1"
+	volSnapID  = "1966782b-60c9-40e2-a1ee-9b2b8f6b98e7"
+	volSnapID2 = "34380c29-2203-4490-aeb7-2853b9a85075"
+)
 
 func TestClientIMPL_GetVolumes(t *testing.T) {
 	httpmock.Activate()
@@ -260,6 +262,7 @@ func TestClientIMPL_ComputeDifferences(t *testing.T) {
 	assert.Equal(t, "Dw==", *resp.ChunkBitmap)
 	assert.Equal(t, int64(-1), *resp.NextOffset)
 }
+
 func TestClientIMPL_ModifyVolume(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()

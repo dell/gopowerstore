@@ -21,10 +21,11 @@ package inttests
 import (
 	"context"
 	"fmt"
-	"github.com/dell/gopowerstore"
-	"github.com/stretchr/testify/assert"
 	"strings"
 	"testing"
+
+	"github.com/dell/gopowerstore"
+	"github.com/stretchr/testify/assert"
 )
 
 const (
@@ -109,8 +110,10 @@ func TestModifyHost(t *testing.T) {
 	// update chap
 	user := "admin"
 	password := "password"
-	updateInitiator := []gopowerstore.UpdateInitiatorInHost{{PortName: &portName, ChapMutualPassword: &password,
-		ChapSinglePassword: &password, ChapMutualUsername: &user, ChapSingleUsername: &user}}
+	updateInitiator := []gopowerstore.UpdateInitiatorInHost{{
+		PortName: &portName, ChapMutualPassword: &password,
+		ChapSinglePassword: &password, ChapMutualUsername: &user, ChapSingleUsername: &user,
+	}}
 	modifyParams = gopowerstore.HostModify{ModifyInitiators: &updateInitiator}
 
 	deleteHost(t, hostID)

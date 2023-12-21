@@ -18,8 +18,10 @@ package gopowerstore
 
 import "errors"
 
-type RPOEnum string
-type RSStateEnum string
+type (
+	RPOEnum     string
+	RSStateEnum string
+)
 
 const (
 	RpoFiveMinutes                         RPOEnum     = "Five_Minutes"
@@ -115,7 +117,7 @@ type ProtectionPolicyCreate struct {
 // failover params create failover request
 type FailoverParams struct {
 	// For DR failover.
-	IsPlanned bool `json:"is_planned, omitempty"`
+	IsPlanned bool `json:"is_planned,omitempty"`
 	// Reverse replication direction
 	Reverse bool `json:"reverse,omitempty"`
 	// Force for DR

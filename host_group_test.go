@@ -31,8 +31,10 @@ const (
 	hostGroupMockURL = APIMockURL + hostGroupURL
 )
 
-var hostGroupID = "6b930711-46bc-4a4b-9d6a-22c77a7838c4"
-var hostGroupID2 = "3765da74-28a7-49db-a693-10cec1de91f8"
+var (
+	hostGroupID  = "6b930711-46bc-4a4b-9d6a-22c77a7838c4"
+	hostGroupID2 = "3765da74-28a7-49db-a693-10cec1de91f8"
+)
 
 func TestClientIMPL_AttachVolumeToHostGroup(t *testing.T) {
 	httpmock.Activate()

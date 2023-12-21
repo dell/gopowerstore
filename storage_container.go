@@ -36,8 +36,8 @@ func getStorageContainerDefaultQueryParams(c Client) api.QueryParamsEncoder {
 
 // CreateStorageContainer creates new StorageContainer
 func (c *ClientIMPL) CreateStorageContainer(ctx context.Context,
-	createParams *StorageContainer) (resp CreateResponse, err error) {
-
+	createParams *StorageContainer,
+) (resp CreateResponse, err error) {
 	customHeader := http.Header{}
 	customHeader.Add("DELL-VISIBILITY", "Partner")
 	apiClient := c.APIClient()
@@ -48,14 +48,14 @@ func (c *ClientIMPL) CreateStorageContainer(ctx context.Context,
 		RequestConfig{
 			Method:   "POST",
 			Endpoint: storageContainerURL,
-			Body:     createParams},
+			Body:     createParams,
+		},
 		&resp)
 	return resp, WrapErr(err)
 }
 
 // GetStorageContainer get existing StorageContainer with ID
 func (c *ClientIMPL) GetStorageContainer(ctx context.Context, id string) (resp StorageContainer, err error) {
-
 	customHeader := http.Header{}
 	customHeader.Add("DELL-VISIBILITY", "Partner")
 	apiClient := c.APIClient()
@@ -67,7 +67,8 @@ func (c *ClientIMPL) GetStorageContainer(ctx context.Context, id string) (resp S
 			Method:      "GET",
 			Endpoint:    storageContainerURL,
 			ID:          id,
-			QueryParams: getStorageContainerDefaultQueryParams(c)},
+			QueryParams: getStorageContainerDefaultQueryParams(c),
+		},
 		&resp)
 	return resp, WrapErr(err)
 }
@@ -85,14 +86,14 @@ func (c *ClientIMPL) DeleteStorageContainer(ctx context.Context, id string) (res
 			Method:   "DELETE",
 			Endpoint: storageContainerURL,
 			ID:       id,
-			Body:     nil},
+			Body:     nil,
+		},
 		&resp)
 	return resp, WrapErr(err)
 }
 
 // ModifyStorageContainer updates existing storage container
 func (c *ClientIMPL) ModifyStorageContainer(ctx context.Context, modifyParams *StorageContainer, id string) (resp EmptyResponse, err error) {
-
 	customHeader := http.Header{}
 	customHeader.Add("DELL-VISIBILITY", "Partner")
 	apiClient := c.APIClient()
@@ -104,7 +105,8 @@ func (c *ClientIMPL) ModifyStorageContainer(ctx context.Context, modifyParams *S
 			Method:   "PATCH",
 			Endpoint: storageContainerURL,
 			ID:       id,
-			Body:     modifyParams},
+			Body:     modifyParams,
+		},
 		&resp)
 	return resp, WrapErr(err)
 }

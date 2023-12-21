@@ -32,8 +32,10 @@ const (
 	hostMappingMockURL = APIMockURL + hostMappingURL
 )
 
-var hostID = "6b930711-46bc-4a4b-9d6a-22c77a7838c4"
-var hostID2 = "3765da74-28a7-49db-a693-10cec1de91f8"
+var (
+	hostID  = "6b930711-46bc-4a4b-9d6a-22c77a7838c4"
+	hostID2 = "3765da74-28a7-49db-a693-10cec1de91f8"
+)
 
 func TestClientIMPL_GetHosts(t *testing.T) {
 	httpmock.Activate()

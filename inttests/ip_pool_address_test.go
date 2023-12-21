@@ -20,8 +20,9 @@ package inttests
 
 import (
 	"context"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGetIPPoolAddress(t *testing.T) {

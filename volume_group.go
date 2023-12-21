@@ -44,7 +44,8 @@ func (c *ClientIMPL) GetVolumeGroup(ctx context.Context, id string) (resp Volume
 			Method:      "GET",
 			Endpoint:    volumeGroupURL,
 			ID:          id,
-			QueryParams: qp},
+			QueryParams: qp,
+		},
 		&resp)
 	return resp, WrapErr(err)
 }
@@ -59,7 +60,8 @@ func (c *ClientIMPL) GetVolumeGroupByName(ctx context.Context, name string) (res
 		RequestConfig{
 			Method:      "GET",
 			Endpoint:    volumeGroupURL,
-			QueryParams: qp},
+			QueryParams: qp,
+		},
 		&groups)
 	err = WrapErr(err)
 	if err != nil {
@@ -76,8 +78,8 @@ func (c *ClientIMPL) GetVolumeGroups(ctx context.Context) ([]VolumeGroup, error)
 	var result []VolumeGroup
 	err := c.readPaginatedData(func(offset int) (api.RespMeta, error) {
 		var page []VolumeGroup
-		volume_group := VolumeGroup{}
-		qp := c.APIClient().QueryParamsWithFields(&volume_group)
+		volumegroup := VolumeGroup{}
+		qp := c.APIClient().QueryParamsWithFields(&volumegroup)
 		qp.Order("name")
 		qp.Offset(offset).Limit(paginationDefaultPageSize)
 		meta, err := c.APIClient().Query(
@@ -85,7 +87,8 @@ func (c *ClientIMPL) GetVolumeGroups(ctx context.Context) ([]VolumeGroup, error)
 			RequestConfig{
 				Method:      "GET",
 				Endpoint:    volumeGroupURL,
-				QueryParams: qp},
+				QueryParams: qp,
+			},
 			&page)
 		err = WrapErr(err)
 		if err == nil {
@@ -98,13 +101,15 @@ func (c *ClientIMPL) GetVolumeGroups(ctx context.Context) ([]VolumeGroup, error)
 
 // CreateVolumeGroup creates new volume group
 func (c *ClientIMPL) CreateVolumeGroup(ctx context.Context,
-	createParams *VolumeGroupCreate) (resp CreateResponse, err error) {
+	createParams *VolumeGroupCreate,
+) (resp CreateResponse, err error) {
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{
 			Method:   "POST",
 			Endpoint: volumeGroupURL,
-			Body:     createParams},
+			Body:     createParams,
+		},
 		&resp)
 	return resp, WrapErr(err)
 }
@@ -118,7 +123,8 @@ func (c *ClientIMPL) GetVolumeGroupsByVolumeID(ctx context.Context, id string) (
 			Method:      "GET",
 			Endpoint:    volumeURL,
 			ID:          id,
-			QueryParams: qp},
+			QueryParams: qp,
+		},
 		&resp)
 	logrus.Info(resp)
 	return resp, WrapErr(err)
@@ -138,7 +144,8 @@ func (c *ClientIMPL) UpdateVolumeGroupProtectionPolicy(ctx context.Context, id s
 }
 
 func (c *ClientIMPL) RemoveMembersFromVolumeGroup(ctx context.Context,
-	params *VolumeGroupMembers, id string) (resp EmptyResponse, err error) {
+	params *VolumeGroupMembers, id string,
+) (resp EmptyResponse, err error) {
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{
@@ -153,7 +160,8 @@ func (c *ClientIMPL) RemoveMembersFromVolumeGroup(ctx context.Context,
 }
 
 func (c *ClientIMPL) AddMembersToVolumeGroup(ctx context.Context,
-	params *VolumeGroupMembers, id string) (resp EmptyResponse, err error) {
+	params *VolumeGroupMembers, id string,
+) (resp EmptyResponse, err error) {
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{
@@ -181,27 +189,31 @@ func (c *ClientIMPL) DeleteVolumeGroup(ctx context.Context, id string) (resp Emp
 }
 
 func (c *ClientIMPL) ModifyVolumeGroup(ctx context.Context,
-	modifyParams *VolumeGroupModify, id string) (resp EmptyResponse, err error) {
+	modifyParams *VolumeGroupModify, id string,
+) (resp EmptyResponse, err error) {
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{
 			Method:   "PATCH",
 			Endpoint: volumeGroupURL,
 			ID:       id,
-			Body:     modifyParams},
+			Body:     modifyParams,
+		},
 		&resp)
 	return resp, WrapErr(err)
 }
 
 // CreateVolumeGroupSnapshot Creates a new volume group snapshot from the existing volume group
 func (c *ClientIMPL) CreateVolumeGroupSnapshot(ctx context.Context, volumeGroupID string,
-	createParams *VolumeGroupSnapshotCreate) (resp CreateResponse, err error) {
+	createParams *VolumeGroupSnapshotCreate,
+) (resp CreateResponse, err error) {
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{
 			Method:   "POST",
 			Endpoint: volumeGroupURL + "/" + volumeGroupID + snapshotURL,
-			Body:     createParams},
+			Body:     createParams,
+		},
 		&resp)
 	return resp, WrapErr(err)
 }
@@ -215,7 +227,8 @@ func (c *ClientIMPL) GetVolumeGroupSnapshot(ctx context.Context, snapID string) 
 			Method:      "GET",
 			Endpoint:    volumeGroupURL,
 			ID:          snapID,
-			QueryParams: qp},
+			QueryParams: qp,
+		},
 		&resVol)
 	return resVol, WrapErr(err)
 }
@@ -234,7 +247,8 @@ func (c *ClientIMPL) GetVolumeGroupSnapshots(ctx context.Context) ([]VolumeGroup
 			RequestConfig{
 				Method:      "GET",
 				Endpoint:    volumeGroupURL,
-				QueryParams: qp},
+				QueryParams: qp,
+			},
 			&page)
 		err = WrapErr(err)
 		if err == nil {
@@ -255,7 +269,8 @@ func (c *ClientIMPL) GetVolumeGroupSnapshotByName(ctx context.Context, name stri
 		RequestConfig{
 			Method:      "GET",
 			Endpoint:    volumeGroupURL,
-			QueryParams: qp},
+			QueryParams: qp,
+		},
 		&volGroupList)
 	err = WrapErr(err)
 	if err != nil {

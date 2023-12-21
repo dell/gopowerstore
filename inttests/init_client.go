@@ -19,9 +19,10 @@
 package inttests
 
 import (
+	"log"
+
 	"github.com/dell/gopowerstore"
 	"github.com/joho/godotenv"
-	"log"
 )
 
 const envVarsFile = "GOPOWERSTORE_TEST.env"

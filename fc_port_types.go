@@ -92,7 +92,9 @@ type FcPortModify struct {
 
 // Fields returns fields which must be requested to fill struct
 func (h *FcPort) Fields() []string {
-	return []string{"appliance_id", "current_speed", "id",
+	return []string{
+		"appliance_id", "current_speed", "id",
 		"io_module_id", "is_link_up", "name", "node_id", "partner_id",
-		"port_index", "requested_speed", "sfp_id", "supported_speeds", "wwn"}
+		"port_index", "requested_speed", "sfp_id", "supported_speeds", "wwn",
+	}
 }

@@ -29,7 +29,8 @@ const (
 
 // RegisterK8sCluster registers K8s cluster with PowerStore array
 func (c *ClientIMPL) RegisterK8sCluster(ctx context.Context,
-	createParams *K8sCluster) (resp CreateResponse, err error) {
+	createParams *K8sCluster,
+) (resp CreateResponse, err error) {
 	defaultHeaders := c.GetCustomHTTPHeaders()
 	if defaultHeaders == nil {
 		defaultHeaders = make(http.Header)
@@ -45,7 +46,8 @@ func (c *ClientIMPL) RegisterK8sCluster(ctx context.Context,
 		RequestConfig{
 			Method:   "POST",
 			Endpoint: k8sClusterURL,
-			Body:     createParams},
+			Body:     createParams,
+		},
 		&resp)
 	if err != nil {
 		logrus.Error(err.Error())

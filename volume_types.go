@@ -207,9 +207,9 @@ type VolumeModify struct {
 	PerformancePolicyID string `json:"performance_policy_id,omitempty"`
 	// Description of the volume
 	Description string `json:"description"`
-	//This attribute indicates the intended use of this volume.
+	// This attribute indicates the intended use of this volume.
 	AppType string `json:"app_type,omitempty"`
-	//An optional field used to describe application type usage for a volume.
+	// An optional field used to describe application type usage for a volume.
 	AppTypeOther string `json:"app_type_other,omitempty"`
 	// ExpirationTimestamp provides time at which snapshot will be auto-purged. Valid only for snapshot type.
 	ExpirationTimestamp *string `json:"expiration_timestamp,omitempty"`
@@ -286,7 +286,7 @@ type Volume struct {
 	LogicalUsed int64 `json:"logical_used,omitempty"`
 	// It shows which node will be advertised as the optimized IO path to the volume
 	NodeAffinity NodeAffinityEnum `json:"node_affinity,omitempty"`
-	//Unique identifier of the protection policy assigned to the volume. Only applicable to primary and clone volumes.
+	// Unique identifier of the protection policy assigned to the volume. Only applicable to primary and clone volumes.
 	ProtectionPolicyID string `json:"protection_policy_id,omitempty"`
 	// Unique identifier of the performance policy assigned to the volume.
 	PerformancePolicyID string `json:"performance_policy_id,omitempty"`
@@ -315,7 +315,7 @@ type Volume struct {
 	// AppTypeL10n Localized message string corresponding to App type
 	AppTypeL10n string `json:"app_type_l10n,omitempty"`
 	// LocationHistory contains the storage resource location history.
-	LocationHistory []LocationHistory `json:"location_history,omitempty""`
+	LocationHistory []LocationHistory `json:"location_history,omitempty"`
 	// ProtectionPolicy defines the properties of a policy.
 	ProtectionPolicy ProtectionPolicy `json:"protection_policy,omitempty"`
 	// MigrationSession defines the migration session.

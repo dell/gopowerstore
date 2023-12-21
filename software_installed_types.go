@@ -32,6 +32,8 @@ type SoftwareInstalled struct {
 
 // Fields returns fields which must be requested to fill struct
 func (h *SoftwareInstalled) Fields() []string {
-	return []string{"id", "is_cluster", "release_version",
-		"build_version", "build_id"}
+	return []string{
+		"id", "is_cluster", "release_version",
+		"build_version", "build_id",
+	}
 }
