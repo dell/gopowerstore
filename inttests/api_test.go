@@ -47,14 +47,14 @@ func TestCustomLogger(t *testing.T) {
 
 type customLogger struct{}
 
-func (cl *customLogger) Info(ctx context.Context, format string, args ...interface{}) {
+func (cl *customLogger) Info(_ context.Context, format string, args ...interface{}) {
 	log.Printf("INFO:"+format, args...)
 }
 
-func (cl *customLogger) Debug(ctx context.Context, format string, args ...interface{}) {
+func (cl *customLogger) Debug(_ context.Context, format string, args ...interface{}) {
 	log.Printf("DEBUG:"+format, args...)
 }
 
-func (cl *customLogger) Error(ctx context.Context, format string, args ...interface{}) {
+func (cl *customLogger) Error(_ context.Context, format string, args ...interface{}) {
 	log.Printf("ERROR:"+format, args...)
 }

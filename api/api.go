@@ -48,6 +48,8 @@ const (
 	dellEmcToken     = "DELL-EMC-TOKEN" // #nosec G101
 )
 
+type ContextKey string
+
 // RequestConfig provide options for the request
 type RequestConfig struct {
 	// http method Name
@@ -95,7 +97,7 @@ type RespMeta struct {
 }
 
 // ApiClient is PowerStore API client interface
-type ApiClient interface {
+type Client interface {
 	Traceable
 	Query(
 		ctx context.Context,
@@ -121,7 +123,7 @@ type ClientIMPL struct {
 	password          string
 	httpClient        *http.Client
 	defaultTimeout    uint64
-	requestIDKey      string
+	requestIDKey      ContextKey
 	customHTTPHeaders http.Header
 	logger            Logger
 	apiThrottle       TimeoutSemaphoreInterface
@@ -131,7 +133,7 @@ type ClientIMPL struct {
 
 // New creates and initialize API client
 func New(apiURL string, username string,
-	password string, insecure bool, defaultTimeout, rateLimit uint64, requestIDKey string,
+	password string, insecure bool, defaultTimeout, rateLimit uint64, requestIDKey ContextKey,
 ) (*ClientIMPL, error) {
 	debug, _ = strconv.ParseBool(os.Getenv("GOPOWERSTORE_DEBUG"))
 	if apiURL == "" || username == "" || password == "" {

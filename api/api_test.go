@@ -31,8 +31,9 @@ import (
 )
 
 const (
-	errResponseFile        = "test_data/err_response.json"
-	unknownErrResponseFile = "test_data/unknown_error.txt"
+	errResponseFile                   = "test_data/err_response.json"
+	unknownErrResponseFile            = "test_data/unknown_error.txt"
+	key                    ContextKey = "key"
 )
 
 func buildResp(t *testing.T, path string, statusCode int) *http.Response {
@@ -72,7 +73,6 @@ func TestNew(t *testing.T) {
 	password := "password"
 	timeout := uint64(120)
 	limit := uint64(1000)
-	key := "key"
 	var err error
 	var c *ClientIMPL
 	c, err = New(url, user, password, false, timeout, limit, key)

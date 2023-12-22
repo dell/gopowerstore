@@ -88,7 +88,7 @@ func TestClientIMPL_CreateSnapshotRule(t *testing.T) {
 	createReq := SnapshotRuleCreate{
 		Name:             "test_snapshotrule",
 		DesiredRetention: 8,
-		Interval:         SnapshotRuleIntervalEnumFour_Hours,
+		Interval:         SnapshotRuleIntervalEnumFourHours,
 	}
 
 	resp, err := C.CreateSnapshotRule(context.Background(), &createReq)
@@ -103,7 +103,7 @@ func TestClientIMPL_ModifySnapshotRule(t *testing.T) {
 		httpmock.NewStringResponder(201, ""))
 
 	modifyParams := SnapshotRuleCreate{
-		TimeZone: TimeZoneEnumUS__Pacific,
+		TimeZone: TimeZoneEnumUSPacific,
 	}
 
 	resp, err := C.ModifySnapshotRule(context.Background(), &modifyParams, snapshotRuleID)

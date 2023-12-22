@@ -36,49 +36,49 @@ func (e *TimeoutSemaphoreError) Error() string {
 	return e.msg
 }
 
-type timeoutSemaphore struct {
-	timeout   time.Duration
-	semaphore chan struct{}
-	logger    Logger
+type TimeoutSemaphore struct {
+	Timeout   time.Duration
+	Semaphore chan struct{}
+	Logger    Logger
 }
 
-func NewTimeoutSemaphore(timeout, rateLimit int, logger Logger) *timeoutSemaphore {
+func NewTimeoutSemaphore(timeout, rateLimit int, logger Logger) *TimeoutSemaphore {
 	log := logger
 
 	if log == nil {
 		log = &defaultLogger{}
 	}
 
-	return &timeoutSemaphore{
-		timeout:   time.Duration(timeout) * time.Second,
-		semaphore: make(chan struct{}, rateLimit),
-		logger:    log,
+	return &TimeoutSemaphore{
+		Timeout:   time.Duration(timeout) * time.Second,
+		Semaphore: make(chan struct{}, rateLimit),
+		Logger:    log,
 	}
 }
 
-func (ts *timeoutSemaphore) Acquire(ctx context.Context) error {
+func (ts *TimeoutSemaphore) Acquire(ctx context.Context) error {
 	var cancelFunc func()
-	ctx, cancelFunc = context.WithTimeout(ctx, ts.timeout)
+	ctx, cancelFunc = context.WithTimeout(ctx, ts.Timeout)
 	defer cancelFunc()
 	for {
 		select {
-		case ts.semaphore <- struct{}{}:
-			ts.logger.Debug(ctx, "acquire a lock")
+		case ts.Semaphore <- struct{}{}:
+			ts.Logger.Debug(ctx, "acquire a lock")
 			return nil
 		case <-ctx.Done():
 			msg := "lock is acquire failed, timeout expired"
-			ts.logger.Error(ctx, msg)
+			ts.Logger.Error(ctx, msg)
 			return &TimeoutSemaphoreError{msg}
 		}
 	}
 }
 
-func (ts *timeoutSemaphore) Release(ctx context.Context) {
-	<-ts.semaphore
-	ts.logger.Debug(ctx, "release a lock")
+func (ts *TimeoutSemaphore) Release(ctx context.Context) {
+	<-ts.Semaphore
+	ts.Logger.Debug(ctx, "release a lock")
 }
 
-func (ts *timeoutSemaphore) SetLogger(logger Logger) TimeoutSemaphoreInterface {
-	ts.logger = logger
+func (ts *TimeoutSemaphore) SetLogger(logger Logger) TimeoutSemaphoreInterface {
+	ts.Logger = logger
 	return ts
 }

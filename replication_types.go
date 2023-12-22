@@ -24,27 +24,27 @@ type (
 )
 
 const (
-	RpoFiveMinutes                         RPOEnum     = "Five_Minutes"
-	RpoFifteenMinutes                      RPOEnum     = "Fifteen_Minutes"
-	RpoThirtyMinutes                       RPOEnum     = "Thirty_Minutes"
-	RpoOneHour                             RPOEnum     = "One_Hour"
-	RpoSixHours                            RPOEnum     = "Six_Hours"
-	RpoTwelveHours                         RPOEnum     = "Twelve_Hours"
-	RpoOneDay                              RPOEnum     = "One_Day"
-	RS_STATE_INITIALIZING                  RSStateEnum = "Initializing"
-	RS_STATE_OK                            RSStateEnum = "OK"
-	RS_STATE_SYNCHRONIZING                 RSStateEnum = "Synchronizing"
-	RS_STATE_SYSTEM_PAUSED                 RSStateEnum = "System_Paused"
-	RS_STATE_PAUSED                        RSStateEnum = "Paused"
-	RS_STATE_PAUSED_FOR_MIGRATION          RSStateEnum = "Paused_For_Migration"
-	RS_STATE_PAUSED_FOR_NDU                RSStateEnum = "Paused_For_NDU"
-	RS_STATE_RESUMING                      RSStateEnum = "Resuming"
-	RS_STATE_FAILING_OVER                  RSStateEnum = "Failing_Over"
-	RS_STATE_FAILING_OVER_FOR_DR           RSStateEnum = "Failing_Over_For_DR"
-	RS_STATE_FAILED_OVER                   RSStateEnum = "Failed_Over"
-	RS_STATE_REPROTECTING                  RSStateEnum = "Reprotecting"
-	RS_STATE_PARTIAL_CUTOVER_FOR_MIGRATION RSStateEnum = "Partial_Cutover_For_Migration"
-	RS_STATE_ERROR                         RSStateEnum = "Error"
+	RpoFiveMinutes                    RPOEnum     = "Five_Minutes"
+	RpoFifteenMinutes                 RPOEnum     = "Fifteen_Minutes"
+	RpoThirtyMinutes                  RPOEnum     = "Thirty_Minutes"
+	RpoOneHour                        RPOEnum     = "One_Hour"
+	RpoSixHours                       RPOEnum     = "Six_Hours"
+	RpoTwelveHours                    RPOEnum     = "Twelve_Hours"
+	RpoOneDay                         RPOEnum     = "One_Day"
+	RsStateInitializing               RSStateEnum = "Initializing"
+	RsStateOk                         RSStateEnum = "OK"
+	RsStateSynchronizing              RSStateEnum = "Synchronizing"
+	RsStateSystemPaused               RSStateEnum = "System_Paused"
+	RsStatePaused                     RSStateEnum = "Paused"
+	RsStatePausedForMigration         RSStateEnum = "Paused_For_Migration"
+	RsStatePausedForNdu               RSStateEnum = "Paused_For_NDU"
+	RsStateResuming                   RSStateEnum = "Resuming"
+	RsStateFailingOver                RSStateEnum = "Failing_Over"
+	RsStateFailingOverForDr           RSStateEnum = "Failing_Over_For_DR"
+	RsStateFailedOver                 RSStateEnum = "Failed_Over"
+	RsStateReprotecting               RSStateEnum = "Reprotecting"
+	RsStatePartialCutoverForMigration RSStateEnum = "Partial_Cutover_For_Migration"
+	RsStateError                      RSStateEnum = "Error"
 )
 
 func (rpo RPOEnum) IsValid() error {
@@ -149,10 +149,10 @@ func (policy *ProtectionPolicy) Fields() []string {
 }
 
 type StorageElementPair struct {
-	LocalStorageElementId  string `json:"local_storage_element_id,omitempty"`
-	RemoteStorageElementId string `json:"remote_storage_element_id,omitempty"`
+	LocalStorageElementID  string `json:"local_storage_element_id,omitempty"`
+	RemoteStorageElementID string `json:"remote_storage_element_id,omitempty"`
 	StorageElementType     string `json:"storage_element_type,omitempty"`
-	ReplicationShadowId    string `json:"replication_shadow_id,omitempty"`
+	ReplicationShadowID    string `json:"replication_shadow_id,omitempty"`
 }
 
 type ReplicationSession struct {
@@ -160,9 +160,9 @@ type ReplicationSession struct {
 	State            RSStateEnum `json:"state,omitempty"`
 	Role             string      `json:"role,omitempty"`
 	ResourceType     string      `json:"resource_type,omitempty"`
-	LocalResourceId  string      `json:"local_resource_id,omitempty"`
-	RemoteResourceId string      `json:"remote_resource_id,omitempty"`
-	RemoteSystemId   string      `json:"remote_system_id,omitempty"` // todo: maybe name?
+	LocalResourceID  string      `json:"local_resource_id,omitempty"`
+	RemoteResourceID string      `json:"remote_resource_id,omitempty"`
+	RemoteSystemID   string      `json:"remote_system_id,omitempty"` // todo: maybe name?
 
 	StorageElementPairs []StorageElementPair `json:"storage_element_pairs,omitempty"`
 }

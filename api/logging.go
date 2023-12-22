@@ -32,16 +32,16 @@ type Logger interface {
 
 type defaultLogger struct{}
 
-func (dl *defaultLogger) Info(ctx context.Context, format string, args ...interface{}) {
+func (dl *defaultLogger) Info(_ context.Context, format string, args ...interface{}) {
 	log.Printf(format, args...)
 }
 
-func (dl *defaultLogger) Debug(ctx context.Context, format string, args ...interface{}) {
+func (dl *defaultLogger) Debug(_ context.Context, format string, args ...interface{}) {
 	if debug {
 		log.Printf(format, args...)
 	}
 }
 
-func (dl *defaultLogger) Error(ctx context.Context, format string, args ...interface{}) {
+func (dl *defaultLogger) Error(_ context.Context, format string, args ...interface{}) {
 	log.Printf(format, args...)
 }
