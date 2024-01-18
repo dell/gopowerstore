@@ -74,6 +74,7 @@ type Client interface {
 	DetachVolumeFromHost(ctx context.Context, hostID string, detachParams *HostVolumeDetach) (EmptyResponse, error)
 	DetachVolumeFromHostGroup(ctx context.Context, hostGroupID string, detachParams *HostVolumeDetach) (EmptyResponse, error)
 	GetStorageISCSITargetAddresses(ctx context.Context) ([]IPPoolAddress, error)
+	GetStorageNVMETCPTargetAddresses(ctx context.Context) ([]IPPoolAddress, error)
 	GetCapacity(ctx context.Context) (int64, error)
 	GetFCPorts(ctx context.Context) (resp []FcPort, err error)
 	GetFCPort(ctx context.Context, id string) (resp FcPort, err error)
