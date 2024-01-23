@@ -73,7 +73,7 @@ func (c *ClientIMPL) GetStorageNVMETCPTargetAddresses(
 		return resp, err
 	}
 	if len(resp) == 0 {
-		return resp, errors.New("can't get iscsi target address")
+		return resp, errors.New("can't get NVMeTCP target address")
 	}
 	return resp, nil
 }
