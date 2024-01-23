@@ -42,6 +42,8 @@ const (
 	IPPurposeTypeEnumStorageIscsiInitiator IPPurposeTypeEnum = "Storage_Iscsi_Initiator"
 	// IPPurposeTypeEnumStorageIscsiTarget captures enum value "Storage_Iscsi_Target"
 	IPPurposeTypeEnumStorageIscsiTarget IPPurposeTypeEnum = "Storage_Iscsi_Target"
+	// IPPurposeTypeEnumStorageNVMETCPPort captures enum value "Storage_NVMe_TCP_Port"
+	IPPurposeTypeEnumStorageNVMETCPPort IPPurposeTypeEnum = "Storage_NVMe_TCP_Port"
 	// IPPurposeTypeEnumStorageClusterFloating captures enum value "Storage_Cluster_Floating"
 	IPPurposeTypeEnumStorageClusterFloating IPPurposeTypeEnum = "Storage_Cluster_Floating"
 	// IPPurposeTypeEnumICDNode captures enum value "ICD_Node"

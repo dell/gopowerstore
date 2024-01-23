@@ -51,3 +51,29 @@ func (c *ClientIMPL) GetStorageISCSITargetAddresses(
 	}
 	return resp, nil
 }
+
+// GetStorageNVMETCPTargetAddresses returns a list of PowerStore NVME/TCP targets ip addresses
+func (c *ClientIMPL) GetStorageNVMETCPTargetAddresses(
+	ctx context.Context,
+) (resp []IPPoolAddress, err error) {
+	var ipPoolAddress IPPoolAddress
+	qp := c.APIClient().QueryParamsWithFields(&ipPoolAddress)
+	qp.RawArg("purposes", fmt.Sprintf("cs.{%s}", IPPurposeTypeEnumStorageNVMETCPPort))
+	qp.Order("id")
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:      "GET",
+			Endpoint:    apiPoolAddressURL,
+			QueryParams: qp,
+		},
+		&resp)
+	err = WrapErr(err)
+	if err != nil {
+		return resp, err
+	}
+	if len(resp) == 0 {
+		return resp, errors.New("can't get NVMeTCP target address")
+	}
+	return resp, nil
+}
