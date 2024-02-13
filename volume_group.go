@@ -218,6 +218,22 @@ func (c *ClientIMPL) CreateVolumeGroupSnapshot(ctx context.Context, volumeGroupI
 	return resp, WrapErr(err)
 }
 
+// ModifyVolumeGroup modifies existing volume group snapshot
+func (c *ClientIMPL) ModifyVolumeGroupSnapshot(ctx context.Context,
+	modifyParams *VolumeGroupSnapshotModify, id string,
+) (resp EmptyResponse, err error) {
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:   "PATCH",
+			Endpoint: volumeGroupURL,
+			ID:       id,
+			Body:     modifyParams,
+		},
+		&resp)
+	return resp, WrapErr(err)
+}
+
 // GetVolumeGroupSnapshot query and return specific snapshot by id
 func (c *ClientIMPL) GetVolumeGroupSnapshot(ctx context.Context, snapID string) (resVol VolumeGroup, err error) {
 	qp := getVolumeGroupDefaultQueryParams(c)

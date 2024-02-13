@@ -3241,6 +3241,34 @@ func (_m *Client) ModifyVolumeGroup(ctx context.Context, modifyParams *gopowerst
 	return r0, r1
 }
 
+// ModifyVolumeGroupSnapshot provides a mock function with given fields: ctx, modifyParams, id
+func (_m *Client) ModifyVolumeGroupSnapshot(ctx context.Context, modifyParams *gopowerstore.VolumeGroupSnapshotModify, id string) (gopowerstore.EmptyResponse, error) {
+	ret := _m.Called(ctx, modifyParams, id)
+
+	if len(ret) == 0 {
+		panic("no return value specified for ModifyVolumeGroupSnapshot")
+	}
+
+	var r0 gopowerstore.EmptyResponse
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, *gopowerstore.VolumeGroupSnapshotModify, string) (gopowerstore.EmptyResponse, error)); ok {
+		return rf(ctx, modifyParams, id)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, *gopowerstore.VolumeGroupSnapshotModify, string) gopowerstore.EmptyResponse); ok {
+		r0 = rf(ctx, modifyParams, id)
+	} else {
+		r0 = ret.Get(0).(gopowerstore.EmptyResponse)
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, *gopowerstore.VolumeGroupSnapshotModify, string) error); ok {
+		r1 = rf(ctx, modifyParams, id)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // PerformanceMetricsByAppliance provides a mock function with given fields: ctx, entityID, interval
 func (_m *Client) PerformanceMetricsByAppliance(ctx context.Context, entityID string, interval gopowerstore.MetricsIntervalEnum) ([]gopowerstore.PerformanceMetricsByApplianceResponse, error) {
 	ret := _m.Called(ctx, entityID, interval)
