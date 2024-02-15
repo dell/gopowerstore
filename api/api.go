@@ -146,7 +146,7 @@ func New(apiURL string, username string,
 		client = &http.Client{
 			Transport: &http.Transport{
 				TLSClientConfig: &tls.Config{
-					InsecureSkipVerify: insecure, // #nosec
+					InsecureSkipVerify: insecure, // #nosec nolint:gosec
 				},
 			},
 		}
