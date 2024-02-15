@@ -142,11 +142,11 @@ func New(apiURL string, username string,
 	}
 
 	var client *http.Client
-	if insecure {
+	if insecure { // #nosec G402
 		client = &http.Client{
 			Transport: &http.Transport{
 				TLSClientConfig: &tls.Config{
-					InsecureSkipVerify: insecure, // #nosec nolint:gosec
+					InsecureSkipVerify: insecure,
 				},
 			},
 		}
