@@ -198,6 +198,24 @@ func TestClientIMPL_ModifyVolumeGroup(t *testing.T) {
 	assert.Equal(t, EmptyResponse(""), resp)
 }
 
+func TestClientIMPL_ModifyVolumeGroupSnapshot(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	respData := fmt.Sprintf(``)
+	httpmock.RegisterResponder("PATCH", fmt.Sprintf("%s/%s", volumeGroupMockURL, volID),
+		httpmock.NewStringResponder(201, respData))
+
+	modifyParams := VolumeGroupSnapshotModify{
+		Description:            "test description",
+		Name:                   "test name",
+		IsWriteOrderConsistent: false,
+	}
+
+	resp, err := C.ModifyVolumeGroupSnapshot(context.Background(), &modifyParams, volID)
+	assert.Nil(t, err)
+	assert.Equal(t, EmptyResponse(""), resp)
+}
+
 func TestClientIMPL_RemoveMembersFromVolumeGroup(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()

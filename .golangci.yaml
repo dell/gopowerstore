@@ -28,3 +28,8 @@ linters:
     - govet
     # Drop-in replacement of golint.
     - revive
+
+linters-settings:
+  gosec:
+    excludes:
+      - G402 # Look for bad TLS connection settings

@@ -110,6 +110,14 @@ type VolumeGroupModify struct {
 	ExpirationTimestamp    *string `json:"expiration_timestamp,omitempty"`
 }
 
+// VolumeGroupSnapshotModify modifies existing Volume Group Snapshot Similar to volume group modify without protection policy since this is an invalid field for VolumeGroupSnapshot
+type VolumeGroupSnapshotModify struct {
+	Description            string  `json:"description"`
+	Name                   string  `json:"name,omitempty"`
+	IsWriteOrderConsistent bool    `json:"is_write_order_consistent,omitempty"`
+	ExpirationTimestamp    *string `json:"expiration_timestamp,omitempty"`
+}
+
 type VolumeGroupChangePolicy struct {
 	ProtectionPolicyID string `json:"protection_policy_id"`
 }
