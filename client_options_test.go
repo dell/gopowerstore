@@ -21,6 +21,7 @@ package gopowerstore
 import (
 	"testing"
 
+	"github.com/dell/gopowerstore/api"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -40,5 +41,5 @@ func TestClientOptions_DefaultTimeout(t *testing.T) {
 func TestClientOptions_RequestIDKey(t *testing.T) {
 	co := NewClientOptions()
 	co.SetRequestIDKey("foobar")
-	assert.Equal(t, "foobar", co.RequestIDKey())
+	assert.Equal(t, api.ContextKey("foobar"), co.RequestIDKey())
 }
