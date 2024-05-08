@@ -22,6 +22,7 @@ import (
 	"bytes"
 	"context"
 	"crypto/tls"
+	"crypto/x509"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -151,7 +152,20 @@ func New(apiURL string, username string,
 			},
 		}
 	} else {
-		client = &http.Client{}
+		// TLS support for client side CA certification
+		pool, err := x509.SystemCertPool()
+		if err != nil {
+			return nil, errors.New("unable to initialize cert pool from system")
+		}
+		client = &http.Client{
+			Transport: &http.Transport{
+				// #nosec G402
+				TLSClientConfig: &tls.Config{
+					RootCAs:            pool,
+					InsecureSkipVerify: false,
+				},
+			},
+		}
 	}
 
 	// Set cookie jar to enable session management via auth_cookie
