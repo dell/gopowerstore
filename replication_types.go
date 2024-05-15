@@ -109,9 +109,9 @@ type ProtectionPolicyCreate struct {
 	// Policy description.
 	Description string `json:"description,omitempty"`
 	// IDs of replication rules
-	ReplicationRuleIds []string `json:"replication_rule_ids"`
+	ReplicationRuleIDs []string `json:"replication_rule_ids"`
 	// IDs of snapshot rules
-	SnapshotRuleIds []string `json:"snapshot_rule_ids"`
+	SnapshotRuleIDs []string `json:"snapshot_rule_ids"`
 }
 
 // failover params create failover request

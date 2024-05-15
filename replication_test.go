@@ -47,7 +47,7 @@ func TestClientIMPL_CreateProtectionPolicy(t *testing.T) {
 	createReq := ProtectionPolicyCreate{
 		Name:               "pp-test",
 		Description:        "pp-test",
-		ReplicationRuleIds: []string{"id"},
+		ReplicationRuleIDs: []string{"id"},
 	}
 
 	resp, err := C.CreateProtectionPolicy(context.Background(), &createReq)

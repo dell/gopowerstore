@@ -73,7 +73,7 @@ func (suite *ReplicationTestSuite) TearDownSuite() {
 		suite.T().Fail()
 	}
 	C.ModifyVolumeGroup(context.Background(), &gopowerstore.VolumeGroupModify{ProtectionPolicyID: ""}, suite.vg.ID)
-	C.RemoveMembersFromVolumeGroup(context.Background(), &gopowerstore.VolumeGroupMembers{VolumeIds: []string{suite.vol.ID}}, suite.vg.ID)
+	C.RemoveMembersFromVolumeGroup(context.Background(), &gopowerstore.VolumeGroupMembers{VolumeIDs: []string{suite.vol.ID}}, suite.vg.ID)
 	C.ModifyVolume(context.Background(), &gopowerstore.VolumeModify{ProtectionPolicyID: ""}, suite.vol.ID)
 	C.DeleteProtectionPolicy(context.Background(), suite.pp.ID)
 	C.DeleteReplicationRule(context.Background(), suite.rr.ID)
@@ -107,7 +107,7 @@ func getRemoteSystem(t *testing.T, suite *ReplicationTestSuite) (string, string)
 
 		suite.pp, err = C.CreateProtectionPolicy(context.Background(), &gopowerstore.ProtectionPolicyCreate{
 			Name:               "intcsi" + suite.randomString + "-pptst",
-			ReplicationRuleIds: []string{suite.rr.ID},
+			ReplicationRuleIDs: []string{suite.rr.ID},
 		})
 
 		if err == nil {

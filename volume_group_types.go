@@ -44,7 +44,7 @@ type VolumeGroupCreate struct {
 	// All the volumes must be on the same Cyclone appliance and should not be part of another volume group.
 	// If a list of volumes is not specified or if the specified list is empty, an
 	// empty volume group of type Volume will be created.
-	VolumeIds []string `json:"volume_ids,omitempty"`
+	VolumeIDs []string `json:"volume_ids,omitempty"`
 }
 
 // VolumeGroup details about a volume groups.
@@ -98,7 +98,7 @@ type VolumeGroups struct {
 }
 
 type VolumeGroupMembers struct {
-	VolumeIds []string `json:"volume_ids"`
+	VolumeIDs []string `json:"volume_ids"`
 }
 
 // VolumeGroupModify modifies existing Volume Group

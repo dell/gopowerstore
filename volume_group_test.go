@@ -46,7 +46,7 @@ func TestClientIMPL_CreateVolumeGroup(t *testing.T) {
 		Name:               "vg-test",
 		Description:        "vg-test",
 		ProtectionPolicyID: volID,
-		VolumeIds:          []string{volID2},
+		VolumeIDs:          []string{volID2},
 	}
 
 	resp, err := C.CreateVolumeGroup(context.Background(), &createReq)
@@ -224,7 +224,7 @@ func TestClientIMPL_RemoveMembersFromVolumeGroup(t *testing.T) {
 		httpmock.NewStringResponder(201, respData))
 
 	createReq := VolumeGroupMembers{
-		VolumeIds: []string{"id-1", "id-2"},
+		VolumeIDs: []string{"id-1", "id-2"},
 	}
 
 	resp, err := C.RemoveMembersFromVolumeGroup(context.Background(), &createReq, volID)
