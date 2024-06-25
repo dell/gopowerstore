@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2020-2023 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2020-2024 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -175,7 +175,6 @@ type Client interface {
 	PerformanceMetricsNfsv4ByNode(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]PerformanceMetricsByNfsv4Response, error)
 	ExecuteActionOnReplicationSession(ctx context.Context, id string, actionType ActionType, params *FailoverParams) (resp EmptyResponse, err error)
 	GetReplicationSessionByID(ctx context.Context, id string) (resp ReplicationSession, err error)
-	RegisterK8sCluster(ctx context.Context, request *K8sCluster) (CreateResponse, error)
 	CreateStorageContainer(ctx context.Context, createParams *StorageContainer) (CreateResponse, error)
 	DeleteStorageContainer(ctx context.Context, id string) (EmptyResponse, error)
 	GetStorageContainer(ctx context.Context, id string) (StorageContainer, error)

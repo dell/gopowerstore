@@ -3899,34 +3899,6 @@ func (_m *Client) PerformanceMetricsSmbByNode(ctx context.Context, entityID stri
 	return r0, r1
 }
 
-// RegisterK8sCluster provides a mock function with given fields: ctx, request
-func (_m *Client) RegisterK8sCluster(ctx context.Context, request *gopowerstore.K8sCluster) (gopowerstore.CreateResponse, error) {
-	ret := _m.Called(ctx, request)
-
-	if len(ret) == 0 {
-		panic("no return value specified for RegisterK8sCluster")
-	}
-
-	var r0 gopowerstore.CreateResponse
-	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, *gopowerstore.K8sCluster) (gopowerstore.CreateResponse, error)); ok {
-		return rf(ctx, request)
-	}
-	if rf, ok := ret.Get(0).(func(context.Context, *gopowerstore.K8sCluster) gopowerstore.CreateResponse); ok {
-		r0 = rf(ctx, request)
-	} else {
-		r0 = ret.Get(0).(gopowerstore.CreateResponse)
-	}
-
-	if rf, ok := ret.Get(1).(func(context.Context, *gopowerstore.K8sCluster) error); ok {
-		r1 = rf(ctx, request)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
 // RemoveMembersFromVolumeGroup provides a mock function with given fields: ctx, params, id
 func (_m *Client) RemoveMembersFromVolumeGroup(ctx context.Context, params *gopowerstore.VolumeGroupMembers, id string) (gopowerstore.EmptyResponse, error) {
 	ret := _m.Called(ctx, params, id)
