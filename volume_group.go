@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2021-2022 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2021-2024 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -116,7 +116,7 @@ func (c *ClientIMPL) CreateVolumeGroup(ctx context.Context,
 
 func (c *ClientIMPL) GetVolumeGroupsByVolumeID(ctx context.Context, id string) (resp VolumeGroups, err error) {
 	qp := c.API.QueryParams()
-	qp.Select("volume_group.volume_group_membership(id,name,protection_policy_id)")
+	qp.Select("volume_groups(id,name,protection_policy_id)")
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{

@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2021-2023 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2021-2024 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -140,12 +140,12 @@ type ProtectionPolicy struct {
 	PerformanceRules []PerformanceRules `json:"performance_rules"`
 	ReplicationRules []ReplicationRule  `json:"replication_rules"`
 	SnapshotRules    []SnapshotRule     `json:"snapshot_rules"`
-	Volumes          []Volume           `json:"volume"`
-	VolumeGroups     []VolumeGroup      `json:"volume_group"`
+	Volumes          []Volume           `json:"volumes"`
+	VolumeGroups     []VolumeGroup      `json:"volume_groups"`
 }
 
 func (policy *ProtectionPolicy) Fields() []string {
-	return []string{"*", "replication_rules(*)", "snapshot_rules(*)", "virtual_machines(*)", "file_systems(*)", "performance_rules(*)", "volume(*)", "volume_group(*)"}
+	return []string{"*", "replication_rules(*)", "snapshot_rules(*)", "virtual_machines(*)", "file_systems(*)", "performance_rules(*)", "volumes(*)", "volume_groups(*)"}
 }
 
 type StorageElementPair struct {
