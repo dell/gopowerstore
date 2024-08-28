@@ -375,3 +375,10 @@ func (v *Volume) Fields() []string {
 func (n *ApplianceInstance) Fields() []string {
 	return []string{"id", "name", "service_tag"}
 }
+
+type MetroConfig struct {
+	RemoteSystem    RemoteSystem
+	RemoteAppliance ApplianceInstance
+}
+
+type MetroSessionId string

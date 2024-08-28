@@ -33,11 +33,20 @@ const (
 )
 
 var (
-	volID      = "6b930711-46bc-4a4b-9d6a-22c77a7838c4"
-	volID2     = "3765da74-28a7-49db-a693-10cec1de91f8"
-	appID      = "A1"
-	volSnapID  = "1966782b-60c9-40e2-a1ee-9b2b8f6b98e7"
-	volSnapID2 = "34380c29-2203-4490-aeb7-2853b9a85075"
+	volID       = "6b930711-46bc-4a4b-9d6a-22c77a7838c4"
+	volID2      = "3765da74-28a7-49db-a693-10cec1de91f8"
+	appID       = "A1"
+	volSnapID   = "1966782b-60c9-40e2-a1ee-9b2b8f6b98e7"
+	volSnapID2  = "34380c29-2203-4490-aeb7-2853b9a85075"
+	metroConfig = MetroConfig{
+		RemoteSystem: RemoteSystem{
+			ID:   "47921973-b0eb-485d-8492-c5d7f6ca216c",
+			Name: "RT-0000",
+		},
+		RemoteAppliance: ApplianceInstance{
+			ID: appID,
+		},
+	}
 )
 
 func TestClientIMPL_GetVolumes(t *testing.T) {
@@ -302,6 +311,17 @@ func TestClientIMPL_DeleteVolume(t *testing.T) {
 	deleteReq := VolumeDelete{}
 	deleteReq.ForceInternal = &force
 	resp, err := C.DeleteVolume(context.Background(), &deleteReq, volID)
+	assert.Nil(t, err)
+	assert.Len(t, string(resp), 0)
+}
+
+func TestClientIMPL_ConfigureMetroVolumeWithValidConfig(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	httpmock.RegisterResponder("POST", fmt.Sprintf("%s/%s/configure_metro", volumeMockURL, volID),
+		httpmock.NewStringResponder(200, ""))
+
+	resp, err := C.ConfigureMetroVolume(context.Background(), volID, metroConfig)
 	assert.Nil(t, err)
 	assert.Len(t, string(resp), 0)
 }

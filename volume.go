@@ -354,3 +354,10 @@ func (c *ClientIMPL) GetApplianceByName(ctx context.Context, name string) (resp 
 	}
 	return appList[0], err
 }
+
+func (c *ClientIMPL) ConfigureMetroVolume(ctx context.Context, volId string, config MetroConfig) (resp MetroSessionId, err error) {
+
+	e := NewAPIError()
+	e.StatusCode = 500
+	return resp, *e
+}
