@@ -355,9 +355,22 @@ func (c *ClientIMPL) GetApplianceByName(ctx context.Context, name string) (resp 
 	return appList[0], err
 }
 
-func (c *ClientIMPL) ConfigureMetroVolume(ctx context.Context, volId string, config MetroConfig) (resp MetroSessionId, err error) {
+func (c *ClientIMPL) ConfigureMetroVolume(ctx context.Context, volId string, config *MetroConfig) (resp MetroSessionId, err error) {
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:   "POST",
+			Endpoint: volumeURL,
+			Action:   "configure_metro",
+			ID:       volId,
+			Body:     config,
+		},
+		&resp)
+	err = WrapErr(err)
 
-	e := NewAPIError()
-	e.StatusCode = 500
-	return resp, *e
+	if err != nil {
+		return resp, err
+	}
+
+	return resp, err
 }

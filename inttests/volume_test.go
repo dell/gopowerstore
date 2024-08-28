@@ -296,7 +296,7 @@ func TestMetroVolumeSuite(t *testing.T) {
 	suite.Run(t, new(MetroVolumeTestSuite))
 }
 
-func (s *MetroVolumeTestSuite) SetupTestSuite() {
+func (s *MetroVolumeTestSuite) SetupSuite() {
 
 	// get the remote system from env vars
 	envRemoteSystemName := os.Getenv("GOPOWERSTORE_REMOTE_NAME")
@@ -309,7 +309,7 @@ func (s *MetroVolumeTestSuite) SetupTestSuite() {
 	assert.NoError(s.T(), err)
 
 	// build a MetroConfig instance to use in tests to configure metro volumes
-	s.metroConfig = gopowerstore.MetroConfig{RemoteSystem: remoteSystem}
+	s.metroConfig = gopowerstore.MetroConfig{RemoteSystemId: remoteSystem.ID}
 }
 
 func (s *MetroVolumeTestSuite) SetupTest() {
@@ -324,42 +324,39 @@ func (s *MetroVolumeTestSuite) TearDownTest() {
 
 func (s *MetroVolumeTestSuite) TestConfigureMetroVolumeWithValidConfig() {
 
-	resp, err := C.ConfigureMetroVolume(context.Background(), s.volID, s.metroConfig)
+	resp, err := C.ConfigureMetroVolume(context.Background(), s.volID, &s.metroConfig)
 	//TODO: defer endMetroVolume()
 	assert.NoError(s.T(), err)
-	assert.Len(s.T(), string(resp), 0)
+	assert.Len(s.T(), resp.ID, 0)
 }
 
 func (s *MetroVolumeTestSuite) TestConfigureMetroVolumeWithNonExistantVolume() {
 
 	// try to configure metro on a nonexistent volume
 	volID := "invalid"
-	_, err := C.ConfigureMetroVolume(context.Background(), volID, s.metroConfig)
+	_, err := C.ConfigureMetroVolume(context.Background(), volID, &s.metroConfig)
 	//TODO: defer endMetroVolume()
-	assert.Equal(s.T(), err.(gopowerstore.APIError).StatusCode, http.StatusNotFound)
+	assert.Equal(s.T(), http.StatusNotFound, err.(gopowerstore.APIError).StatusCode)
 }
 
 func (s *MetroVolumeTestSuite) TestConfigureMetroVolumeWithBadRemoteSystemId() {
 
-	_, err := C.ConfigureMetroVolume(context.Background(), s.volID, gopowerstore.MetroConfig{
-		RemoteSystem: gopowerstore.RemoteSystem{
-			ID:   "invalid-id",
-			Name: "invalid-name",
-		},
+	_, err := C.ConfigureMetroVolume(context.Background(), s.volID, &gopowerstore.MetroConfig{
+		RemoteSystemId: "invalid-id",
 	})
 	//TODO: defer endMetroVolume()
-	assert.Equal(s.T(), err.(gopowerstore.APIError).StatusCode, http.StatusNotFound)
+	assert.Equal(s.T(), http.StatusNotFound, err.(gopowerstore.APIError).StatusCode)
 }
 
 func (s *MetroVolumeTestSuite) TestConfigureMetroVolumeOnExistingMetroVolume() {
 	// configure the volume for metro
-	_, err := C.ConfigureMetroVolume(context.Background(), s.volID, s.metroConfig)
+	_, err := C.ConfigureMetroVolume(context.Background(), s.volID, &s.metroConfig)
 	//TODO: defer endMetroVolume()
 	assert.NoError(s.T(), err)
 
 	// try to create the same metro config again
 	for i := 0; i < DefaultTimeoutSeconds; i++ {
-		_, err = C.ConfigureMetroVolume(context.Background(), s.volID, s.metroConfig)
+		_, err = C.ConfigureMetroVolume(context.Background(), s.volID, &s.metroConfig)
 		//TODO: defer endMetroVolume()
 
 		if err != nil {
@@ -369,5 +366,5 @@ func (s *MetroVolumeTestSuite) TestConfigureMetroVolumeOnExistingMetroVolume() {
 		time.Sleep(1 * time.Second)
 	}
 
-	assert.Equal(s.T(), err.(gopowerstore.APIError).StatusCode, http.StatusBadRequest)
+	assert.Equal(s.T(), http.StatusBadRequest, err.(gopowerstore.APIError).StatusCode)
 }

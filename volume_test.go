@@ -40,13 +40,8 @@ var (
 	volSnapID   = "1966782b-60c9-40e2-a1ee-9b2b8f6b98e7"
 	volSnapID2  = "34380c29-2203-4490-aeb7-2853b9a85075"
 	metroConfig = MetroConfig{
-		RemoteSystem: RemoteSystem{
-			ID:   "47921973-b0eb-485d-8492-c5d7f6ca216c",
-			Name: "RT-0000",
-		},
-		RemoteAppliance: ApplianceInstance{
-			ID: appID,
-		},
+		RemoteSystemId:    "47921973-b0eb-485d-8492-c5d7f6ca216c",
+		RemoteApplianceId: appID,
 	}
 )
 
@@ -301,10 +296,14 @@ func (s *VolumeTestSuite) TestClientIMPL_DeleteVolume() {
 }
 
 func (s *VolumeTestSuite) TestClientIMPL_ConfigureMetroVolumeWithValidConfig() {
-	httpmock.RegisterResponder("POST", fmt.Sprintf("%s/%s/configure_metro", volumeMockURL, volID),
-		httpmock.NewStringResponder(200, ""))
 
-	resp, err := C.ConfigureMetroVolume(context.Background(), volID, metroConfig)
+	sessionId := "test-id"
+	sessionIdJson := fmt.Sprintf(`{"metro_session_id": "%s"}`, sessionId)
+
+	httpmock.RegisterResponder("POST", fmt.Sprintf("%s/%s/configure_metro", volumeMockURL, volID),
+		httpmock.NewStringResponder(200, sessionIdJson))
+
+	resp, err := C.ConfigureMetroVolume(context.Background(), volID, &metroConfig)
 	assert.Nil(s.T(), err)
-	assert.Len(s.T(), string(resp), 0)
+	assert.Equal(s.T(), sessionId, resp.ID)
 }

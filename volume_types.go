@@ -377,8 +377,10 @@ func (n *ApplianceInstance) Fields() []string {
 }
 
 type MetroConfig struct {
-	RemoteSystem    RemoteSystem
-	RemoteAppliance ApplianceInstance
+	RemoteSystemId    string `json:"remote_system_id"`
+	RemoteApplianceId string `json:"remote_appliance_id,omitempty"`
 }
 
-type MetroSessionId string
+type MetroSessionId struct {
+	ID string `json:"metro_session_id,omitempty"`
+}
