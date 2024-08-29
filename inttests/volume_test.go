@@ -297,7 +297,6 @@ func TestMetroVolumeSuite(t *testing.T) {
 }
 
 func (s *MetroVolumeTestSuite) SetupSuite() {
-
 	// get the remote system from env vars
 	envRemoteSystemName := os.Getenv("GOPOWERSTORE_REMOTE_NAME")
 	if envRemoteSystemName == "" {
@@ -309,7 +308,7 @@ func (s *MetroVolumeTestSuite) SetupSuite() {
 	assert.NoError(s.T(), err)
 
 	// build a MetroConfig instance to use in tests to configure metro volumes
-	s.metroConfig = gopowerstore.MetroConfig{RemoteSystemId: remoteSystem.ID}
+	s.metroConfig = gopowerstore.MetroConfig{RemoteSystemID: remoteSystem.ID}
 }
 
 func (s *MetroVolumeTestSuite) SetupTest() {
@@ -323,42 +322,38 @@ func (s *MetroVolumeTestSuite) TearDownTest() {
 }
 
 func (s *MetroVolumeTestSuite) TestConfigureMetroVolumeWithValidConfig() {
-
 	resp, err := C.ConfigureMetroVolume(context.Background(), s.volID, &s.metroConfig)
-	//TODO: defer endMetroVolume()
+	// TODO: defer C.EndMetroVolume()
 	assert.NoError(s.T(), err)
 	assert.Len(s.T(), resp.ID, 0)
 }
 
 func (s *MetroVolumeTestSuite) TestConfigureMetroVolumeWithNonExistantVolume() {
-
 	// try to configure metro on a nonexistent volume
 	volID := "invalid"
 	_, err := C.ConfigureMetroVolume(context.Background(), volID, &s.metroConfig)
-	//TODO: defer endMetroVolume()
+	// TODO: defer C.EndMetroVolume()
 	assert.Equal(s.T(), http.StatusNotFound, err.(gopowerstore.APIError).StatusCode)
 }
 
 func (s *MetroVolumeTestSuite) TestConfigureMetroVolumeWithBadRemoteSystemId() {
-
 	_, err := C.ConfigureMetroVolume(context.Background(), s.volID, &gopowerstore.MetroConfig{
-		RemoteSystemId: "invalid-id",
+		RemoteSystemID: "invalid-id",
 	})
-	//TODO: defer endMetroVolume()
+	// TODO: defer C.EndMetroVolume()
 	assert.Equal(s.T(), http.StatusNotFound, err.(gopowerstore.APIError).StatusCode)
 }
 
 func (s *MetroVolumeTestSuite) TestConfigureMetroVolumeOnExistingMetroVolume() {
 	// configure the volume for metro
 	_, err := C.ConfigureMetroVolume(context.Background(), s.volID, &s.metroConfig)
-	//TODO: defer endMetroVolume()
+	// TODO: defer C.EndMetroVolume()
 	assert.NoError(s.T(), err)
 
 	// try to create the same metro config again
 	for i := 0; i < DefaultTimeoutSeconds; i++ {
 		_, err = C.ConfigureMetroVolume(context.Background(), s.volID, &s.metroConfig)
-		//TODO: defer endMetroVolume()
-
+		// TODO: defer C.EndMetroVolume()
 		if err != nil {
 			break
 		}
