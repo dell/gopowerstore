@@ -113,6 +113,15 @@ const (
 	AppTypeEnumRelationOther              AppTypeEnum = "Other"
 )
 
+// Actions are used to build a PowerStore API query. Each action represents an
+// endpoint under the /volume/ prefix.
+const (
+	VolumeActionClone              string = "clone"
+	VolumeActionComputeDifferences string = "compute_differences"
+	VolumeActionConfigureMetro     string = "configure_metro"
+	VolumeActionSnapshot           string = "snapshot"
+)
+
 // VolumeCreate create volume request
 type VolumeCreate struct {
 	// Unique name for the volume to be created.
