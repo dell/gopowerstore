@@ -300,7 +300,7 @@ func (s *MetroVolumeTestSuite) SetupSuite() {
 	// get the remote system from env vars
 	envRemoteSystemName := os.Getenv("GOPOWERSTORE_REMOTE_NAME")
 	if envRemoteSystemName == "" {
-		s.Fail("GOPOWERSTORE_REMOTE_NAME is not set. Cannot test Metro Volume.")
+		s.FailNow("GOPOWERSTORE_REMOTE_NAME is not set. Cannot test Metro Volume.")
 		return
 	}
 
