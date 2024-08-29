@@ -385,11 +385,20 @@ func (n *ApplianceInstance) Fields() []string {
 	return []string{"id", "name", "service_tag"}
 }
 
+// MetroConfig defines the properties required to configure a metro volume replication session.
 type MetroConfig struct {
-	RemoteSystemId    string `json:"remote_system_id"`
-	RemoteApplianceId string `json:"remote_appliance_id,omitempty"`
+	// RemoteSystemID is a required parameter specifying the remote PowerStore array/cluster on which
+	// the metro volume should be replicated.
+	RemoteSystemID string `json:"remote_system_id"`
+	// RemoteApplianceID is an optional parameter specifying a specific remote PowerStore appliance
+	// on which the metro volume or volume group should be replicated.
+	RemoteApplianceID string `json:"remote_appliance_id,omitempty"`
 }
 
-type MetroSessionId struct {
+// MetroSessionID id the Unique identifier of the replication session assigned
+// to the volume if it has been configured as a metro volume between two PowerStore clusters.
+type MetroSessionID struct {
+	// ID is a unique identifier of the metro replication session and
+	// is included in response to configuring a metro .
 	ID string `json:"metro_session_id,omitempty"`
 }

@@ -355,22 +355,20 @@ func (c *ClientIMPL) GetApplianceByName(ctx context.Context, name string) (resp 
 	return appList[0], err
 }
 
-func (c *ClientIMPL) ConfigureMetroVolume(ctx context.Context, volId string, config *MetroConfig) (resp MetroSessionId, err error) {
+// ConfigureMetroVolume configures the given volume, volID, for metro replication with
+// the remote PowerStore system and optional remote PowerStore appliance provided in config.
+// Returns the metro replication session ID and any errors.
+func (c *ClientIMPL) ConfigureMetroVolume(ctx context.Context, volID string, config *MetroConfig) (resp MetroSessionID, err error) {
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{
 			Method:   "POST",
 			Endpoint: volumeURL,
 			Action:   VolumeActionConfigureMetro,
-			ID:       volId,
+			ID:       volID,
 			Body:     config,
 		},
 		&resp)
-	err = WrapErr(err)
 
-	if err != nil {
-		return resp, err
-	}
-
-	return resp, err
+	return resp, WrapErr(err)
 }
