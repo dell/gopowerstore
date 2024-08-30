@@ -269,8 +269,9 @@ func TestComputeDifferences(t *testing.T) {
 
 type MetroVolumeTestSuite struct {
 	suite.Suite
-	volID       string
-	metroConfig gopowerstore.MetroConfig
+	volID        string
+	metroConfig  gopowerstore.MetroConfig
+	endMetroOpts gopowerstore.EndMetroVolumeOptions
 }
 
 func TestMetroVolumeSuite(t *testing.T) {
@@ -342,5 +343,29 @@ func (s *MetroVolumeTestSuite) TestConfigureMetroVolumeOnExistingMetroVolume() {
 		time.Sleep(1 * time.Second)
 	}
 
+	assert.Equal(s.T(), http.StatusBadRequest, err.(gopowerstore.APIError).StatusCode)
+}
+
+func (s *MetroVolumeTestSuite) TestEndMetroVolume() {
+	// configure the volume for metro
+	_, err := C.ConfigureMetroVolume(context.Background(), s.volID, &s.metroConfig)
+	assert.NoError(s.T(), err)
+
+	// end the metro volume session with config to delete the remote volume
+	_, err = C.EndMetroVolume(context.Background(), s.volID, &s.endMetroOpts)
+	assert.NoError(s.T(), err)
+}
+
+func (s *MetroVolumeTestSuite) TestEndMetroVolumeWithNonExistantVolume() {
+	badVolID := "invalid"
+
+	// attempt to end metro volume session using a volume that should not exist.
+	_, err := C.EndMetroVolume(context.Background(), badVolID, &s.endMetroOpts)
+	assert.Equal(s.T(), http.StatusNotFound, err.(gopowerstore.APIError).StatusCode)
+}
+
+func (s *MetroVolumeTestSuite) TestEndMetroVolumeWithUnreplicatedVolume() {
+	// try to end metro volume session on a volume that exists but is not part of a metro session
+	_, err := C.EndMetroVolume(context.Background(), s.volID, &s.endMetroOpts)
 	assert.Equal(s.T(), http.StatusBadRequest, err.(gopowerstore.APIError).StatusCode)
 }

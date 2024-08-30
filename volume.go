@@ -372,3 +372,14 @@ func (c *ClientIMPL) ConfigureMetroVolume(ctx context.Context, volID string, con
 
 	return resp, WrapErr(err)
 }
+
+func (c *ClientIMPL) EndMetroVolume(ctx context.Context, volID string, deleteOpts *EndMetroVolumeOptions) (resp EmptyResponse, err error) {
+
+	err = APIError{
+		&api.ErrorMsg{
+			StatusCode: 500,
+			Message:    "Not implemented",
+		},
+	}
+	return resp, err
+}

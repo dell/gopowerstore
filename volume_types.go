@@ -119,6 +119,7 @@ const (
 	VolumeActionClone              string = "clone"
 	VolumeActionComputeDifferences string = "compute_differences"
 	VolumeActionConfigureMetro     string = "configure_metro"
+	VolumeActionEndMetro           string = "end_metro"
 	VolumeActionSnapshot           string = "snapshot"
 )
 
@@ -400,5 +401,17 @@ type MetroConfig struct {
 type MetroSessionID struct {
 	// ID is a unique identifier of the metro replication session and
 	// is included in response to configuring a metro .
-	ID string `json:"metro_session_id,omitempty"`
+	ID string `json:"metro_replication_session_id,omitempty"`
+}
+
+// EndMetroVolumeOptions defines the options associated with deleting a metro volume.
+type EndMetroVolumeOptions struct {
+	// DeleteRemoteVolume specifies whether or not to delete the remote volume when ending the metro session.
+	DeleteRemoteVolume bool `json:"delete_remote_volume,omitempty"`
+	// ForceDelete specifies if the Metro volume should be forcefully deleted.
+	// If the force option is specified, any errors returned while attempting to tear down the remote side of the
+	// metro session will be ignored and the remote side may be left in an indeterminate state.
+	// If any errors occur on the local side the operation can still fail.
+	// It is not recommended to use this option unless the remote side is known to be down.
+	ForceDelete bool `json:"force,omitempty"`
 }
