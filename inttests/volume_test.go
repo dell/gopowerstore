@@ -23,15 +23,10 @@ import (
 	"net/http"
 	"os"
 	"testing"
-	"time"
 
 	"github.com/dell/gopowerstore"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
-)
-
-const (
-	DefaultTimeoutSeconds = 30
 )
 
 func createSnap(volID string, t *testing.T, volName string) gopowerstore.CreateResponse {
@@ -270,6 +265,7 @@ func TestComputeDifferences(t *testing.T) {
 type MetroVolumeTestSuite struct {
 	suite.Suite
 	volID        string
+	metroSession gopowerstore.MetroSessionID
 	metroConfig  gopowerstore.MetroConfig
 	endMetroOpts gopowerstore.EndMetroVolumeOptions
 }
@@ -291,58 +287,65 @@ func (s *MetroVolumeTestSuite) SetupSuite() {
 
 	// build a MetroConfig instance to use in tests to configure metro volumes
 	s.metroConfig = gopowerstore.MetroConfig{RemoteSystemID: remoteSystem.ID}
+
+	// always delete the remote metro volume
+	s.endMetroOpts = gopowerstore.EndMetroVolumeOptions{
+		DeleteRemoteVolume: true,
+		ForceDelete:        false,
+	}
 }
 
 func (s *MetroVolumeTestSuite) SetupTest() {
 	// Get a new volume for each test.
 	s.volID, _ = CreateVol(s.T())
+	// sanitize for next test run.
+	s.metroSession.ID = ""
 }
 
 func (s *MetroVolumeTestSuite) TearDownTest() {
+	// end the metro volume session if one was created
+	if s.metroSession.ID != "" {
+		_, err := C.EndMetroVolume(context.Background(), s.volID, &s.endMetroOpts)
+		assert.NoError(s.T(), err)
+	}
+
 	// clean up any volumes from the array
 	DeleteVol(s.T(), s.volID)
 }
 
 func (s *MetroVolumeTestSuite) TestConfigureMetroVolumeWithValidConfig() {
-	resp, err := C.ConfigureMetroVolume(context.Background(), s.volID, &s.metroConfig)
-	// TODO: defer C.EndMetroVolume()
+	var err error
+	s.metroSession, err = C.ConfigureMetroVolume(context.Background(), s.volID, &s.metroConfig)
 	assert.NoError(s.T(), err)
-	assert.Len(s.T(), resp.ID, 0)
+	assert.NotEmpty(s.T(), s.metroSession.ID)
 }
 
 func (s *MetroVolumeTestSuite) TestConfigureMetroVolumeWithNonExistantVolume() {
+	var err error
 	// try to configure metro on a nonexistent volume
 	volID := "invalid"
-	_, err := C.ConfigureMetroVolume(context.Background(), volID, &s.metroConfig)
-	// TODO: defer C.EndMetroVolume()
+	s.metroSession, err = C.ConfigureMetroVolume(context.Background(), volID, &s.metroConfig)
 	assert.Equal(s.T(), http.StatusNotFound, err.(gopowerstore.APIError).StatusCode)
+	assert.Empty(s.T(), s.metroSession.ID)
 }
 
 func (s *MetroVolumeTestSuite) TestConfigureMetroVolumeWithBadRemoteSystemId() {
-	_, err := C.ConfigureMetroVolume(context.Background(), s.volID, &gopowerstore.MetroConfig{
+	var err error
+	s.metroSession, err = C.ConfigureMetroVolume(context.Background(), s.volID, &gopowerstore.MetroConfig{
 		RemoteSystemID: "invalid-id",
 	})
-	// TODO: defer C.EndMetroVolume()
 	assert.Equal(s.T(), http.StatusNotFound, err.(gopowerstore.APIError).StatusCode)
+	assert.Empty(s.T(), s.metroSession.ID)
 }
 
 func (s *MetroVolumeTestSuite) TestConfigureMetroVolumeOnExistingMetroVolume() {
+	var err error
 	// configure the volume for metro
-	_, err := C.ConfigureMetroVolume(context.Background(), s.volID, &s.metroConfig)
-	// TODO: defer C.EndMetroVolume()
+	s.metroSession, err = C.ConfigureMetroVolume(context.Background(), s.volID, &s.metroConfig)
 	assert.NoError(s.T(), err)
 
 	// try to create the same metro config again
-	for i := 0; i < DefaultTimeoutSeconds; i++ {
-		_, err = C.ConfigureMetroVolume(context.Background(), s.volID, &s.metroConfig)
-		// TODO: defer C.EndMetroVolume()
-		if err != nil {
-			break
-		}
-
-		time.Sleep(1 * time.Second)
-	}
-
+	_, err = C.ConfigureMetroVolume(context.Background(), s.volID, &s.metroConfig)
 	assert.Equal(s.T(), http.StatusBadRequest, err.(gopowerstore.APIError).StatusCode)
 }
 

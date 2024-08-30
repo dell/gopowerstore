@@ -373,13 +373,20 @@ func (c *ClientIMPL) ConfigureMetroVolume(ctx context.Context, volID string, con
 	return resp, WrapErr(err)
 }
 
+// EndMetroVolume ends the metro session for a volume, volID, between two PowerStore systems.
+// deleteOpts provides options to delete the replicated volume on the remote system and
+// whether or not to force the session removal.
 func (c *ClientIMPL) EndMetroVolume(ctx context.Context, volID string, deleteOpts *EndMetroVolumeOptions) (resp EmptyResponse, err error) {
-
-	err = APIError{
-		&api.ErrorMsg{
-			StatusCode: 500,
-			Message:    "Not implemented",
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:   "POST",
+			Endpoint: volumeURL,
+			Action:   VolumeActionEndMetro,
+			ID:       volID,
+			Body:     deleteOpts,
 		},
-	}
-	return resp, err
+		&resp)
+
+	return resp, WrapErr(err)
 }
