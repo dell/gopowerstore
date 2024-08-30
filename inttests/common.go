@@ -19,9 +19,19 @@
 package inttests
 
 import (
+	"context"
 	"crypto/rand"
 	"math/big"
 	"testing"
+
+	"github.com/dell/gopowerstore"
+)
+
+const (
+	TestVolumePrefix       = "test_vol_"
+	DefaultVolSize   int64 = 1048576
+	DefaultChunkSize int64 = 1048576
+	letters                = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 )
 
 func checkAPIErr(t *testing.T, err error) {
@@ -37,8 +47,6 @@ func skipTestOnError(t *testing.T, err error) {
 	}
 }
 
-const letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-
 func randString(n int) string {
 	b := make([]byte, n)
 	for i := range b {
@@ -50,4 +58,20 @@ func randString(n int) string {
 		}
 	}
 	return string(b)
+}
+
+func CreateVol(t *testing.T) (volID, volName string) {
+	volName = TestVolumePrefix + randString(8)
+	createParams := gopowerstore.VolumeCreate{}
+	createParams.Name = &volName
+	size := DefaultVolSize
+	createParams.Size = &size
+	createResp, err := C.CreateVolume(context.Background(), &createParams)
+	checkAPIErr(t, err)
+	return createResp.ID, volName
+}
+
+func DeleteVol(t *testing.T, id string) {
+	_, err := C.DeleteVolume(context.Background(), nil, id)
+	checkAPIErr(t, err)
 }

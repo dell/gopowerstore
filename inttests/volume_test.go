@@ -31,27 +31,8 @@ import (
 )
 
 const (
-	TestVolumePrefix            = "test_vol_"
-	DefaultVolSize        int64 = 1048576
-	DefaultChunkSize      int64 = 1048576
-	DefaultTimeoutSeconds       = 30
+	DefaultTimeoutSeconds = 30
 )
-
-func createVol(t *testing.T) (string, string) {
-	volName := TestVolumePrefix + randString(8)
-	createParams := gopowerstore.VolumeCreate{}
-	createParams.Name = &volName
-	size := DefaultVolSize
-	createParams.Size = &size
-	createResp, err := C.CreateVolume(context.Background(), &createParams)
-	checkAPIErr(t, err)
-	return createResp.ID, volName
-}
-
-func deleteVol(t *testing.T, id string) {
-	_, err := C.DeleteVolume(context.Background(), nil, id)
-	checkAPIErr(t, err)
-}
 
 func createSnap(volID string, t *testing.T, volName string) gopowerstore.CreateResponse {
 	return createSnapWithSuffix(volID, t, volName, "snapshot")
@@ -73,8 +54,8 @@ func createSnapWithSuffix(volID string, t *testing.T, volName string, snapshotSu
 }
 
 func TestModifyVolume(t *testing.T) {
-	volID, _ := createVol(t)
-	defer deleteVol(t, volID)
+	volID, _ := CreateVol(t)
+	defer DeleteVol(t, volID)
 
 	_, err := C.ModifyVolume(context.Background(), &gopowerstore.VolumeModify{Size: DefaultVolSize * 2, Name: "rename"}, volID)
 	checkAPIErr(t, err)
@@ -85,8 +66,8 @@ func TestModifyVolume(t *testing.T) {
 }
 
 func TestGetSnapshotsByVolumeID(t *testing.T) {
-	volID, volName := createVol(t)
-	defer deleteVol(t, volID)
+	volID, volName := CreateVol(t)
+	defer DeleteVol(t, volID)
 
 	snap := createSnap(volID, t, volName)
 	assert.NotEmpty(t, snap.ID)
@@ -99,8 +80,8 @@ func TestGetSnapshotsByVolumeID(t *testing.T) {
 }
 
 func TestGetSnapshot(t *testing.T) {
-	volID, volName := createVol(t)
-	defer deleteVol(t, volID)
+	volID, volName := CreateVol(t)
+	defer DeleteVol(t, volID)
 
 	snap := createSnap(volID, t, volName)
 	assert.NotEmpty(t, snap.ID)
@@ -117,8 +98,8 @@ func TestGetSnapshots(t *testing.T) {
 }
 
 func TestGetNonExistingSnapshot(t *testing.T) {
-	volID, volName := createVol(t)
-	defer deleteVol(t, volID)
+	volID, volName := CreateVol(t)
+	defer DeleteVol(t, volID)
 
 	snap := createSnap(volID, t, volName)
 	assert.NotEmpty(t, snap.ID)
@@ -132,15 +113,15 @@ func TestGetNonExistingSnapshot(t *testing.T) {
 }
 
 func TestCreateSnapshot(t *testing.T) {
-	volID, volName := createVol(t)
-	defer deleteVol(t, volID)
+	volID, volName := CreateVol(t)
+	defer DeleteVol(t, volID)
 	snap := createSnap(volID, t, volName)
 	assert.NotEmpty(t, snap.ID)
 }
 
 func TestDeleteSnapshot(t *testing.T) {
-	volID, volName := createVol(t)
-	defer deleteVol(t, volID)
+	volID, volName := CreateVol(t)
+	defer DeleteVol(t, volID)
 	snap := createSnap(volID, t, volName)
 	assert.NotEmpty(t, snap.ID)
 	_, err := C.DeleteSnapshot(context.Background(), nil, snap.ID)
@@ -148,8 +129,8 @@ func TestDeleteSnapshot(t *testing.T) {
 }
 
 func TestCreateVolumeFromSnapshot(t *testing.T) {
-	volID, volName := createVol(t)
-	defer deleteVol(t, volID)
+	volID, volName := CreateVol(t)
+	defer DeleteVol(t, volID)
 	snap := createSnap(volID, t, volName)
 	assert.NotEmpty(t, snap.ID)
 
@@ -159,7 +140,7 @@ func TestCreateVolumeFromSnapshot(t *testing.T) {
 	snapVol, err := C.CreateVolumeFromSnapshot(context.Background(), &createParams, snap.ID)
 	checkAPIErr(t, err)
 	assert.NotEmpty(t, snapVol.ID)
-	deleteVol(t, snapVol.ID)
+	DeleteVol(t, snapVol.ID)
 }
 
 func TestGetVolumes(t *testing.T) {
@@ -168,26 +149,26 @@ func TestGetVolumes(t *testing.T) {
 }
 
 func TestGetVolume(t *testing.T) {
-	volID, volName := createVol(t)
+	volID, volName := CreateVol(t)
 	volume, err := C.GetVolume(context.Background(), volID)
 	checkAPIErr(t, err)
 	assert.NotEmpty(t, volume.Name)
 	assert.Equal(t, volName, volume.Name)
-	deleteVol(t, volID)
+	DeleteVol(t, volID)
 }
 
 func TestGetVolumeByName(t *testing.T) {
-	volID, volName := createVol(t)
+	volID, volName := CreateVol(t)
 	volume, err := C.GetVolumeByName(context.Background(), volName)
 	checkAPIErr(t, err)
 	assert.NotEmpty(t, volume.Name)
 	assert.Equal(t, volName, volume.Name)
-	deleteVol(t, volID)
+	DeleteVol(t, volID)
 }
 
 func TestCreateDeleteVolume(t *testing.T) {
-	volID, _ := createVol(t)
-	deleteVol(t, volID)
+	volID, _ := CreateVol(t)
+	DeleteVol(t, volID)
 }
 
 func TestDeleteUnknownVol(t *testing.T) {
@@ -211,8 +192,8 @@ func TestGetVolumesWithTrace(t *testing.T) {
 }
 
 func TestVolumeAlreadyExist(t *testing.T) {
-	volID, name := createVol(t)
-	defer deleteVol(t, volID)
+	volID, name := CreateVol(t)
+	defer DeleteVol(t, volID)
 	createReq := gopowerstore.VolumeCreate{}
 	createReq.Name = &name
 	size := DefaultVolSize
@@ -224,8 +205,8 @@ func TestVolumeAlreadyExist(t *testing.T) {
 }
 
 func TestSnapshotAlreadyExist(t *testing.T) {
-	volID, volName := createVol(t)
-	defer deleteVol(t, volID)
+	volID, volName := CreateVol(t)
+	defer DeleteVol(t, volID)
 	snap := createSnap(volID, t, volName)
 	assert.NotEmpty(t, snap.ID)
 
@@ -249,8 +230,8 @@ func TestGetInvalidVolume(t *testing.T) {
 
 func TestComputeDifferences(t *testing.T) {
 	// Create volume
-	volID, volName := createVol(t)
-	defer deleteVol(t, volID)
+	volID, volName := CreateVol(t)
+	defer DeleteVol(t, volID)
 
 	// Create snap of volume
 	snap1 := createSnapWithSuffix(volID, t, volName, "snapshot1")
@@ -313,12 +294,12 @@ func (s *MetroVolumeTestSuite) SetupSuite() {
 
 func (s *MetroVolumeTestSuite) SetupTest() {
 	// Get a new volume for each test.
-	s.volID, _ = createVol(s.T())
+	s.volID, _ = CreateVol(s.T())
 }
 
 func (s *MetroVolumeTestSuite) TearDownTest() {
 	// clean up any volumes from the array
-	deleteVol(s.T(), s.volID)
+	DeleteVol(s.T(), s.volID)
 }
 
 func (s *MetroVolumeTestSuite) TestConfigureMetroVolumeWithValidConfig() {
