@@ -44,3 +44,16 @@ func initClient() {
 func init() {
 	initClient()
 }
+
+func GetNewClient() (client gopowerstore.Client) {
+	err := godotenv.Load(envVarsFile)
+	if err != nil {
+		log.Printf("%s file not found.", envVarsFile)
+	}
+	client, err = gopowerstore.NewClient()
+	if err != nil {
+		panic(err)
+	}
+
+	return client
+}

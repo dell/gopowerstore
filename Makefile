@@ -27,8 +27,9 @@ unit-test:
 	go test -v -coverprofile=c.out $(unit_test_paths)
 
 int-test:
-		 go test -timeout 600s -v -coverprofile=c.out -coverpkg github.com/dell/gopowerstore \
-		 $(integration_tests_path)
+	source $(integration_tests_path)/GOPOWERSTORE_TEST.env \
+	&& \
+	go test -timeout 600s -shuffle=on -v -coverprofile=c.out -coverpkg github.com/dell/gopowerstore $(integration_tests_path)
 
 gocover:
 	go tool cover -html=c.out

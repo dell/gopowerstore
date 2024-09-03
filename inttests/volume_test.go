@@ -224,6 +224,7 @@ func TestGetInvalidVolume(t *testing.T) {
 }
 
 func TestComputeDifferences(t *testing.T) {
+	pstoreClient := GetNewClient()
 	// Create volume
 	volID, volName := CreateVol(t)
 	defer DeleteVol(t, volID)
@@ -246,16 +247,16 @@ func TestComputeDifferences(t *testing.T) {
 		Length:         &length,
 		Offset:         &offset,
 	}
-	defaultHeaders := C.GetCustomHTTPHeaders()
+	defaultHeaders := pstoreClient.GetCustomHTTPHeaders()
 	if defaultHeaders == nil {
 		defaultHeaders = make(http.Header)
 	}
 	customHeaders := defaultHeaders
 	// for accessing internal REST-APIs
 	customHeaders.Add("DELL-VISIBILITY", "internal")
-	C.SetCustomHTTPHeaders(customHeaders)
+	pstoreClient.SetCustomHTTPHeaders(customHeaders)
 
-	resp, err := C.ComputeDifferences(context.Background(), &snapdiffParams, snap1.ID)
+	resp, err := pstoreClient.ComputeDifferences(context.Background(), &snapdiffParams, snap1.ID)
 	checkAPIErr(t, err)
 	// AA== is equivalent to an empty bitmap
 	assert.Equal(t, "AA==", *resp.ChunkBitmap)

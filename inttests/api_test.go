@@ -24,28 +24,43 @@ import (
 	"testing"
 	"time"
 
+	"github.com/dell/gopowerstore"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
 )
 
-func TestTimeout(t *testing.T) {
+type customLogger struct{}
+
+type APITestSuite struct {
+	suite.Suite
+	C gopowerstore.Client
+}
+
+func TestApiSuite(t *testing.T) {
+	suite.Run(t, new(APITestSuite))
+}
+
+func (s *APITestSuite) SetupTest() {
+	s.C = GetNewClient()
+}
+
+func (s *APITestSuite) TestTimeout() {
 	ctx, cancelFunc := context.WithTimeout(context.Background(), time.Millisecond*10)
 	defer cancelFunc()
-	_, err := C.GetVolumes(ctx)
-	assert.NotNil(t, err)
+	_, err := s.C.GetVolumes(ctx)
+	assert.NotNil(s.T(), err)
 }
 
-func TestTraceID(t *testing.T) {
-	_, err := C.GetVolumes(C.SetTraceID(context.Background(), "reqid-1"))
-	assert.Nil(t, err)
+func (s *APITestSuite) TestTraceID() {
+	_, err := s.C.GetVolumes(s.C.SetTraceID(context.Background(), "reqid-1"))
+	assert.Nil(s.T(), err)
 }
 
-func TestCustomLogger(t *testing.T) {
-	C.SetLogger(&customLogger{})
-	_, err := C.GetVolumes(C.SetTraceID(context.Background(), "reqid-1"))
-	assert.Nil(t, err)
+func (s *APITestSuite) TestCustomLogger() {
+	s.C.SetLogger(&customLogger{})
+	_, err := s.C.GetVolumes(s.C.SetTraceID(context.Background(), "reqid-1"))
+	assert.Nil(s.T(), err)
 }
-
-type customLogger struct{}
 
 func (cl *customLogger) Info(_ context.Context, format string, args ...interface{}) {
 	log.Printf("INFO:"+format, args...)
