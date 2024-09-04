@@ -263,7 +263,7 @@ func NewClient() (Client, error) {
 	if err == nil {
 		options.SetInsecure(insecure)
 	}
-	httpTimeout, err := strconv.ParseUint(os.Getenv(HTTPTimeoutEnv), 10, 64)
+	httpTimeout, err := strconv.ParseInt(os.Getenv(HTTPTimeoutEnv), 10, 64)
 
 	if err == nil {
 		options.SetDefaultTimeout(httpTimeout)

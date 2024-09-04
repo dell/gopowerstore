@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2021-2022 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2021-2024 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ type TimeoutSemaphore struct {
 	Logger    Logger
 }
 
-func NewTimeoutSemaphore(timeout, rateLimit int, logger Logger) *TimeoutSemaphore {
+func NewTimeoutSemaphore(timeout int64, rateLimit int, logger Logger) *TimeoutSemaphore {
 	log := logger
 
 	if log == nil {
