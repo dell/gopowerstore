@@ -12,5 +12,4 @@ GOPOWERSTORE_APIURL=https://127.0.0.1/api/rest
 GOPOWERSTORE_USERNAME=admin
 GOPOWERSTORE_PASSWORD=Password
 GOPOWERSTORE_DEBUG=true
-GOPOWERSTORE_REMOTE_ID=RT-D0000 # This remote system should be configured for metro replication
 ```

@@ -295,7 +295,7 @@ func (s *VolumeTestSuite) TestClientIMPL_DeleteVolume() {
 	assert.Len(s.T(), string(resp), 0)
 }
 
-func (s *VolumeTestSuite) TestClientIMPL_ConfigureMetroVolumeWithValidConfig() {
+func (s *VolumeTestSuite) TestClientIMPL_ConfigureMetroVolume() {
 	sessionID := "test-id"
 	sessionIDJSON := fmt.Sprintf(`{"metro_session_id": "%s"}`, sessionID)
 

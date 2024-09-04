@@ -75,3 +75,13 @@ func DeleteVol(t *testing.T, id string) {
 	_, err := C.DeleteVolume(context.Background(), nil, id)
 	checkAPIErr(t, err)
 }
+
+// check for the target string in the list of strings and return true if found.
+func Includes(list *[]string, target string) bool {
+	for _, s := range *list {
+		if s == target {
+			return true
+		}
+	}
+	return false
+}

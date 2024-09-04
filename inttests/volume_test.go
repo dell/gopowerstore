@@ -21,7 +21,6 @@ package inttests
 import (
 	"context"
 	"net/http"
-	"os"
 	"testing"
 
 	"github.com/dell/gopowerstore"
@@ -275,19 +274,36 @@ func TestMetroVolumeSuite(t *testing.T) {
 	suite.Run(t, new(MetroVolumeTestSuite))
 }
 
+// Find a remote system with Metro support and make sure all metro volume sessions
+// are terminated with the remote volume being deleted.
 func (s *MetroVolumeTestSuite) SetupSuite() {
-	// get the remote system from env vars
-	envRemoteSystemName := os.Getenv("GOPOWERSTORE_REMOTE_NAME")
-	if envRemoteSystemName == "" {
-		s.FailNow("GOPOWERSTORE_REMOTE_NAME is not set. Cannot test Metro Volume.")
-		return
+	// Begin query to find a remote system for testing Metro
+	resp, err := C.GetAllRemoteSystems(context.Background())
+	skipTestOnError(s.T(), err)
+
+	// try to find a valid remote system with Metro from the list of all available remote systems
+	for i := range resp {
+		// get remote system details
+		rs, err := C.GetRemoteSystem(context.Background(), resp[i].ID)
+		assert.NoError(s.T(), err)
+		assert.Equal(s.T(), rs.ID, resp[i].ID)
+
+		// check remote capabilities for metro and create MetroConfig if found
+		if Includes(&rs.Capabilities, string(gopowerstore.BlockMetro)) {
+			// make sure the connection is in a good state
+			if rs.DataConnectionState == string(gopowerstore.ConnStateOK) {
+				s.metroConfig = gopowerstore.MetroConfig{RemoteSystemID: rs.ID}
+				break
+			}
+		}
+
+		// if none of the remote systems support metro, skip the test
+		if i == len(resp)-1 {
+			s.T().Skip("Skipping test as there are no working remote systems with Metro configured on array.")
+			return
+		}
+
 	}
-
-	remoteSystem, err := C.GetRemoteSystemByName(context.Background(), envRemoteSystemName)
-	assert.NoError(s.T(), err)
-
-	// build a MetroConfig instance to use in tests to configure metro volumes
-	s.metroConfig = gopowerstore.MetroConfig{RemoteSystemID: remoteSystem.ID}
 
 	// always delete the remote metro volume
 	s.endMetroOpts = gopowerstore.EndMetroVolumeOptions{
@@ -314,7 +330,7 @@ func (s *MetroVolumeTestSuite) TearDownTest() {
 	DeleteVol(s.T(), s.volID)
 }
 
-func (s *MetroVolumeTestSuite) TestConfigureMetroVolumeWithValidConfig() {
+func (s *MetroVolumeTestSuite) TestConfigureMetroVolume() {
 	var err error
 	s.metroSession, err = C.ConfigureMetroVolume(context.Background(), s.volID, &s.metroConfig)
 	assert.NoError(s.T(), err)
