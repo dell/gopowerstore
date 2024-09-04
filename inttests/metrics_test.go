@@ -240,15 +240,17 @@ func Test_SpaceMetricsByVolumeGroup(t *testing.T) {
 func Test_CopyMetricsByAppliance(t *testing.T) {
 	resp, err := C.CopyMetricsByAppliance(context.Background(), "A1", gopowerstore.OneDay)
 	checkAPIErr(t, err)
-	assert.NotEmpty(t, resp)
-	assert.Equal(t, "copy_metrics_by_appliance", resp[0].Entity)
+	if assert.NotEmpty(t, resp) {
+		assert.Equal(t, "copy_metrics_by_appliance", resp[0].Entity)
+	}
 }
 
 func Test_CopyMetricsByCluster(t *testing.T) {
 	resp, err := C.CopyMetricsByCluster(context.Background(), "0", gopowerstore.OneDay)
 	checkAPIErr(t, err)
-	assert.NotEmpty(t, resp)
-	assert.Equal(t, "copy_metrics_by_cluster", resp[0].Entity)
+	if assert.NotEmpty(t, resp) {
+		assert.Equal(t, "copy_metrics_by_cluster", resp[0].Entity)
+	}
 }
 
 func Test_CopyMetricsByVolumeGroup(t *testing.T) {
