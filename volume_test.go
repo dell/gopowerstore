@@ -21,6 +21,7 @@ package gopowerstore
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"testing"
 
 	"github.com/jarcoal/httpmock"
@@ -297,12 +298,23 @@ func (s *VolumeTestSuite) TestClientIMPL_DeleteVolume() {
 
 func (s *VolumeTestSuite) TestClientIMPL_ConfigureMetroVolume() {
 	sessionID := "test-id"
-	sessionIDJSON := fmt.Sprintf(`{"metro_session_id": "%s"}`, sessionID)
+	sessionIDJSON := fmt.Sprintf(`{"metro_replication_session_id": "%s"}`, sessionID)
 
-	httpmock.RegisterResponder("POST", fmt.Sprintf("%s/%s/configure_metro", volumeMockURL, volID),
-		httpmock.NewStringResponder(200, sessionIDJSON))
+	httpmock.RegisterResponder("POST", fmt.Sprintf("%s/%s/%s", volumeMockURL, volID, VolumeActionConfigureMetro),
+		httpmock.NewStringResponder(http.StatusOK, sessionIDJSON))
 
 	resp, err := C.ConfigureMetroVolume(context.Background(), volID, &metroConfig)
 	assert.Nil(s.T(), err)
 	assert.Equal(s.T(), sessionID, resp.ID)
+}
+
+func (s *VolumeTestSuite) TestClientIMPL_EndMetroVolume() {
+	opts := EndMetroVolumeOptions{DeleteRemoteVolume: true}
+
+	httpmock.RegisterResponder("POST", fmt.Sprintf("%s/%s/%s", volumeMockURL, volID, VolumeActionEndMetro),
+		httpmock.NewStringResponder(http.StatusNoContent, ""))
+
+	resp, err := C.EndMetroVolume(context.Background(), volID, &opts)
+	assert.Nil(s.T(), err)
+	assert.Empty(s.T(), resp)
 }
