@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2020-2022 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2020-2024 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -237,7 +237,7 @@ func (c *ClientIMPL) ComputeDifferences(ctx context.Context,
 			Method:   "POST",
 			Endpoint: volumeURL,
 			ID:       volID,
-			Action:   "compute_differences",
+			Action:   VolumeActionComputeDifferences,
 			Body:     computeDiffParams,
 		},
 		&resp)
@@ -254,7 +254,7 @@ func (c *ClientIMPL) CreateVolumeFromSnapshot(ctx context.Context,
 			Method:   "POST",
 			Endpoint: volumeURL,
 			ID:       snapID,
-			Action:   "clone",
+			Action:   VolumeActionClone,
 			Body:     createParams,
 		},
 		&resp)
@@ -271,7 +271,7 @@ func (c *ClientIMPL) CreateSnapshot(ctx context.Context,
 			Method:   "POST",
 			Endpoint: volumeURL,
 			ID:       id,
-			Action:   "snapshot",
+			Action:   VolumeActionSnapshot,
 			Body:     createSnapParams,
 		},
 		&resp)
@@ -311,7 +311,7 @@ func (c *ClientIMPL) CloneVolume(ctx context.Context,
 			Method:   "POST",
 			Endpoint: volumeURL,
 			ID:       volID,
-			Action:   "clone",
+			Action:   VolumeActionClone,
 			Body:     createParams,
 		},
 		&resp)
@@ -353,4 +353,40 @@ func (c *ClientIMPL) GetApplianceByName(ctx context.Context, name string) (resp 
 		return resp, NewNotFoundError()
 	}
 	return appList[0], err
+}
+
+// ConfigureMetroVolume configures the given volume, id, for metro replication with
+// the remote PowerStore system and optional remote PowerStore appliance provided in config.
+// Returns the metro replication session ID and any errors.
+func (c *ClientIMPL) ConfigureMetroVolume(ctx context.Context, id string, config *MetroConfig) (resp MetroSessionResponse, err error) {
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:   "POST",
+			Endpoint: volumeURL,
+			Action:   VolumeActionConfigureMetro,
+			ID:       id,
+			Body:     config,
+		},
+		&resp)
+
+	return resp, WrapErr(err)
+}
+
+// EndMetroVolume ends the metro session for a volume, id, between two PowerStore systems.
+// deleteOpts provides options to delete the replicated volume on the remote system and
+// whether or not to force the session removal.
+func (c *ClientIMPL) EndMetroVolume(ctx context.Context, id string, deleteOpts *EndMetroVolumeOptions) (resp EmptyResponse, err error) {
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:   "POST",
+			Endpoint: volumeURL,
+			Action:   VolumeActionEndMetro,
+			ID:       id,
+			Body:     deleteOpts,
+		},
+		&resp)
+
+	return resp, WrapErr(err)
 }

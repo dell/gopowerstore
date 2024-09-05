@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2021-2023 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2021-2024 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -116,7 +116,7 @@ func TestClientIMPL_GetVolumeGroupByName(t *testing.T) {
 func TestClientIMPL_GetVolumeGroupsByVolumeID(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
-	respData := fmt.Sprintf(`{ "volume_group": [{"id": "%s", "name": "%s"}] }`, volID2, "volume-group")
+	respData := fmt.Sprintf(`{ "volume_groups": [{"id": "%s", "name": "%s"}] }`, volID2, "volume-group")
 	httpmock.RegisterResponder("GET", fmt.Sprintf("%s/%s", volumeMockURL, volID),
 		httpmock.NewStringResponder(200, respData))
 
@@ -201,7 +201,7 @@ func TestClientIMPL_ModifyVolumeGroup(t *testing.T) {
 func TestClientIMPL_ModifyVolumeGroupSnapshot(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
-	respData := fmt.Sprintf(``)
+	respData := fmt.Sprint(``)
 	httpmock.RegisterResponder("PATCH", fmt.Sprintf("%s/%s", volumeGroupMockURL, volID),
 		httpmock.NewStringResponder(201, respData))
 

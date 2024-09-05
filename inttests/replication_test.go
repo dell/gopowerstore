@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2021-2022 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2021-2024 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,6 +40,10 @@ type ReplicationTestSuite struct {
 	rr              gopowerstore.CreateResponse
 	vol             gopowerstore.CreateResponse
 }
+
+const (
+	OneMB int64 = 1048576
+)
 
 func (suite *ReplicationTestSuite) SetupSuite() {
 	// instead of completely hardcoded/constant string, let's make it dynamic
@@ -123,29 +127,36 @@ func getRemoteSystem(t *testing.T, suite *ReplicationTestSuite) (string, string)
 
 func (suite *ReplicationTestSuite) TestReplication() {
 	t := suite.T()
+
+	// get the remote powerstore system
 	remoteSystem := suite.remoteSystem
 	rs, err := C.GetRemoteSystem(context.Background(), remoteSystem)
 	assert.NoError(t, err)
 	assert.Equal(t, rs.ID, remoteSystem)
 
+	// create a volume group with a protection policy
 	suite.vg, err = C.CreateVolumeGroup(context.Background(), &gopowerstore.VolumeGroupCreate{
 		Name:               "intcsi" + suite.randomString + "-vgtst",
 		ProtectionPolicyID: suite.pp.ID,
 	})
 	assert.NoError(t, err)
 
+	// create a volume within the volume group
 	volName := "intcsi" + suite.randomString + "-voltst"
-	size := int64(1048576)
+	size := int64(OneMB)
 	suite.vol, err = C.CreateVolume(context.Background(), &gopowerstore.VolumeCreate{
 		Name:          &volName,
 		Size:          &size,
 		VolumeGroupID: suite.vg.ID,
 	})
 	assert.NoError(t, err)
+
+	// get the volume group from the volume ID
 	volID := suite.vol.ID
 	_, err = C.GetVolumeGroupsByVolumeID(context.Background(), volID)
 	assert.NoError(t, err)
 
+	// get the replication session using the volume group ID. May take some time.
 	for tout := 0; tout < 30; tout++ {
 		_, err = C.GetReplicationSessionByLocalResourceID(context.Background(), suite.vg.ID)
 		if err == nil {

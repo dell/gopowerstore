@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2020-2023 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2020-2024 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -111,6 +111,16 @@ const (
 	AppTypeEnumContainers                 AppTypeEnum = "Virtualization_Containers_Kubernetes"
 	AppTypeEnumVirtualDesktops            AppTypeEnum = "Virtualization_Virtual_Desktops_VDI"
 	AppTypeEnumRelationOther              AppTypeEnum = "Other"
+)
+
+// Actions are used to build a PowerStore API query. Each action represents an
+// endpoint under the /volume/ prefix.
+const (
+	VolumeActionClone              string = "clone"
+	VolumeActionComputeDifferences string = "compute_differences"
+	VolumeActionConfigureMetro     string = "configure_metro"
+	VolumeActionEndMetro           string = "end_metro"
+	VolumeActionSnapshot           string = "snapshot"
 )
 
 // VolumeCreate create volume request
@@ -374,4 +384,34 @@ func (v *Volume) Fields() []string {
 // Fields returns fields which must be requested to fill struct
 func (n *ApplianceInstance) Fields() []string {
 	return []string{"id", "name", "service_tag"}
+}
+
+// MetroConfig defines the properties required to configure a metro volume replication session.
+type MetroConfig struct {
+	// RemoteSystemID is a required parameter specifying the remote PowerStore array/cluster on which
+	// the metro volume should be replicated.
+	RemoteSystemID string `json:"remote_system_id"`
+	// RemoteApplianceID is an optional parameter specifying a specific remote PowerStore appliance
+	// on which the metro volume or volume group should be replicated.
+	RemoteApplianceID string `json:"remote_appliance_id,omitempty"`
+}
+
+// MetroSessionResponse id the Unique identifier of the replication session assigned
+// to the volume if it has been configured as a metro volume between two PowerStore clusters.
+type MetroSessionResponse struct {
+	// ID is a unique identifier of the metro replication session and
+	// is included in response to configuring a metro .
+	ID string `json:"metro_replication_session_id,omitempty"`
+}
+
+// EndMetroVolumeOptions defines the options associated with deleting a metro volume.
+type EndMetroVolumeOptions struct {
+	// DeleteRemoteVolume specifies whether or not to delete the remote volume when ending the metro session.
+	DeleteRemoteVolume bool `json:"delete_remote_volume,omitempty"`
+	// ForceDelete specifies if the Metro volume should be forcefully deleted.
+	// If the force option is specified, any errors returned while attempting to tear down the remote side of the
+	// metro session will be ignored and the remote side may be left in an indeterminate state.
+	// If any errors occur on the local side the operation can still fail.
+	// It is not recommended to use this option unless the remote side is known to be down.
+	ForceDelete bool `json:"force,omitempty"`
 }

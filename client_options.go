@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2020-2022 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2020-2024 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,8 +38,8 @@ func NewClientOptions() *ClientOptions {
 // ClientOptions struct provide additional options for api client configuration
 type ClientOptions struct {
 	insecure       *bool // skip https cert check
-	defaultTimeout *uint64
-	rateLimit      *uint64
+	defaultTimeout *int64
+	rateLimit      *int
 	// define field name in context which will be used for tracing
 	requestIDKey *api.ContextKey
 }
@@ -53,7 +53,7 @@ func (co *ClientOptions) Insecure() bool {
 }
 
 // DefaultTimeout returns http client default timeout
-func (co *ClientOptions) DefaultTimeout() uint64 {
+func (co *ClientOptions) DefaultTimeout() int64 {
 	if co.defaultTimeout == nil {
 		return clientOptionsDefaultTimeout
 	}
@@ -61,7 +61,7 @@ func (co *ClientOptions) DefaultTimeout() uint64 {
 }
 
 // RateLimit returns http client rate limit
-func (co *ClientOptions) RateLimit() uint64 {
+func (co *ClientOptions) RateLimit() int {
 	if co.rateLimit == nil {
 		return clientOptionsDefaultRateLimit
 	}
@@ -83,13 +83,13 @@ func (co *ClientOptions) SetInsecure(value bool) *ClientOptions {
 }
 
 // SetDefaultTimeout sets default http client timeout value
-func (co *ClientOptions) SetDefaultTimeout(value uint64) *ClientOptions {
+func (co *ClientOptions) SetDefaultTimeout(value int64) *ClientOptions {
 	co.defaultTimeout = &value
 	return co
 }
 
 // SetRateLimit returns http client rate limit
-func (co *ClientOptions) SetRateLimit(value uint64) *ClientOptions {
+func (co *ClientOptions) SetRateLimit(value int) *ClientOptions {
 	co.rateLimit = &value
 	return co
 }

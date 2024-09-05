@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2020 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2020-2024 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,4 +43,17 @@ func initClient() {
 
 func init() {
 	initClient()
+}
+
+func GetNewClient() (client gopowerstore.Client) {
+	err := godotenv.Load(envVarsFile)
+	if err != nil {
+		log.Printf("%s file not found.", envVarsFile)
+	}
+	client, err = gopowerstore.NewClient()
+	if err != nil {
+		panic(err)
+	}
+
+	return client
 }

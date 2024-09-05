@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2020-2022 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2020-2024 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,29 +25,8 @@ import (
 
 	"github.com/dell/gopowerstore"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
 )
-
-const (
-	TestVolumePrefix       = "test_vol_"
-	DefaultVolSize   int64 = 1048576
-	DefaultChunkSize int64 = 1048576
-)
-
-func createVol(t *testing.T) (string, string) {
-	volName := TestVolumePrefix + randString(8)
-	createParams := gopowerstore.VolumeCreate{}
-	createParams.Name = &volName
-	size := DefaultVolSize
-	createParams.Size = &size
-	createResp, err := C.CreateVolume(context.Background(), &createParams)
-	checkAPIErr(t, err)
-	return createResp.ID, volName
-}
-
-func deleteVol(t *testing.T, id string) {
-	_, err := C.DeleteVolume(context.Background(), nil, id)
-	checkAPIErr(t, err)
-}
 
 func createSnap(volID string, t *testing.T, volName string) gopowerstore.CreateResponse {
 	return createSnapWithSuffix(volID, t, volName, "snapshot")
@@ -69,8 +48,8 @@ func createSnapWithSuffix(volID string, t *testing.T, volName string, snapshotSu
 }
 
 func TestModifyVolume(t *testing.T) {
-	volID, _ := createVol(t)
-	defer deleteVol(t, volID)
+	volID, _ := CreateVol(t)
+	defer DeleteVol(t, volID)
 
 	_, err := C.ModifyVolume(context.Background(), &gopowerstore.VolumeModify{Size: DefaultVolSize * 2, Name: "rename"}, volID)
 	checkAPIErr(t, err)
@@ -81,8 +60,8 @@ func TestModifyVolume(t *testing.T) {
 }
 
 func TestGetSnapshotsByVolumeID(t *testing.T) {
-	volID, volName := createVol(t)
-	defer deleteVol(t, volID)
+	volID, volName := CreateVol(t)
+	defer DeleteVol(t, volID)
 
 	snap := createSnap(volID, t, volName)
 	assert.NotEmpty(t, snap.ID)
@@ -95,8 +74,8 @@ func TestGetSnapshotsByVolumeID(t *testing.T) {
 }
 
 func TestGetSnapshot(t *testing.T) {
-	volID, volName := createVol(t)
-	defer deleteVol(t, volID)
+	volID, volName := CreateVol(t)
+	defer DeleteVol(t, volID)
 
 	snap := createSnap(volID, t, volName)
 	assert.NotEmpty(t, snap.ID)
@@ -113,8 +92,8 @@ func TestGetSnapshots(t *testing.T) {
 }
 
 func TestGetNonExistingSnapshot(t *testing.T) {
-	volID, volName := createVol(t)
-	defer deleteVol(t, volID)
+	volID, volName := CreateVol(t)
+	defer DeleteVol(t, volID)
 
 	snap := createSnap(volID, t, volName)
 	assert.NotEmpty(t, snap.ID)
@@ -128,15 +107,15 @@ func TestGetNonExistingSnapshot(t *testing.T) {
 }
 
 func TestCreateSnapshot(t *testing.T) {
-	volID, volName := createVol(t)
-	defer deleteVol(t, volID)
+	volID, volName := CreateVol(t)
+	defer DeleteVol(t, volID)
 	snap := createSnap(volID, t, volName)
 	assert.NotEmpty(t, snap.ID)
 }
 
 func TestDeleteSnapshot(t *testing.T) {
-	volID, volName := createVol(t)
-	defer deleteVol(t, volID)
+	volID, volName := CreateVol(t)
+	defer DeleteVol(t, volID)
 	snap := createSnap(volID, t, volName)
 	assert.NotEmpty(t, snap.ID)
 	_, err := C.DeleteSnapshot(context.Background(), nil, snap.ID)
@@ -144,8 +123,8 @@ func TestDeleteSnapshot(t *testing.T) {
 }
 
 func TestCreateVolumeFromSnapshot(t *testing.T) {
-	volID, volName := createVol(t)
-	defer deleteVol(t, volID)
+	volID, volName := CreateVol(t)
+	defer DeleteVol(t, volID)
 	snap := createSnap(volID, t, volName)
 	assert.NotEmpty(t, snap.ID)
 
@@ -155,7 +134,7 @@ func TestCreateVolumeFromSnapshot(t *testing.T) {
 	snapVol, err := C.CreateVolumeFromSnapshot(context.Background(), &createParams, snap.ID)
 	checkAPIErr(t, err)
 	assert.NotEmpty(t, snapVol.ID)
-	deleteVol(t, snapVol.ID)
+	DeleteVol(t, snapVol.ID)
 }
 
 func TestGetVolumes(t *testing.T) {
@@ -164,26 +143,26 @@ func TestGetVolumes(t *testing.T) {
 }
 
 func TestGetVolume(t *testing.T) {
-	volID, volName := createVol(t)
+	volID, volName := CreateVol(t)
 	volume, err := C.GetVolume(context.Background(), volID)
 	checkAPIErr(t, err)
 	assert.NotEmpty(t, volume.Name)
 	assert.Equal(t, volName, volume.Name)
-	deleteVol(t, volID)
+	DeleteVol(t, volID)
 }
 
 func TestGetVolumeByName(t *testing.T) {
-	volID, volName := createVol(t)
+	volID, volName := CreateVol(t)
 	volume, err := C.GetVolumeByName(context.Background(), volName)
 	checkAPIErr(t, err)
 	assert.NotEmpty(t, volume.Name)
 	assert.Equal(t, volName, volume.Name)
-	deleteVol(t, volID)
+	DeleteVol(t, volID)
 }
 
 func TestCreateDeleteVolume(t *testing.T) {
-	volID, _ := createVol(t)
-	deleteVol(t, volID)
+	volID, _ := CreateVol(t)
+	DeleteVol(t, volID)
 }
 
 func TestDeleteUnknownVol(t *testing.T) {
@@ -207,8 +186,8 @@ func TestGetVolumesWithTrace(t *testing.T) {
 }
 
 func TestVolumeAlreadyExist(t *testing.T) {
-	volID, name := createVol(t)
-	defer deleteVol(t, volID)
+	volID, name := CreateVol(t)
+	defer DeleteVol(t, volID)
 	createReq := gopowerstore.VolumeCreate{}
 	createReq.Name = &name
 	size := DefaultVolSize
@@ -220,8 +199,8 @@ func TestVolumeAlreadyExist(t *testing.T) {
 }
 
 func TestSnapshotAlreadyExist(t *testing.T) {
-	volID, volName := createVol(t)
-	defer deleteVol(t, volID)
+	volID, volName := CreateVol(t)
+	defer DeleteVol(t, volID)
 	snap := createSnap(volID, t, volName)
 	assert.NotEmpty(t, snap.ID)
 
@@ -244,9 +223,10 @@ func TestGetInvalidVolume(t *testing.T) {
 }
 
 func TestComputeDifferences(t *testing.T) {
+	pstoreClient := GetNewClient()
 	// Create volume
-	volID, volName := createVol(t)
-	defer deleteVol(t, volID)
+	volID, volName := CreateVol(t)
+	defer DeleteVol(t, volID)
 
 	// Create snap of volume
 	snap1 := createSnapWithSuffix(volID, t, volName, "snapshot1")
@@ -266,18 +246,146 @@ func TestComputeDifferences(t *testing.T) {
 		Length:         &length,
 		Offset:         &offset,
 	}
-	defaultHeaders := C.GetCustomHTTPHeaders()
+	defaultHeaders := pstoreClient.GetCustomHTTPHeaders()
 	if defaultHeaders == nil {
 		defaultHeaders = make(http.Header)
 	}
 	customHeaders := defaultHeaders
 	// for accessing internal REST-APIs
 	customHeaders.Add("DELL-VISIBILITY", "internal")
-	C.SetCustomHTTPHeaders(customHeaders)
+	pstoreClient.SetCustomHTTPHeaders(customHeaders)
 
-	resp, err := C.ComputeDifferences(context.Background(), &snapdiffParams, snap1.ID)
+	resp, err := pstoreClient.ComputeDifferences(context.Background(), &snapdiffParams, snap1.ID)
 	checkAPIErr(t, err)
 	// AA== is equivalent to an empty bitmap
 	assert.Equal(t, "AA==", *resp.ChunkBitmap)
 	assert.Equal(t, int64(-1), *resp.NextOffset)
+}
+
+type MetroVolumeTestSuite struct {
+	suite.Suite
+	volID        string
+	metroSession gopowerstore.MetroSessionResponse
+	metroConfig  gopowerstore.MetroConfig
+	endMetroOpts gopowerstore.EndMetroVolumeOptions
+}
+
+func TestMetroVolumeSuite(t *testing.T) {
+	suite.Run(t, new(MetroVolumeTestSuite))
+}
+
+// Find a remote system with Metro support and make sure all metro volume sessions
+// are terminated with the remote volume being deleted.
+func (s *MetroVolumeTestSuite) SetupSuite() {
+	// Begin query to find a remote system for testing Metro
+	resp, err := C.GetAllRemoteSystems(context.Background())
+	skipTestOnError(s.T(), err)
+
+	// try to find a valid remote system with Metro from the list of all available remote systems
+	for i := range resp {
+		// get remote system details
+		rs, err := C.GetRemoteSystem(context.Background(), resp[i].ID)
+		assert.NoError(s.T(), err)
+		assert.Equal(s.T(), rs.ID, resp[i].ID)
+
+		// check remote capabilities for metro and create MetroConfig if found
+		if Includes(&rs.Capabilities, string(gopowerstore.BlockMetro)) {
+			// make sure the connection is in a good state
+			if rs.DataConnectionState == string(gopowerstore.ConnStateOK) {
+				s.metroConfig = gopowerstore.MetroConfig{RemoteSystemID: rs.ID}
+				break
+			}
+		}
+
+		// if none of the remote systems support metro, skip the test
+		if i == len(resp)-1 {
+			s.T().Skip("Skipping test as there are no working remote systems with Metro configured on array.")
+			return
+		}
+
+	}
+
+	// always delete the remote metro volume
+	s.endMetroOpts = gopowerstore.EndMetroVolumeOptions{
+		DeleteRemoteVolume: true,
+		ForceDelete:        false,
+	}
+}
+
+func (s *MetroVolumeTestSuite) SetupTest() {
+	// Get a new volume for each test.
+	s.volID, _ = CreateVol(s.T())
+	// sanitize for next test run.
+	s.metroSession.ID = ""
+}
+
+func (s *MetroVolumeTestSuite) TearDownTest() {
+	// end the metro volume session if one was created
+	if s.metroSession.ID != "" {
+		_, err := C.EndMetroVolume(context.Background(), s.volID, &s.endMetroOpts)
+		assert.NoError(s.T(), err)
+	}
+
+	// clean up any volumes from the array
+	DeleteVol(s.T(), s.volID)
+}
+
+func (s *MetroVolumeTestSuite) TestConfigureMetroVolume() {
+	var err error
+	s.metroSession, err = C.ConfigureMetroVolume(context.Background(), s.volID, &s.metroConfig)
+	assert.NoError(s.T(), err)
+	assert.NotEmpty(s.T(), s.metroSession.ID)
+}
+
+func (s *MetroVolumeTestSuite) TestConfigureMetroVolumeWithNonExistantVolume() {
+	var err error
+	// try to configure metro on a nonexistent volume
+	volID := "invalid"
+	s.metroSession, err = C.ConfigureMetroVolume(context.Background(), volID, &s.metroConfig)
+	assert.Equal(s.T(), http.StatusNotFound, err.(gopowerstore.APIError).StatusCode)
+	assert.Empty(s.T(), s.metroSession.ID)
+}
+
+func (s *MetroVolumeTestSuite) TestConfigureMetroVolumeWithBadRemoteSystemId() {
+	var err error
+	s.metroSession, err = C.ConfigureMetroVolume(context.Background(), s.volID, &gopowerstore.MetroConfig{
+		RemoteSystemID: "invalid-id",
+	})
+	assert.Equal(s.T(), http.StatusNotFound, err.(gopowerstore.APIError).StatusCode)
+	assert.Empty(s.T(), s.metroSession.ID)
+}
+
+func (s *MetroVolumeTestSuite) TestConfigureMetroVolumeOnExistingMetroVolume() {
+	var err error
+	// configure the volume for metro
+	s.metroSession, err = C.ConfigureMetroVolume(context.Background(), s.volID, &s.metroConfig)
+	assert.NoError(s.T(), err)
+
+	// try to create the same metro config again
+	_, err = C.ConfigureMetroVolume(context.Background(), s.volID, &s.metroConfig)
+	assert.Equal(s.T(), http.StatusBadRequest, err.(gopowerstore.APIError).StatusCode)
+}
+
+func (s *MetroVolumeTestSuite) TestEndMetroVolume() {
+	// configure the volume for metro
+	_, err := C.ConfigureMetroVolume(context.Background(), s.volID, &s.metroConfig)
+	assert.NoError(s.T(), err)
+
+	// end the metro volume session with config to delete the remote volume
+	_, err = C.EndMetroVolume(context.Background(), s.volID, &s.endMetroOpts)
+	assert.NoError(s.T(), err)
+}
+
+func (s *MetroVolumeTestSuite) TestEndMetroVolumeWithNonExistantVolume() {
+	badVolID := "invalid"
+
+	// attempt to end metro volume session using a volume that should not exist.
+	_, err := C.EndMetroVolume(context.Background(), badVolID, &s.endMetroOpts)
+	assert.Equal(s.T(), http.StatusNotFound, err.(gopowerstore.APIError).StatusCode)
+}
+
+func (s *MetroVolumeTestSuite) TestEndMetroVolumeWithUnreplicatedVolume() {
+	// try to end metro volume session on a volume that exists but is not part of a metro session
+	_, err := C.EndMetroVolume(context.Background(), s.volID, &s.endMetroOpts)
+	assert.Equal(s.T(), http.StatusBadRequest, err.(gopowerstore.APIError).StatusCode)
 }

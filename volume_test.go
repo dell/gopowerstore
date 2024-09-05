@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2020-2023 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2020-2024 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +21,12 @@ package gopowerstore
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"testing"
 
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
 )
 
 const (
@@ -33,39 +35,53 @@ const (
 )
 
 var (
-	volID      = "6b930711-46bc-4a4b-9d6a-22c77a7838c4"
-	volID2     = "3765da74-28a7-49db-a693-10cec1de91f8"
-	appID      = "A1"
-	volSnapID  = "1966782b-60c9-40e2-a1ee-9b2b8f6b98e7"
-	volSnapID2 = "34380c29-2203-4490-aeb7-2853b9a85075"
+	volID       = "6b930711-46bc-4a4b-9d6a-22c77a7838c4"
+	volID2      = "3765da74-28a7-49db-a693-10cec1de91f8"
+	appID       = "A1"
+	volSnapID   = "1966782b-60c9-40e2-a1ee-9b2b8f6b98e7"
+	volSnapID2  = "34380c29-2203-4490-aeb7-2853b9a85075"
+	metroConfig = MetroConfig{
+		RemoteSystemID:    "47921973-b0eb-485d-8492-c5d7f6ca216c",
+		RemoteApplianceID: appID,
+	}
 )
 
-func TestClientIMPL_GetVolumes(t *testing.T) {
+type VolumeTestSuite struct {
+	suite.Suite
+}
+
+func TestVolumeSuite(t *testing.T) {
+	suite.Run(t, new(VolumeTestSuite))
+}
+
+func (s *VolumeTestSuite) SetupTest() {
 	httpmock.Activate()
-	defer httpmock.DeactivateAndReset()
+}
+
+func (s *VolumeTestSuite) TearDownTest() {
+	httpmock.DeactivateAndReset()
+}
+
+func (s *VolumeTestSuite) TestClientIMPL_GetVolumes() {
 	respData := fmt.Sprintf(`[{"id": "%s"}, {"id": "%s"}]`, volID, volID2)
 	httpmock.RegisterResponder("GET", volumeMockURL,
 		httpmock.NewStringResponder(200, respData))
 	vols, err := C.GetVolumes(context.Background())
-	assert.Nil(t, err)
-	assert.Len(t, vols, 2)
-	assert.Equal(t, volID, vols[0].ID)
+	assert.Nil(s.T(), err)
+	assert.Len(s.T(), vols, 2)
+	assert.Equal(s.T(), volID, vols[0].ID)
 }
 
-func TestClientIMPL_GetVolume(t *testing.T) {
-	httpmock.Activate()
-	defer httpmock.DeactivateAndReset()
+func (s *VolumeTestSuite) TestClientIMPL_GetVolume() {
 	respData := fmt.Sprintf(`{"id": "%s"}`, volID)
 	httpmock.RegisterResponder("GET", fmt.Sprintf("%s/%s", volumeMockURL, volID),
 		httpmock.NewStringResponder(200, respData))
 	vol, err := C.GetVolume(context.Background(), volID)
-	assert.Nil(t, err)
-	assert.Equal(t, volID, vol.ID)
+	assert.Nil(s.T(), err)
+	assert.Equal(s.T(), volID, vol.ID)
 }
 
-func TestClientIMPL_GetVolumeByName(t *testing.T) {
-	httpmock.Activate()
-	defer httpmock.DeactivateAndReset()
+func (s *VolumeTestSuite) TestClientIMPL_GetVolumeByName() {
 	setResponder := func(respData string) {
 		httpmock.RegisterResponder("GET", volumeMockURL,
 			httpmock.NewStringResponder(200, respData))
@@ -73,30 +89,26 @@ func TestClientIMPL_GetVolumeByName(t *testing.T) {
 	respData := fmt.Sprintf(`[{"id": "%s"}]`, volID)
 	setResponder(respData)
 	vol, err := C.GetVolumeByName(context.Background(), "test")
-	assert.Nil(t, err)
-	assert.Equal(t, volID, vol.ID)
+	assert.Nil(s.T(), err)
+	assert.Equal(s.T(), volID, vol.ID)
 	httpmock.Reset()
 	setResponder("")
 	_, err = C.GetVolumeByName(context.Background(), "test")
-	assert.NotNil(t, err)
+	assert.NotNil(s.T(), err)
 	apiError := err.(APIError)
-	assert.True(t, apiError.NotFound())
+	assert.True(s.T(), apiError.NotFound())
 }
 
-func TestClientIMPL_GetAppliance(t *testing.T) {
-	httpmock.Activate()
-	defer httpmock.DeactivateAndReset()
+func (s *VolumeTestSuite) TestClientIMPL_GetAppliance() {
 	respData := fmt.Sprintf(`{"id": "%s"}`, appID)
 	httpmock.RegisterResponder("GET", fmt.Sprintf("%s/%s", applianceMockURL, appID),
 		httpmock.NewStringResponder(200, respData))
 	app, err := C.GetAppliance(context.Background(), appID)
-	assert.Nil(t, err)
-	assert.Equal(t, appID, app.ID)
+	assert.Nil(s.T(), err)
+	assert.Equal(s.T(), appID, app.ID)
 }
 
-func TestClientIMPL_GetApplianceByName(t *testing.T) {
-	httpmock.Activate()
-	defer httpmock.DeactivateAndReset()
+func (s *VolumeTestSuite) TestClientIMPL_GetApplianceByName() {
 	setResponder := func(respData string) {
 		httpmock.RegisterResponder("GET", applianceMockURL,
 			httpmock.NewStringResponder(200, respData))
@@ -104,19 +116,17 @@ func TestClientIMPL_GetApplianceByName(t *testing.T) {
 	respData := fmt.Sprintf(`[{"id": "%s"}]`, appID)
 	setResponder(respData)
 	ap, err := C.GetApplianceByName(context.Background(), "test")
-	assert.Nil(t, err)
-	assert.Equal(t, appID, ap.ID)
+	assert.Nil(s.T(), err)
+	assert.Equal(s.T(), appID, ap.ID)
 	httpmock.Reset()
 	setResponder("")
 	_, err = C.GetApplianceByName(context.Background(), "test")
-	assert.NotNil(t, err)
+	assert.NotNil(s.T(), err)
 	apiError := err.(APIError)
-	assert.True(t, apiError.NotFound())
+	assert.True(s.T(), apiError.NotFound())
 }
 
-func TestClientIMPL_GetSnapshotsByVolumeID(t *testing.T) {
-	httpmock.Activate()
-	defer httpmock.DeactivateAndReset()
+func (s *VolumeTestSuite) TestClientIMPL_GetSnapshotsByVolumeID() {
 	respData := fmt.Sprintf(`[{
 		"description":"",
 		"id":"%s",
@@ -143,37 +153,31 @@ func TestClientIMPL_GetSnapshotsByVolumeID(t *testing.T) {
 		httpmock.NewStringResponder(200, respData))
 
 	resp, err := C.GetSnapshotsByVolumeID(context.Background(), volID2)
-	assert.Nil(t, err)
-	assert.Equal(t, 1, len(resp))
-	assert.Equal(t, volID2, resp[0].ID)
+	assert.Nil(s.T(), err)
+	assert.Equal(s.T(), 1, len(resp))
+	assert.Equal(s.T(), volID2, resp[0].ID)
 }
 
-func TestClientIMPL_GetSnapshot(t *testing.T) {
-	httpmock.Activate()
-	defer httpmock.DeactivateAndReset()
+func (s *VolumeTestSuite) TestClientIMPL_GetSnapshot() {
 	respData := fmt.Sprintf(`{"id": "%s"}`, volSnapID)
 	httpmock.RegisterResponder("GET", fmt.Sprintf("%s/%s", volumeMockURL, volSnapID),
 		httpmock.NewStringResponder(200, respData))
 	snapshot, err := C.GetSnapshot(context.Background(), volSnapID)
-	assert.Nil(t, err)
-	assert.Equal(t, volSnapID, snapshot.ID)
+	assert.Nil(s.T(), err)
+	assert.Equal(s.T(), volSnapID, snapshot.ID)
 }
 
-func TestClientIMPL_GetSnapshots(t *testing.T) {
-	httpmock.Activate()
-	defer httpmock.DeactivateAndReset()
+func (s *VolumeTestSuite) TestClientIMPL_GetSnapshots() {
 	respData := fmt.Sprintf(`[{"id": "%s"}, {"id": "%s"}]`, volSnapID, volSnapID2)
 	httpmock.RegisterResponder("GET", volumeMockURL,
 		httpmock.NewStringResponder(200, respData))
 	snapshots, err := C.GetSnapshots(context.Background())
-	assert.Nil(t, err)
-	assert.Len(t, snapshots, 2)
-	assert.Equal(t, volSnapID, snapshots[0].ID)
+	assert.Nil(s.T(), err)
+	assert.Len(s.T(), snapshots, 2)
+	assert.Equal(s.T(), volSnapID, snapshots[0].ID)
 }
 
-func TestClientIMPL_GetSnapshotByName(t *testing.T) {
-	httpmock.Activate()
-	defer httpmock.DeactivateAndReset()
+func (s *VolumeTestSuite) TestClientIMPL_GetSnapshotByName() {
 	setResponder := func(respData string) {
 		httpmock.RegisterResponder("GET", volumeMockURL,
 			httpmock.NewStringResponder(200, respData))
@@ -181,19 +185,17 @@ func TestClientIMPL_GetSnapshotByName(t *testing.T) {
 	respData := fmt.Sprintf(`[{"id": "%s"}]`, volSnapID)
 	setResponder(respData)
 	snap, err := C.GetSnapshotByName(context.Background(), "test")
-	assert.Nil(t, err)
-	assert.Equal(t, volSnapID, snap.ID)
+	assert.Nil(s.T(), err)
+	assert.Equal(s.T(), volSnapID, snap.ID)
 	httpmock.Reset()
 	setResponder("")
 	_, err = C.GetSnapshotByName(context.Background(), "test")
-	assert.NotNil(t, err)
+	assert.NotNil(s.T(), err)
 	apiError := err.(APIError)
-	assert.True(t, apiError.NotFound())
+	assert.True(s.T(), apiError.NotFound())
 }
 
-func TestClientIMPL_CreateVolume(t *testing.T) {
-	httpmock.Activate()
-	defer httpmock.DeactivateAndReset()
+func (s *VolumeTestSuite) TestClientIMPL_CreateVolume() {
 	respData := fmt.Sprintf(`{"id": "%s"}`, volID)
 	httpmock.RegisterResponder("POST", volumeMockURL,
 		httpmock.NewStringResponder(201, respData))
@@ -204,13 +206,11 @@ func TestClientIMPL_CreateVolume(t *testing.T) {
 	createReq.Size = &size
 
 	resp, err := C.CreateVolume(context.Background(), &createReq)
-	assert.Nil(t, err)
-	assert.Equal(t, volID, resp.ID)
+	assert.Nil(s.T(), err)
+	assert.Equal(s.T(), volID, resp.ID)
 }
 
-func TestClientIMPL_CreateSnapshot(t *testing.T) {
-	httpmock.Activate()
-	defer httpmock.DeactivateAndReset()
+func (s *VolumeTestSuite) TestClientIMPL_CreateSnapshot() {
 	respData := fmt.Sprintf(`{"id": "%s"}`, volID2)
 	httpmock.RegisterResponder("POST", fmt.Sprintf("%s/%s/snapshot", volumeMockURL, volID),
 		httpmock.NewStringResponder(201, respData))
@@ -221,13 +221,11 @@ func TestClientIMPL_CreateSnapshot(t *testing.T) {
 	createReq.Description = &desc
 
 	resp, err := C.CreateSnapshot(context.Background(), &createReq, volID)
-	assert.Nil(t, err)
-	assert.Equal(t, volID2, resp.ID)
+	assert.Nil(s.T(), err)
+	assert.Equal(s.T(), volID2, resp.ID)
 }
 
-func TestClientIMPL_CreateVolumeFromSnapshot(t *testing.T) {
-	httpmock.Activate()
-	defer httpmock.DeactivateAndReset()
+func (s *VolumeTestSuite) TestClientIMPL_CreateVolumeFromSnapshot() {
 	respData := fmt.Sprintf(`{"id": "%s"}`, volID2)
 	httpmock.RegisterResponder("POST", fmt.Sprintf("%s/%s/clone", volumeMockURL, volID),
 		httpmock.NewStringResponder(201, respData))
@@ -236,13 +234,11 @@ func TestClientIMPL_CreateVolumeFromSnapshot(t *testing.T) {
 	createParams := VolumeClone{}
 	createParams.Name = &name
 	resp, err := C.CreateVolumeFromSnapshot(context.Background(), &createParams, volID)
-	assert.Nil(t, err)
-	assert.Equal(t, volID2, resp.ID)
+	assert.Nil(s.T(), err)
+	assert.Equal(s.T(), volID2, resp.ID)
 }
 
-func TestClientIMPL_ComputeDifferences(t *testing.T) {
-	httpmock.Activate()
-	defer httpmock.DeactivateAndReset()
+func (s *VolumeTestSuite) TestClientIMPL_ComputeDifferences() {
 	respData := `{"chunk_bitmap":"Dw==","next_offset":-1}`
 	httpmock.RegisterResponder("POST", fmt.Sprintf("%s/%s/compute_differences", volumeMockURL, volID),
 		httpmock.NewStringResponder(201, respData))
@@ -258,14 +254,12 @@ func TestClientIMPL_ComputeDifferences(t *testing.T) {
 		Offset:         &offset,
 	}
 	resp, err := C.ComputeDifferences(context.Background(), &computeDiffParams, volID)
-	assert.Nil(t, err)
-	assert.Equal(t, "Dw==", *resp.ChunkBitmap)
-	assert.Equal(t, int64(-1), *resp.NextOffset)
+	assert.Nil(s.T(), err)
+	assert.Equal(s.T(), "Dw==", *resp.ChunkBitmap)
+	assert.Equal(s.T(), int64(-1), *resp.NextOffset)
 }
 
-func TestClientIMPL_ModifyVolume(t *testing.T) {
-	httpmock.Activate()
-	defer httpmock.DeactivateAndReset()
+func (s *VolumeTestSuite) TestClientIMPL_ModifyVolume() {
 	respData := ""
 	httpmock.RegisterResponder("PATCH", fmt.Sprintf("%s/%s", volumeMockURL, volID),
 		httpmock.NewStringResponder(201, respData))
@@ -276,32 +270,51 @@ func TestClientIMPL_ModifyVolume(t *testing.T) {
 	}
 
 	resp, err := C.ModifyVolume(context.Background(), &modifyParams, volID)
-	assert.Nil(t, err)
-	assert.Equal(t, EmptyResponse(""), resp)
+	assert.Nil(s.T(), err)
+	assert.Equal(s.T(), EmptyResponse(""), resp)
 }
 
-func TestClientIMPL_DeleteSnapshot(t *testing.T) {
-	httpmock.Activate()
-	defer httpmock.DeactivateAndReset()
+func (s *VolumeTestSuite) TestClientIMPL_DeleteSnapshot() {
 	httpmock.RegisterResponder("DELETE", fmt.Sprintf("%s/%s", volumeMockURL, volID),
 		httpmock.NewStringResponder(204, ""))
 	force := true
 	deleteReq := VolumeDelete{}
 	deleteReq.ForceInternal = &force
 	resp, err := C.DeleteSnapshot(context.Background(), &deleteReq, volID)
-	assert.Nil(t, err)
-	assert.Len(t, string(resp), 0)
+	assert.Nil(s.T(), err)
+	assert.Len(s.T(), string(resp), 0)
 }
 
-func TestClientIMPL_DeleteVolume(t *testing.T) {
-	httpmock.Activate()
-	defer httpmock.DeactivateAndReset()
+func (s *VolumeTestSuite) TestClientIMPL_DeleteVolume() {
 	httpmock.RegisterResponder("DELETE", fmt.Sprintf("%s/%s", volumeMockURL, volID),
 		httpmock.NewStringResponder(204, ""))
 	force := true
 	deleteReq := VolumeDelete{}
 	deleteReq.ForceInternal = &force
 	resp, err := C.DeleteVolume(context.Background(), &deleteReq, volID)
-	assert.Nil(t, err)
-	assert.Len(t, string(resp), 0)
+	assert.Nil(s.T(), err)
+	assert.Len(s.T(), string(resp), 0)
+}
+
+func (s *VolumeTestSuite) TestClientIMPL_ConfigureMetroVolume() {
+	sessionID := "test-id"
+	sessionIDJSON := fmt.Sprintf(`{"metro_replication_session_id": "%s"}`, sessionID)
+
+	httpmock.RegisterResponder("POST", fmt.Sprintf("%s/%s/%s", volumeMockURL, volID, VolumeActionConfigureMetro),
+		httpmock.NewStringResponder(http.StatusOK, sessionIDJSON))
+
+	resp, err := C.ConfigureMetroVolume(context.Background(), volID, &metroConfig)
+	assert.Nil(s.T(), err)
+	assert.Equal(s.T(), sessionID, resp.ID)
+}
+
+func (s *VolumeTestSuite) TestClientIMPL_EndMetroVolume() {
+	opts := EndMetroVolumeOptions{DeleteRemoteVolume: true}
+
+	httpmock.RegisterResponder("POST", fmt.Sprintf("%s/%s/%s", volumeMockURL, volID, VolumeActionEndMetro),
+		httpmock.NewStringResponder(http.StatusNoContent, ""))
+
+	resp, err := C.EndMetroVolume(context.Background(), volID, &opts)
+	assert.Nil(s.T(), err)
+	assert.Empty(s.T(), resp)
 }

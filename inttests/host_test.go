@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2020 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2020-2024 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -136,7 +136,7 @@ func TestGetHostVolumeMapping(t *testing.T) {
 }
 
 func TestAttachDetachVolume(t *testing.T) {
-	volID, _ := createVol(t)
+	volID, _ := CreateVol(t)
 	hostID, _ := createHost(t)
 	// attach
 	attach := gopowerstore.HostVolumeAttach{}
@@ -159,7 +159,7 @@ func TestAttachDetachVolume(t *testing.T) {
 	// try detach second time
 	apiError := err.(gopowerstore.APIError)
 	assert.True(t, apiError.HostIsNotAttachedToVolume())
-	deleteVol(t, volID)
+	DeleteVol(t, volID)
 	deleteHost(t, hostID)
 	// try detach not exist host
 	_, err = C.DetachVolumeFromHost(context.Background(), hostID, &detach)
@@ -169,7 +169,7 @@ func TestAttachDetachVolume(t *testing.T) {
 }
 
 func TestDeleteAttachedVolume(t *testing.T) {
-	volID, _ := createVol(t)
+	volID, _ := CreateVol(t)
 	hostID, _ := createHost(t)
 	// attach
 	attach := gopowerstore.HostVolumeAttach{}

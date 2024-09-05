@@ -163,10 +163,22 @@ type ReplicationSession struct {
 	LocalResourceID  string      `json:"local_resource_id,omitempty"`
 	RemoteResourceID string      `json:"remote_resource_id,omitempty"`
 	RemoteSystemID   string      `json:"remote_system_id,omitempty"` // todo: maybe name?
+	// Type of replication session. One of Synchronous, Asynchronous, or Metro_Active_Active.
+	Type string `json:"type,omitempty"`
 
 	StorageElementPairs []StorageElementPair `json:"storage_element_pairs,omitempty"`
 }
 
 func (r *ReplicationSession) Fields() []string {
-	return []string{"id", "state", "role", "resource_type", "local_resource_id", "remote_resource_id", "remote_system_id", "storage_element_pairs"}
+	return []string{"id", "state", "role", "resource_type", "local_resource_id", "remote_resource_id", "remote_system_id", "type", "storage_element_pairs"}
 }
+
+// ReplicationRoleEnum - List of replication role types associated with a replication session
+type ReplicationRoleEnum string
+
+const (
+	ReplicationRoleSource            ReplicationRoleEnum = "Source"
+	ReplicationRoleDestination       ReplicationRoleEnum = "Destination"
+	ReplicationRoleMetroPreferred    ReplicationRoleEnum = "Metro_Preferred"
+	ReplicationRoleMetroNonPreferred ReplicationRoleEnum = "Metro_Non_Preferred"
+)

@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2020-2023 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2020-2024 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -122,7 +122,7 @@ type ClientIMPL struct {
 	username          string
 	password          string
 	httpClient        *http.Client
-	defaultTimeout    uint64
+	defaultTimeout    int64
 	requestIDKey      ContextKey
 	customHTTPHeaders http.Header
 	logger            Logger
@@ -133,7 +133,7 @@ type ClientIMPL struct {
 
 // New creates and initialize API client
 func New(apiURL string, username string,
-	password string, insecure bool, defaultTimeout, rateLimit uint64, requestIDKey ContextKey,
+	password string, insecure bool, defaultTimeout int64, rateLimit int, requestIDKey ContextKey,
 ) (*ClientIMPL, error) {
 	debug, _ = strconv.ParseBool(os.Getenv("GOPOWERSTORE_DEBUG"))
 	if apiURL == "" || username == "" || password == "" {
@@ -164,7 +164,7 @@ func New(apiURL string, username string,
 		log.Print("Session management is enabled.")
 	}
 
-	throttle := NewTimeoutSemaphore(int(defaultTimeout), int(rateLimit), &defaultLogger{})
+	throttle := NewTimeoutSemaphore(defaultTimeout, rateLimit, &defaultLogger{})
 
 	clientImpl := &ClientIMPL{
 		apiURL:         apiURL,

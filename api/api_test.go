@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2020-2022 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2020-2024 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,8 +71,8 @@ func TestNew(t *testing.T) {
 	url := "test_url"
 	user := "admin"
 	password := "password"
-	timeout := uint64(120)
-	limit := uint64(1000)
+	timeout := int64(120)
+	limit := int(1000)
 	var err error
 	var c *ClientIMPL
 	c, err = New(url, user, password, false, timeout, limit, key)
@@ -86,7 +86,7 @@ func TestNew(t *testing.T) {
 }
 
 func testClient(t *testing.T, apiURL string) *ClientIMPL {
-	c, err := New(apiURL, "admin", "password", false, uint64(10), uint64(1000), "key")
+	c, err := New(apiURL, "admin", "password", false, int64(10), int(1000), "key")
 	if err != nil {
 		t.FailNow()
 	}
