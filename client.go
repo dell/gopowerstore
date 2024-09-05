@@ -189,8 +189,8 @@ type Client interface {
 	GetVolumeGroupSnapshots(ctx context.Context) ([]VolumeGroup, error)
 	GetVolumeGroupSnapshotByName(ctx context.Context, snapName string) (VolumeGroup, error)
 	GetMaxVolumeSize(ctx context.Context) (int64, error)
-	ConfigureMetroVolume(ctx context.Context, volID string, config *MetroConfig) (resp MetroSessionID, err error)
-	EndMetroVolume(ctx context.Context, volID string, options *EndMetroVolumeOptions) (resp EmptyResponse, err error)
+	ConfigureMetroVolume(ctx context.Context, id string, config *MetroConfig) (resp MetroSessionResponse, err error)
+	EndMetroVolume(ctx context.Context, id string, options *EndMetroVolumeOptions) (resp EmptyResponse, err error)
 }
 
 // ClientIMPL provides basic API client implementation

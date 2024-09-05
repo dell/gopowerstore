@@ -265,7 +265,7 @@ func TestComputeDifferences(t *testing.T) {
 type MetroVolumeTestSuite struct {
 	suite.Suite
 	volID        string
-	metroSession gopowerstore.MetroSessionID
+	metroSession gopowerstore.MetroSessionResponse
 	metroConfig  gopowerstore.MetroConfig
 	endMetroOpts gopowerstore.EndMetroVolumeOptions
 }

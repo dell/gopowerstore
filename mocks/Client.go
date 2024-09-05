@@ -207,27 +207,27 @@ func (_m *Client) ComputeDifferences(ctx context.Context, snapdiffParams *gopowe
 	return r0, r1
 }
 
-// ConfigureMetroVolume provides a mock function with given fields: ctx, volID, config
-func (_m *Client) ConfigureMetroVolume(ctx context.Context, volID string, config *gopowerstore.MetroConfig) (gopowerstore.MetroSessionID, error) {
-	ret := _m.Called(ctx, volID, config)
+// ConfigureMetroVolume provides a mock function with given fields: ctx, id, config
+func (_m *Client) ConfigureMetroVolume(ctx context.Context, id string, config *gopowerstore.MetroConfig) (gopowerstore.MetroSessionResponse, error) {
+	ret := _m.Called(ctx, id, config)
 
 	if len(ret) == 0 {
 		panic("no return value specified for ConfigureMetroVolume")
 	}
 
-	var r0 gopowerstore.MetroSessionID
+	var r0 gopowerstore.MetroSessionResponse
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, string, *gopowerstore.MetroConfig) (gopowerstore.MetroSessionID, error)); ok {
-		return rf(ctx, volID, config)
+	if rf, ok := ret.Get(0).(func(context.Context, string, *gopowerstore.MetroConfig) (gopowerstore.MetroSessionResponse, error)); ok {
+		return rf(ctx, id, config)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, string, *gopowerstore.MetroConfig) gopowerstore.MetroSessionID); ok {
-		r0 = rf(ctx, volID, config)
+	if rf, ok := ret.Get(0).(func(context.Context, string, *gopowerstore.MetroConfig) gopowerstore.MetroSessionResponse); ok {
+		r0 = rf(ctx, id, config)
 	} else {
-		r0 = ret.Get(0).(gopowerstore.MetroSessionID)
+		r0 = ret.Get(0).(gopowerstore.MetroSessionResponse)
 	}
 
 	if rf, ok := ret.Get(1).(func(context.Context, string, *gopowerstore.MetroConfig) error); ok {
-		r1 = rf(ctx, volID, config)
+		r1 = rf(ctx, id, config)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -1281,9 +1281,9 @@ func (_m *Client) DetachVolumeFromHostGroup(ctx context.Context, hostGroupID str
 	return r0, r1
 }
 
-// EndMetroVolume provides a mock function with given fields: ctx, volID, options
-func (_m *Client) EndMetroVolume(ctx context.Context, volID string, options *gopowerstore.EndMetroVolumeOptions) (gopowerstore.EmptyResponse, error) {
-	ret := _m.Called(ctx, volID, options)
+// EndMetroVolume provides a mock function with given fields: ctx, id, options
+func (_m *Client) EndMetroVolume(ctx context.Context, id string, options *gopowerstore.EndMetroVolumeOptions) (gopowerstore.EmptyResponse, error) {
+	ret := _m.Called(ctx, id, options)
 
 	if len(ret) == 0 {
 		panic("no return value specified for EndMetroVolume")
@@ -1292,16 +1292,16 @@ func (_m *Client) EndMetroVolume(ctx context.Context, volID string, options *gop
 	var r0 gopowerstore.EmptyResponse
 	var r1 error
 	if rf, ok := ret.Get(0).(func(context.Context, string, *gopowerstore.EndMetroVolumeOptions) (gopowerstore.EmptyResponse, error)); ok {
-		return rf(ctx, volID, options)
+		return rf(ctx, id, options)
 	}
 	if rf, ok := ret.Get(0).(func(context.Context, string, *gopowerstore.EndMetroVolumeOptions) gopowerstore.EmptyResponse); ok {
-		r0 = rf(ctx, volID, options)
+		r0 = rf(ctx, id, options)
 	} else {
 		r0 = ret.Get(0).(gopowerstore.EmptyResponse)
 	}
 
 	if rf, ok := ret.Get(1).(func(context.Context, string, *gopowerstore.EndMetroVolumeOptions) error); ok {
-		r1 = rf(ctx, volID, options)
+		r1 = rf(ctx, id, options)
 	} else {
 		r1 = ret.Error(1)
 	}

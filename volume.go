@@ -355,17 +355,17 @@ func (c *ClientIMPL) GetApplianceByName(ctx context.Context, name string) (resp 
 	return appList[0], err
 }
 
-// ConfigureMetroVolume configures the given volume, volID, for metro replication with
+// ConfigureMetroVolume configures the given volume, id, for metro replication with
 // the remote PowerStore system and optional remote PowerStore appliance provided in config.
 // Returns the metro replication session ID and any errors.
-func (c *ClientIMPL) ConfigureMetroVolume(ctx context.Context, volID string, config *MetroConfig) (resp MetroSessionID, err error) {
+func (c *ClientIMPL) ConfigureMetroVolume(ctx context.Context, id string, config *MetroConfig) (resp MetroSessionResponse, err error) {
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{
 			Method:   "POST",
 			Endpoint: volumeURL,
 			Action:   VolumeActionConfigureMetro,
-			ID:       volID,
+			ID:       id,
 			Body:     config,
 		},
 		&resp)
@@ -373,17 +373,17 @@ func (c *ClientIMPL) ConfigureMetroVolume(ctx context.Context, volID string, con
 	return resp, WrapErr(err)
 }
 
-// EndMetroVolume ends the metro session for a volume, volID, between two PowerStore systems.
+// EndMetroVolume ends the metro session for a volume, id, between two PowerStore systems.
 // deleteOpts provides options to delete the replicated volume on the remote system and
 // whether or not to force the session removal.
-func (c *ClientIMPL) EndMetroVolume(ctx context.Context, volID string, deleteOpts *EndMetroVolumeOptions) (resp EmptyResponse, err error) {
+func (c *ClientIMPL) EndMetroVolume(ctx context.Context, id string, deleteOpts *EndMetroVolumeOptions) (resp EmptyResponse, err error) {
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{
 			Method:   "POST",
 			Endpoint: volumeURL,
 			Action:   VolumeActionEndMetro,
-			ID:       volID,
+			ID:       id,
 			Body:     deleteOpts,
 		},
 		&resp)

@@ -396,9 +396,9 @@ type MetroConfig struct {
 	RemoteApplianceID string `json:"remote_appliance_id,omitempty"`
 }
 
-// MetroSessionID id the Unique identifier of the replication session assigned
+// MetroSessionResponse id the Unique identifier of the replication session assigned
 // to the volume if it has been configured as a metro volume between two PowerStore clusters.
-type MetroSessionID struct {
+type MetroSessionResponse struct {
 	// ID is a unique identifier of the metro replication session and
 	// is included in response to configuring a metro .
 	ID string `json:"metro_replication_session_id,omitempty"`
