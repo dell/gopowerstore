@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2020-2023 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2020-2024 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -126,6 +126,11 @@ func (err *APIError) HostAlreadyPresentInNFSExport() bool {
 // UnableToFailoverFromDestination returns true if API error indicate that operation can't be complete because
 // it is impossible to failover from Destination
 func (err *APIError) UnableToFailoverFromDestination() bool {
+	return err.StatusCode == http.StatusBadRequest
+}
+
+// ReplicationSessionAlreadyCreated returns true if API error indicate that replication session has already been created
+func (err *APIError) ReplicationSessionAlreadyCreated() bool {
 	return err.StatusCode == http.StatusBadRequest
 }
 
