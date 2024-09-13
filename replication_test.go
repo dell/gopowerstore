@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2021-2023 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2021-2024 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,6 +65,24 @@ func TestClientIMPL_CreateReplicationRule(t *testing.T) {
 	createReq := ReplicationRuleCreate{
 		Name:           "rr-test",
 		Rpo:            RpoFiveMinutes,
+		RemoteSystemID: "XX-0000X",
+	}
+
+	resp, err := C.CreateReplicationRule(context.Background(), &createReq)
+	assert.Nil(t, err)
+	assert.Equal(t, volID, resp.ID)
+}
+
+func TestClientIMPL_CreateReplicationRuleSync(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	respData := fmt.Sprintf(`{"id": "%s"}`, volID)
+	httpmock.RegisterResponder("POST", replicationRuleMockURL,
+		httpmock.NewStringResponder(201, respData))
+
+	createReq := ReplicationRuleCreate{
+		Name:           "rr-test",
+		Rpo:            RpoZero,
 		RemoteSystemID: "XX-0000X",
 	}
 
