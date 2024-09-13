@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2020-2022 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2020-2024 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,4 +52,13 @@ func TestAPIError_VolumeAttachedToHost(t *testing.T) {
 func TestAPIError_VolumeDetachedFromHost(t *testing.T) {
 	apiError := NewVolumeAttachedToHostError()
 	assert.True(t, apiError.VolumeDetachedFromHost())
+}
+
+func TestAPIError_ReplicationSessionAlreadyCreated(t *testing.T) {
+	apiError := NewAPIError()
+	apiError.StatusCode = http.StatusUnprocessableEntity
+	assert.False(t, apiError.ReplicationSessionAlreadyCreated())
+
+	apiError.StatusCode = http.StatusBadRequest
+	assert.True(t, apiError.ReplicationSessionAlreadyCreated())
 }
