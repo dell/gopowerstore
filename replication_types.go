@@ -31,6 +31,7 @@ const (
 	RpoSixHours                       RPOEnum     = "Six_Hours"
 	RpoTwelveHours                    RPOEnum     = "Twelve_Hours"
 	RpoOneDay                         RPOEnum     = "One_Day"
+	RpoZero                           RPOEnum     = "Zero"
 	RsStateInitializing               RSStateEnum = "Initializing"
 	RsStateOk                         RSStateEnum = "OK"
 	RsStateSynchronizing              RSStateEnum = "Synchronizing"
@@ -49,7 +50,7 @@ const (
 
 func (rpo RPOEnum) IsValid() error {
 	switch rpo {
-	case RpoFiveMinutes, RpoFifteenMinutes, RpoThirtyMinutes, RpoOneHour, RpoSixHours, RpoTwelveHours, RpoOneDay:
+	case RpoFiveMinutes, RpoFifteenMinutes, RpoThirtyMinutes, RpoOneHour, RpoSixHours, RpoTwelveHours, RpoOneDay, RpoZero:
 		return nil
 	}
 	return errors.New("invalid rpo type")
@@ -60,6 +61,7 @@ type ReplicationRuleCreate struct {
 	// Name of the replication rule.
 	Name string `json:"name"`
 	// Recovery point objective (RPO), which is the acceptable amount of data, measured in units of time, that may be lost in case of a failure.
+	// If RPO is Zero, it indicates the replication_type is 'sync'.
 	Rpo RPOEnum `json:"rpo"`
 	// Unique identifier of the remote system to which this rule will replicate the associated resources
 	RemoteSystemID string `json:"remote_system_id"`
@@ -71,6 +73,7 @@ type ReplicationRule struct {
 	// Name of replication rule
 	Name string `json:"name"`
 	// Rpo (Recovery point objective), which is the acceptable amount of data, measured in units of time, that may be lost in case of a failure.
+	// If RPO is Zero, it indicates the replication_type is 'sync'.
 	Rpo RPOEnum `json:"rpo"`
 	// RemoteSystemID - unique identifier of the remote system to which this rule will replicate the associated resources.
 	RemoteSystemID     string             `json:"remote_system_id"`
