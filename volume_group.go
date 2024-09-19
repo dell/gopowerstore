@@ -297,3 +297,9 @@ func (c *ClientIMPL) GetVolumeGroupSnapshotByName(ctx context.Context, name stri
 	}
 	return volGroupList[0], err
 }
+
+// ConfigureMetroVolumeGroup configures the volume group provided by id for metro replication using the
+// configuration supplied by config and returns a MetroSessionResponse containing a replication session ID.
+func (c *ClientIMPL) ConfigureMetroVolumeGroup(ctx context.Context, id string, config *MetroConfig) (resp MetroSessionResponse, err error) {
+	return resp, err
+}

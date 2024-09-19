@@ -277,33 +277,12 @@ func TestMetroVolumeSuite(t *testing.T) {
 // Find a remote system with Metro support and make sure all metro volume sessions
 // are terminated with the remote volume being deleted.
 func (s *MetroVolumeTestSuite) SetupSuite() {
-	// Begin query to find a remote system for testing Metro
-	resp, err := C.GetAllRemoteSystems(context.Background())
-	skipTestOnError(s.T(), err)
-
-	// try to find a valid remote system with Metro from the list of all available remote systems
-	for i := range resp {
-		// get remote system details
-		rs, err := C.GetRemoteSystem(context.Background(), resp[i].ID)
-		assert.NoError(s.T(), err)
-		assert.Equal(s.T(), rs.ID, resp[i].ID)
-
-		// check remote capabilities for metro and create MetroConfig if found
-		if Includes(&rs.Capabilities, string(gopowerstore.BlockMetro)) {
-			// make sure the connection is in a good state
-			if rs.DataConnectionState == string(gopowerstore.ConnStateOK) {
-				s.metroConfig = gopowerstore.MetroConfig{RemoteSystemID: rs.ID}
-				break
-			}
-		}
-
-		// if none of the remote systems support metro, skip the test
-		if i == len(resp)-1 {
-			s.T().Skip("Skipping test as there are no working remote systems with Metro configured on array.")
-			return
-		}
-
+	metroSystem := GetRemoteSystemForMetro(C, s.T())
+	if metroSystem.ID == "" {
+		s.T().Skip("Could not get a remote system with metro configured. Skipping test suite...")
 	}
+
+	s.metroConfig = gopowerstore.MetroConfig{RemoteSystemID: metroSystem.ID}
 
 	// always delete the remote metro volume
 	s.endMetroOpts = gopowerstore.EndMetroVolumeOptions{

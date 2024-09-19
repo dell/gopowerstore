@@ -190,6 +190,7 @@ type Client interface {
 	GetVolumeGroupSnapshotByName(ctx context.Context, snapName string) (VolumeGroup, error)
 	GetMaxVolumeSize(ctx context.Context) (int64, error)
 	ConfigureMetroVolume(ctx context.Context, id string, config *MetroConfig) (resp MetroSessionResponse, err error)
+	ConfigureMetroVolumeGroup(ctx context.Context, id string, config *MetroConfig) (resp MetroSessionResponse, err error)
 	EndMetroVolume(ctx context.Context, id string, options *EndMetroVolumeOptions) (resp EmptyResponse, err error)
 }
 
