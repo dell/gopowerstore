@@ -59,7 +59,7 @@ func (s *VolumeGroupTestSuite) SetupSuite() {
 }
 
 func (s *VolumeGroupTestSuite) TearDownSuite() {
-	// Delete the volume group we created for the test
+	// Delete the volume group we created for the test.
 	_, err := s.client.DeleteVolumeGroup(context.Background(), s.assurance.ID)
 	assert.NoError(s.T(), err)
 }
@@ -118,7 +118,7 @@ func TestMetroVolumeGroupSuite(t *testing.T) {
 func (s *MetroVolumeGroupTestSuite) SetupSuite() {
 	s.client = GetNewClient()
 
-	// Get a remote system configured for metro replication
+	// Get a remote system configured for metro replication.
 	remoteSystem := GetRemoteSystemForMetro(s.client, s.T())
 	if remoteSystem.ID == "" {
 		s.T().Skip("Could not get a remote system configured for metro. Skipping test suite...")
@@ -130,15 +130,17 @@ func (s *MetroVolumeGroupTestSuite) SetupSuite() {
 func (s *MetroVolumeGroupTestSuite) TearDownSuite() {
 }
 
+// Create a volume group with one or more volumes in the group for testing purposes.
+// Save the volume IDs and the volume group ID for use in subsequent tests.
 func (s *MetroVolumeGroupTestSuite) SetupTest() {
-	// create a volume to add to the vg to make it a valid vg we can test with
+	// Create a volume to add to the vg to make it a valid vg we can test with.
 	volID, _ := CreateVol(s.T())
 	s.vg.volumeIDs = append(s.vg.volumeIDs, volID)
 
-	// create a unique vg name for each test run
+	// Create a unique vg name for each test run.
 	s.vg.this.Name = VGPrefix + randString(8)
 
-	// Create a volume group to run tests against
+	// Create a volume group to run tests against.
 	resp, err := s.client.CreateVolumeGroup(context.Background(), &g.VolumeGroupCreate{
 		Name:                   s.vg.this.Name,
 		VolumeIDs:              s.vg.volumeIDs,
@@ -149,10 +151,13 @@ func (s *MetroVolumeGroupTestSuite) SetupTest() {
 	s.vg.this.ID = resp.ID
 }
 
+// End the metro session on the volume group, remove the volumes from the
+// volume group and delete them, delete the volume group, and sanitize
+// test variables for the next test run.
 func (s *MetroVolumeGroupTestSuite) TearDownTest() {
 	// TODO: END METRO VOLUME GROUP
 
-	// Delete all the volumes in the volume group
+	// Delete all the volumes in the volume group.
 	err := s.deleteAllVolumesInVG()
 	if err != nil {
 		s.T().Logf("%s Please delete from PowerStore when tests complete.", err.Error())
@@ -162,7 +167,7 @@ func (s *MetroVolumeGroupTestSuite) TearDownTest() {
 	_, err = s.client.DeleteVolumeGroup(context.Background(), s.vg.this.ID)
 	if err != nil {
 		// 404 status means it was already deleted.
-		// warn about other errors encountered while deleting
+		// Warn about other errors encountered while deleting.
 		if err.(g.APIError).StatusCode != http.StatusNotFound {
 			s.T().Logf("Unable to delete test volume group %s. Please delete from PowerStore when tests complete. err: %s", s.vg.this.Name, err.Error())
 		}
@@ -175,7 +180,7 @@ func (s *MetroVolumeGroupTestSuite) TearDownTest() {
 }
 
 func (s *MetroVolumeGroupTestSuite) deleteAllVolumesInVG() error {
-	// Must remove volumes from the volume group before deleting
+	// Must remove volumes from the volume group before deleting.
 	_, err := s.client.RemoveMembersFromVolumeGroup(context.Background(), &g.VolumeGroupMembers{VolumeIDs: s.vg.volumeIDs}, s.vg.this.ID)
 	if err != nil {
 		if !strings.Contains(err.Error(), "One or more volumes to be removed are not part of the volume group") &&
@@ -188,7 +193,7 @@ func (s *MetroVolumeGroupTestSuite) deleteAllVolumesInVG() error {
 		_, err = s.client.DeleteVolume(context.Background(), nil, volID)
 		if err != nil {
 			// 404 status means it was already deleted.
-			// warn about other errors encountered while deleting
+			// Warn about other errors encountered while deleting.
 			if err.(g.APIError).StatusCode != http.StatusNotFound {
 				return err
 			}
@@ -207,11 +212,11 @@ func (s *MetroVolumeGroupTestSuite) TestConfigureMetroVolumeGroup() {
 
 // Try to configure metro on a volume group without any volumes in it.
 func (s *MetroVolumeGroupTestSuite) TestConfigMetroVGOnEmptyVG() {
-	// delete all the volumes from the volume group
+	// Delete all the volumes from the volume group.
 	err := s.deleteAllVolumesInVG()
 	assert.NoError(s.T(), err)
 
-	// Attempt to configure metro on an empty volume group
+	// Attempt to configure metro on an empty volume group.
 	_, err = s.client.ConfigureMetroVolumeGroup(context.Background(), s.vg.this.ID, &s.metro.config)
 
 	assert.Equal(s.T(), http.StatusUnprocessableEntity, err.(g.APIError).StatusCode)
@@ -219,8 +224,12 @@ func (s *MetroVolumeGroupTestSuite) TestConfigMetroVGOnEmptyVG() {
 
 // Try to configure metro on a non-existent volume group.
 func (s *MetroVolumeGroupTestSuite) TestMetroVGNonExistantVG() {
+	// Delete all the volumes from the volume group.
+	err := s.deleteAllVolumesInVG()
+	assert.NoError(s.T(), err)
+
 	// Delete that volume group, retaining the volume group ID.
-	_, err := s.client.DeleteVolumeGroup(context.Background(), s.vg.this.ID)
+	_, err = s.client.DeleteVolumeGroup(context.Background(), s.vg.this.ID)
 	assert.NoError(s.T(), err)
 
 	// Try to configure metro volume group using the deleted vg ID.
@@ -232,7 +241,7 @@ func (s *MetroVolumeGroupTestSuite) TestMetroVGNonExistantVG() {
 
 // Execute ConfigureMetroVolume with a bad request body.
 func (s *MetroVolumeGroupTestSuite) TestMetroVGBadRequest() {
-	// Pass an emtpy configuration body with the request
+	// Pass an emtpy configuration body with the request.
 	_, err := s.client.ConfigureMetroVolumeGroup(context.Background(), s.vg.this.ID, nil)
 
 	assert.Error(s.T(), err)
