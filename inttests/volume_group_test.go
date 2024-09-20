@@ -20,6 +20,8 @@ package inttests
 
 import (
 	"context"
+	"fmt"
+	"net/http"
 	"testing"
 
 	g "github.com/dell/gopowerstore"
@@ -28,7 +30,7 @@ import (
 )
 
 const (
-	VGName string = "csi_test_vg"
+	VGPrefix string = "test_vg_"
 )
 
 type VolumeGroupTestSuite struct {
@@ -51,8 +53,7 @@ func (s *VolumeGroupTestSuite) SetupSuite() {
 	var err error
 	// Make sure a volume group exists on which we can run tests against.
 	s.assurance, err = s.client.CreateVolumeGroup(context.Background(), &g.VolumeGroupCreate{
-		Name:                   VGName,
-		IsWriteOrderConsistent: false,
+		Name: VGPrefix + randString(8),
 	})
 	assert.NoError(s.T(), err)
 }
@@ -90,11 +91,16 @@ func (s *VolumeGroupTestSuite) TestGetVolumeGroups() {
 	}
 }
 
+/*
+/	////////////////////////////
+/	/ METRO VOLUME GROUP TESTS /
+/ 	////////////////////////////
+*/
 type MetroVolumeGroupTestSuite struct {
 	suite.Suite
 
-	client        g.Client
-	volumeGroupID string
+	client g.Client
+	vg     g.VolumeGroup
 
 	metro struct {
 		config g.MetroConfig
@@ -115,35 +121,102 @@ func (s *MetroVolumeGroupTestSuite) SetupSuite() {
 	}
 
 	s.metro.config = g.MetroConfig{RemoteSystemID: remoteSystem.ID}
-
-	// Create a volume group to run tests against
-	resp, err := s.client.CreateVolumeGroup(context.Background(), &g.VolumeGroupCreate{
-		Name:                   VGName,
-		IsWriteOrderConsistent: false,
-	})
-	assert.NoError(s.T(), err)
-
-	s.volumeGroupID = resp.ID
 }
 
 func (s *MetroVolumeGroupTestSuite) TearDownSuite() {
-	// Delete the volume group when tests are finished
-	_, err := s.client.DeleteVolumeGroup(context.Background(), s.volumeGroupID)
-	if err != nil {
-		s.T().Log("Unable to delete volume group. Please manually delete the volume group on the PowerStore array.")
-	}
 }
 
 func (s *MetroVolumeGroupTestSuite) SetupTest() {
+	// create a unique vg name for each test run
+	s.vg.Name = VGPrefix + randString(8)
+
+	// Create a volume group to run tests against
+	resp, err := s.client.CreateVolumeGroup(context.Background(), &g.VolumeGroupCreate{
+		Name: s.vg.Name,
+	})
+	assert.NoError(s.T(), err)
+
+	s.vg.ID = resp.ID
+
+	// create a volume to add to the vg to make it a valid vg we can test with
+	volID, volName := CreateVol(s.T())
+	s.vg.Volumes = append(s.vg.Volumes, g.Volume{ID: volID, Name: volName})
 }
 
 func (s *MetroVolumeGroupTestSuite) TearDownTest() {
+	// Delete all the volumes in the volume group
+	err := s.deleteVolumesInVG()
+	if err != nil {
+		s.T().Logf("%s. Please delete from PowerStore when tests complete.", err.Error())
+	}
+
+	// Delete the volume group from the previous test.
+	_, err = s.client.DeleteVolumeGroup(context.Background(), s.vg.ID)
+	if err != nil {
+		// 404 status means it was already deleted.
+		// warn about other errors encountered while deleting
+		if err.(g.APIError).StatusCode != http.StatusNotFound {
+			s.T().Logf("Unable to delete test volume group %s. Please delete from PowerStore when tests complete. err: %s", s.vg.Name, err.Error())
+		}
+	}
+
+	// Sanitize for next test.
+	s.vg.Name = ""
+	s.vg.ID = ""
 }
 
+func (s *MetroVolumeGroupTestSuite) deleteVolumesInVG() error {
+	for _, vol := range s.vg.Volumes {
+		_, err := s.client.DeleteVolume(context.Background(), nil, vol.ID)
+		if err != nil {
+			// 404 status means it was already deleted.
+			// warn about other errors encountered while deleting
+			if err.(g.APIError).StatusCode != http.StatusNotFound {
+				return fmt.Errorf("Error encountered deleting vol: %s. Err: %s", vol.Name, err)
+			}
+		}
+	}
+	return nil
+}
+
+// Should configure a metro volume group without errors.
 func (s *MetroVolumeGroupTestSuite) TestConfigureMetroVolumeGroup() {
-	// Should configure a metro volume group without errors.
-	resp, err := s.client.ConfigureMetroVolumeGroup(context.Background(), s.volumeGroupID, &s.metro.config)
+	resp, err := s.client.ConfigureMetroVolumeGroup(context.Background(), s.vg.ID, &s.metro.config)
 
 	assert.NoError(s.T(), err)
 	assert.NotEmpty(s.T(), resp)
+}
+
+// Try to configure metro on a volume group without any volumes in it.
+func (s *MetroVolumeGroupTestSuite) TestConfigMetroVGOnEmptyVG() {
+	// delete all the volumes from the volume group
+	err := s.deleteVolumesInVG()
+	assert.NoError(s.T(), err)
+
+	// Attempt to configure metro on an empty volume group
+	_, err = s.client.ConfigureMetroVolumeGroup(context.Background(), s.vg.ID, &s.metro.config)
+
+	assert.Equal(s.T(), http.StatusUnprocessableEntity, err.(g.APIError).StatusCode)
+}
+
+// Try to configure metro on a non-existent volume group.
+func (s *MetroVolumeGroupTestSuite) TestMetroVGNonExistantVG() {
+	// Delete that volume group, retaining the volume group ID.
+	_, err := s.client.DeleteVolumeGroup(context.Background(), s.vg.ID)
+	assert.NoError(s.T(), err)
+
+	// Try to configure metro volume group using the deleted vg ID.
+	_, err = s.client.ConfigureMetroVolumeGroup(context.Background(), s.vg.ID, &s.metro.config)
+
+	assert.Error(s.T(), err)
+	assert.Equal(s.T(), http.StatusNotFound, err.(g.APIError).StatusCode)
+}
+
+// Execute ConfigureMetroVolume with a bad request body.
+func (s *MetroVolumeGroupTestSuite) TestMetroVGBadRequest() {
+	// Pass an emtpy configuration body with the request
+	_, err := s.client.ConfigureMetroVolumeGroup(context.Background(), s.vg.ID, nil)
+
+	assert.Error(s.T(), err)
+	assert.Equal(s.T(), http.StatusBadRequest, err.(g.APIError).StatusCode)
 }
