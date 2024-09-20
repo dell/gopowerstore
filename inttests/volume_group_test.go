@@ -153,13 +153,13 @@ func (s *MetroVolumeGroupTestSuite) TearDownTest() {
 	// TODO: END METRO VOLUME GROUP
 
 	// Delete all the volumes in the volume group
-	// err := s.deleteAllVolumesInVG()
-	// if err != nil {
-	// 	s.T().Logf("%s Please delete from PowerStore when tests complete.", err.Error())
-	// }
+	err := s.deleteAllVolumesInVG()
+	if err != nil {
+		s.T().Logf("%s Please delete from PowerStore when tests complete.", err.Error())
+	}
 
 	// Delete the volume group from the previous test.
-	_, err := s.client.DeleteVolumeGroup(context.Background(), s.vg.this.ID)
+	_, err = s.client.DeleteVolumeGroup(context.Background(), s.vg.this.ID)
 	if err != nil {
 		// 404 status means it was already deleted.
 		// warn about other errors encountered while deleting
