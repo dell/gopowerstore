@@ -20,8 +20,8 @@ package inttests
 
 import (
 	"context"
-	"fmt"
 	"net/http"
+	"strings"
 	"testing"
 
 	g "github.com/dell/gopowerstore"
@@ -100,7 +100,11 @@ type MetroVolumeGroupTestSuite struct {
 	suite.Suite
 
 	client g.Client
-	vg     g.VolumeGroup
+
+	vg struct {
+		this      g.VolumeGroup
+		volumeIDs []string
+	}
 
 	metro struct {
 		config g.MetroConfig
@@ -127,52 +131,66 @@ func (s *MetroVolumeGroupTestSuite) TearDownSuite() {
 }
 
 func (s *MetroVolumeGroupTestSuite) SetupTest() {
+	// create a volume to add to the vg to make it a valid vg we can test with
+	volID, _ := CreateVol(s.T())
+	s.vg.volumeIDs = append(s.vg.volumeIDs, volID)
+
 	// create a unique vg name for each test run
-	s.vg.Name = VGPrefix + randString(8)
+	s.vg.this.Name = VGPrefix + randString(8)
 
 	// Create a volume group to run tests against
 	resp, err := s.client.CreateVolumeGroup(context.Background(), &g.VolumeGroupCreate{
-		Name: s.vg.Name,
+		Name:                   s.vg.this.Name,
+		VolumeIDs:              s.vg.volumeIDs,
+		IsWriteOrderConsistent: true,
 	})
 	assert.NoError(s.T(), err)
 
-	s.vg.ID = resp.ID
-
-	// create a volume to add to the vg to make it a valid vg we can test with
-	volID, volName := CreateVol(s.T())
-	s.vg.Volumes = append(s.vg.Volumes, g.Volume{ID: volID, Name: volName})
+	s.vg.this.ID = resp.ID
 }
 
 func (s *MetroVolumeGroupTestSuite) TearDownTest() {
+	// TODO: END METRO VOLUME GROUP
+
 	// Delete all the volumes in the volume group
-	err := s.deleteVolumesInVG()
-	if err != nil {
-		s.T().Logf("%s. Please delete from PowerStore when tests complete.", err.Error())
-	}
+	// err := s.deleteAllVolumesInVG()
+	// if err != nil {
+	// 	s.T().Logf("%s Please delete from PowerStore when tests complete.", err.Error())
+	// }
 
 	// Delete the volume group from the previous test.
-	_, err = s.client.DeleteVolumeGroup(context.Background(), s.vg.ID)
+	_, err := s.client.DeleteVolumeGroup(context.Background(), s.vg.this.ID)
 	if err != nil {
 		// 404 status means it was already deleted.
 		// warn about other errors encountered while deleting
 		if err.(g.APIError).StatusCode != http.StatusNotFound {
-			s.T().Logf("Unable to delete test volume group %s. Please delete from PowerStore when tests complete. err: %s", s.vg.Name, err.Error())
+			s.T().Logf("Unable to delete test volume group %s. Please delete from PowerStore when tests complete. err: %s", s.vg.this.Name, err.Error())
 		}
 	}
 
 	// Sanitize for next test.
-	s.vg.Name = ""
-	s.vg.ID = ""
+	s.vg.this.Name = ""
+	s.vg.this.ID = ""
+	s.vg.volumeIDs = []string{}
 }
 
-func (s *MetroVolumeGroupTestSuite) deleteVolumesInVG() error {
-	for _, vol := range s.vg.Volumes {
-		_, err := s.client.DeleteVolume(context.Background(), nil, vol.ID)
+func (s *MetroVolumeGroupTestSuite) deleteAllVolumesInVG() error {
+	// Must remove volumes from the volume group before deleting
+	_, err := s.client.RemoveMembersFromVolumeGroup(context.Background(), &g.VolumeGroupMembers{VolumeIDs: s.vg.volumeIDs}, s.vg.this.ID)
+	if err != nil {
+		if !strings.Contains(err.Error(), "One or more volumes to be removed are not part of the volume group") &&
+			err.(g.APIError).StatusCode != http.StatusNotFound {
+			return err
+		}
+	}
+
+	for _, volID := range s.vg.volumeIDs {
+		_, err = s.client.DeleteVolume(context.Background(), nil, volID)
 		if err != nil {
 			// 404 status means it was already deleted.
 			// warn about other errors encountered while deleting
 			if err.(g.APIError).StatusCode != http.StatusNotFound {
-				return fmt.Errorf("Error encountered deleting vol: %s. Err: %s", vol.Name, err)
+				return err
 			}
 		}
 	}
@@ -181,7 +199,7 @@ func (s *MetroVolumeGroupTestSuite) deleteVolumesInVG() error {
 
 // Should configure a metro volume group without errors.
 func (s *MetroVolumeGroupTestSuite) TestConfigureMetroVolumeGroup() {
-	resp, err := s.client.ConfigureMetroVolumeGroup(context.Background(), s.vg.ID, &s.metro.config)
+	resp, err := s.client.ConfigureMetroVolumeGroup(context.Background(), s.vg.this.ID, &s.metro.config)
 
 	assert.NoError(s.T(), err)
 	assert.NotEmpty(s.T(), resp)
@@ -190,11 +208,11 @@ func (s *MetroVolumeGroupTestSuite) TestConfigureMetroVolumeGroup() {
 // Try to configure metro on a volume group without any volumes in it.
 func (s *MetroVolumeGroupTestSuite) TestConfigMetroVGOnEmptyVG() {
 	// delete all the volumes from the volume group
-	err := s.deleteVolumesInVG()
+	err := s.deleteAllVolumesInVG()
 	assert.NoError(s.T(), err)
 
 	// Attempt to configure metro on an empty volume group
-	_, err = s.client.ConfigureMetroVolumeGroup(context.Background(), s.vg.ID, &s.metro.config)
+	_, err = s.client.ConfigureMetroVolumeGroup(context.Background(), s.vg.this.ID, &s.metro.config)
 
 	assert.Equal(s.T(), http.StatusUnprocessableEntity, err.(g.APIError).StatusCode)
 }
@@ -202,11 +220,11 @@ func (s *MetroVolumeGroupTestSuite) TestConfigMetroVGOnEmptyVG() {
 // Try to configure metro on a non-existent volume group.
 func (s *MetroVolumeGroupTestSuite) TestMetroVGNonExistantVG() {
 	// Delete that volume group, retaining the volume group ID.
-	_, err := s.client.DeleteVolumeGroup(context.Background(), s.vg.ID)
+	_, err := s.client.DeleteVolumeGroup(context.Background(), s.vg.this.ID)
 	assert.NoError(s.T(), err)
 
 	// Try to configure metro volume group using the deleted vg ID.
-	_, err = s.client.ConfigureMetroVolumeGroup(context.Background(), s.vg.ID, &s.metro.config)
+	_, err = s.client.ConfigureMetroVolumeGroup(context.Background(), s.vg.this.ID, &s.metro.config)
 
 	assert.Error(s.T(), err)
 	assert.Equal(s.T(), http.StatusNotFound, err.(g.APIError).StatusCode)
@@ -215,7 +233,7 @@ func (s *MetroVolumeGroupTestSuite) TestMetroVGNonExistantVG() {
 // Execute ConfigureMetroVolume with a bad request body.
 func (s *MetroVolumeGroupTestSuite) TestMetroVGBadRequest() {
 	// Pass an emtpy configuration body with the request
-	_, err := s.client.ConfigureMetroVolumeGroup(context.Background(), s.vg.ID, nil)
+	_, err := s.client.ConfigureMetroVolumeGroup(context.Background(), s.vg.this.ID, nil)
 
 	assert.Error(s.T(), err)
 	assert.Equal(s.T(), http.StatusBadRequest, err.(g.APIError).StatusCode)

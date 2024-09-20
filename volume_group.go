@@ -25,8 +25,9 @@ import (
 )
 
 const (
-	volumeGroupURL = "volume_group"
-	snapshotURL    = "/snapshot"
+	volumeGroupURL    = "volume_group"
+	snapshotURL       = "/snapshot"
+	actionConfigMetro = "configure_metro"
 )
 
 func getVolumeGroupDefaultQueryParams(c Client) api.QueryParamsEncoder {
@@ -301,5 +302,18 @@ func (c *ClientIMPL) GetVolumeGroupSnapshotByName(ctx context.Context, name stri
 // ConfigureMetroVolumeGroup configures the volume group provided by id for metro replication using the
 // configuration supplied by config and returns a MetroSessionResponse containing a replication session ID.
 func (c *ClientIMPL) ConfigureMetroVolumeGroup(ctx context.Context, id string, config *MetroConfig) (resp MetroSessionResponse, err error) {
-	return resp, err
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:   "POST",
+			Endpoint: volumeGroupURL,
+			ID:       id,
+			Action:   actionConfigMetro,
+			Body:     config,
+		},
+		&resp)
+
+	return resp, WrapErr(err)
+}
+
 }
