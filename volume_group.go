@@ -319,7 +319,7 @@ func (c *ClientIMPL) ConfigureMetroVolumeGroup(ctx context.Context, id string, c
 
 // EndMetroVolumeGroup ends a metro configuration from a volume group and keeps both volume groups by default. The local copy
 // will retain its SCSI Identities while the remote volume group members will get new SCSI Identities if kept.
-func (c *ClientIMPL) EndMetroVolumeGroup(ctx context.Context, id string, config *EndMetroVolumeGroupOptions) (resp EmptyResponse, err error) {
+func (c *ClientIMPL) EndMetroVolumeGroup(ctx context.Context, id string, options *EndMetroVolumeGroupOptions) (resp EmptyResponse, err error) {
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{
@@ -327,7 +327,7 @@ func (c *ClientIMPL) EndMetroVolumeGroup(ctx context.Context, id string, config 
 			Endpoint: volumeGroupURL,
 			ID:       id,
 			Action:   actionEndMetro,
-			Body:     config,
+			Body:     options,
 		},
 		&resp)
 

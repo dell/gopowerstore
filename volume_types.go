@@ -415,15 +415,3 @@ type EndMetroVolumeOptions struct {
 	// It is not recommended to use this option unless the remote side is known to be down.
 	ForceDelete bool `json:"force,omitempty"`
 }
-
-// EndMetroVolumeGroupOptions provides options for deleting the remote volume group and forcing the deletion.
-type EndMetroVolumeGroupOptions struct {
-	// DeleteRemoteVolumeGroup specifies whether or not to delete the remote volume group when ending the metro session.
-	DeleteRemoteVolumeGroup bool `json:"delete_remote_volume_group,omitempty"`
-	// ForceDelete specifies if the Metro volume group should be forcefully deleted.
-	// If the force option is specified, any errors returned while attempting to tear down the remote side of the
-	// metro session will be ignored and the remote side may be left in an indeterminate state.
-	// If any errors occur on the local side the operation can still fail.
-	// It is not recommended to use this option unless the remote side is known to be down.
-	ForceDelete bool `json:"force,omitempty"`
-}
