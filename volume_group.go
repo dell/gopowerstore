@@ -28,6 +28,7 @@ const (
 	volumeGroupURL    = "volume_group"
 	snapshotURL       = "/snapshot"
 	actionConfigMetro = "configure_metro"
+	actionEndMetro    = "end_metro"
 )
 
 func getVolumeGroupDefaultQueryParams(c Client) api.QueryParamsEncoder {
@@ -301,7 +302,7 @@ func (c *ClientIMPL) GetVolumeGroupSnapshotByName(ctx context.Context, name stri
 
 // ConfigureMetroVolumeGroup configures the volume group provided by id for metro replication using the
 // configuration supplied by config and returns a MetroSessionResponse containing a replication session ID.
-func (c *ClientIMPL) ConfigureMetroVolumeGroup(ctx context.Context, id string, config *MetroConfig) (resp MetroSessionResponse, err error) {
+func (c *ClientIMPL) ConfigureMetroVolumeGroup(ctx context.Context, id string, config *MetroConfig) (session MetroSessionResponse, err error) {
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{
@@ -311,9 +312,24 @@ func (c *ClientIMPL) ConfigureMetroVolumeGroup(ctx context.Context, id string, c
 			Action:   actionConfigMetro,
 			Body:     config,
 		},
+		&session)
+
+	return session, WrapErr(err)
+}
+
+// EndMetroVolumeGroup ends a metro configuration from a volume group and keeps both volume groups by default. The local copy
+// will retain its SCSI Identities while the remote volume group members will get new SCSI Identities if kept.
+func (c *ClientIMPL) EndMetroVolumeGroup(ctx context.Context, id string, config *EndMetroVolumeGroupOptions) (resp EmptyResponse, err error) {
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:   "POST",
+			Endpoint: volumeGroupURL,
+			ID:       id,
+			Action:   actionEndMetro,
+			Body:     config,
+		},
 		&resp)
 
 	return resp, WrapErr(err)
-}
-
 }
