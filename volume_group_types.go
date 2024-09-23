@@ -39,7 +39,7 @@ type VolumeGroupCreate struct {
 	// Unique identifier of an optional protection policy to assign to the volume group.
 	ProtectionPolicyID string `json:"protection_policy_id,omitempty"`
 	// For a primary or a clone volume group, this property determines whether snapshot sets of the group will be write order consistent.
-	IsWriteOrderConsistent bool `json:"is_write_order_consistent"`
+	IsWriteOrderConsistent bool `json:"is_write_order_consistent,omitempty"`
 	// A list of identifiers of existing volumes that should be added to the volume group.
 	// All the volumes must be on the same Cyclone appliance and should not be part of another volume group.
 	// If a list of volumes is not specified or if the specified list is empty, an
