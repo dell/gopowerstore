@@ -19,6 +19,7 @@ package gopowerstore
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"testing"
 
 	"github.com/jarcoal/httpmock"
@@ -26,13 +27,15 @@ import (
 )
 
 const (
+	volumeGroupID              = "c4e4f58e-cdc2-4b75-a81a-685543b1420f"
 	volumeGroupMockURL         = APIMockURL + volumeGroupURL
-	volumeGroupSnapshotMockURL = APIMockURL + volumeGroupURL + "/test-id" + snapshotURL
-)
+	volumeGroupSnapshotMockURL = APIMockURL + volumeGroupURL + "/" + volumeGroupID + snapshotURL
 
-var (
 	volGroupSnapID  = "1966782b-60c9-40e2-a1ee-9b2b8f6b98e7"
 	volGroupSnapID2 = "34380c29-2203-4490-aeb7-2853b9a85075"
+
+	metroSessionID = "7f354feb-2014-412b-9406-dc325d096f96"
+	remoteArrayID  = "43557404-8446-48db-87b4-5316877f7c26"
 )
 
 func TestClientIMPL_CreateVolumeGroup(t *testing.T) {
@@ -66,7 +69,7 @@ func TestClientIMPL_CreateVolumeGroupSnapshot(t *testing.T) {
 		Description: "vgs-test",
 	}
 
-	resp, err := C.CreateVolumeGroupSnapshot(context.Background(), "test-id", &createReq)
+	resp, err := C.CreateVolumeGroupSnapshot(context.Background(), volumeGroupID, &createReq)
 	assert.Nil(t, err)
 	assert.Equal(t, volID, resp.ID)
 }
@@ -246,4 +249,35 @@ func TestClientIMPL_UpdateVolumeGroupProtectionPolicy(t *testing.T) {
 	resp, err := C.UpdateVolumeGroupProtectionPolicy(context.Background(), volID, &modifyParams)
 	assert.Nil(t, err)
 	assert.Equal(t, EmptyResponse(""), resp)
+}
+
+func TestClientIMPL_ConfigureMetroVolumeGroup(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
+	expectedSessionID := metroSessionID
+
+	// Response body contains a valid metro session ID.
+	bodyResponse := fmt.Sprintf(`{"metro_replication_session_id": "%s"}`, expectedSessionID)
+	httpmock.RegisterResponder("POST", fmt.Sprintf("%s/%s/configure_metro", volumeGroupMockURL, volumeGroupID),
+		httpmock.NewStringResponder(http.StatusOK, bodyResponse))
+
+	metroSession, err := C.ConfigureMetroVolumeGroup(context.Background(), volumeGroupID, &MetroConfig{RemoteSystemID: remoteArrayID})
+
+	assert.NoError(t, err)
+	assert.Equal(t, expectedSessionID, metroSession.ID)
+}
+
+func TestClientIMPL_EndMetroVolumeGroup(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
+	expectedStatusCode := http.StatusNoContent
+
+	httpmock.RegisterResponder("POST", fmt.Sprintf("%s/%s/end_metro", volumeGroupMockURL, volumeGroupID),
+		httpmock.NewStringResponder(expectedStatusCode, ""))
+
+	_, err := C.EndMetroVolumeGroup(context.Background(), volumeGroupID, &EndMetroVolumeGroupOptions{DeleteRemoteVolumeGroup: true})
+
+	assert.NoError(t, err)
 }
