@@ -235,6 +235,34 @@ func (_m *Client) ConfigureMetroVolume(ctx context.Context, id string, config *g
 	return r0, r1
 }
 
+// ConfigureMetroVolumeGroup provides a mock function with given fields: ctx, id, config
+func (_m *Client) ConfigureMetroVolumeGroup(ctx context.Context, id string, config *gopowerstore.MetroConfig) (gopowerstore.MetroSessionResponse, error) {
+	ret := _m.Called(ctx, id, config)
+
+	if len(ret) == 0 {
+		panic("no return value specified for ConfigureMetroVolumeGroup")
+	}
+
+	var r0 gopowerstore.MetroSessionResponse
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, string, *gopowerstore.MetroConfig) (gopowerstore.MetroSessionResponse, error)); ok {
+		return rf(ctx, id, config)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, string, *gopowerstore.MetroConfig) gopowerstore.MetroSessionResponse); ok {
+		r0 = rf(ctx, id, config)
+	} else {
+		r0 = ret.Get(0).(gopowerstore.MetroSessionResponse)
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, string, *gopowerstore.MetroConfig) error); ok {
+		r1 = rf(ctx, id, config)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // CopyMetricsByAppliance provides a mock function with given fields: ctx, entityID, interval
 func (_m *Client) CopyMetricsByAppliance(ctx context.Context, entityID string, interval gopowerstore.MetricsIntervalEnum) ([]gopowerstore.CopyMetricsByApplianceResponse, error) {
 	ret := _m.Called(ctx, entityID, interval)
@@ -1301,6 +1329,34 @@ func (_m *Client) EndMetroVolume(ctx context.Context, id string, options *gopowe
 	}
 
 	if rf, ok := ret.Get(1).(func(context.Context, string, *gopowerstore.EndMetroVolumeOptions) error); ok {
+		r1 = rf(ctx, id, options)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// EndMetroVolumeGroup provides a mock function with given fields: ctx, id, options
+func (_m *Client) EndMetroVolumeGroup(ctx context.Context, id string, options *gopowerstore.EndMetroVolumeGroupOptions) (gopowerstore.EmptyResponse, error) {
+	ret := _m.Called(ctx, id, options)
+
+	if len(ret) == 0 {
+		panic("no return value specified for EndMetroVolumeGroup")
+	}
+
+	var r0 gopowerstore.EmptyResponse
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, string, *gopowerstore.EndMetroVolumeGroupOptions) (gopowerstore.EmptyResponse, error)); ok {
+		return rf(ctx, id, options)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, string, *gopowerstore.EndMetroVolumeGroupOptions) gopowerstore.EmptyResponse); ok {
+		r0 = rf(ctx, id, options)
+	} else {
+		r0 = ret.Get(0).(gopowerstore.EmptyResponse)
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, string, *gopowerstore.EndMetroVolumeGroupOptions) error); ok {
 		r1 = rf(ctx, id, options)
 	} else {
 		r1 = ret.Error(1)
