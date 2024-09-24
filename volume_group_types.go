@@ -86,6 +86,8 @@ type VolumeGroup struct {
 	LocationHistory []LocationHistory `json:"location_history,omitempty"`
 	//  This resource type has queriable associations from virtual_volume, volume, volume_group, replication_session
 	MigrationSession MigrationSession `json:"migration_session,omitempty"`
+	// Unique identifier of the replication session assigned to the volume group if it has been configured as a metro volume group between two PowerStore clusters.
+	MetroReplicationSessionID string `json:"metro_replication_session_id,omitempty"`
 }
 
 // Fields returns fields which must be requested to fill struct
