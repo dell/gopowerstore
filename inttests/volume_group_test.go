@@ -220,6 +220,19 @@ func (s *MetroVolumeGroupTestSuite) TestConfigureMetroVolumeGroup() {
 	assert.NotEmpty(s.T(), resp)
 }
 
+// Make sure GetVolumeGroup returns the metro_replication_session_id
+func (s *MetroVolumeGroupTestSuite) TestGetMetroVGSessionFromVG() {
+	resp, err := s.client.ConfigureMetroVolumeGroup(context.Background(), s.vg.this.ID, &s.metro.config)
+	assert.NoError(s.T(), err)
+	assert.NotEmpty(s.T(), resp)
+
+	// Get the metro_replication_session_id from the Volume Group
+	vg, err := s.client.GetVolumeGroup(context.Background(), s.vg.this.ID)
+
+	assert.NoError(s.T(), err)
+	assert.Equal(s.T(), resp.ID, vg.MetroReplicationSessionID)
+}
+
 // Try to configure metro on a volume group without any volumes in it.
 func (s *MetroVolumeGroupTestSuite) TestConfigMetroVGOnEmptyVG() {
 	// Delete all the volumes from the volume group.
