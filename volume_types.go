@@ -404,7 +404,7 @@ type MetroSessionResponse struct {
 	ID string `json:"metro_replication_session_id,omitempty"`
 }
 
-// EndMetroVolumeOptions defines the options associated with deleting a metro volume.
+// EndMetroVolumeOptions provides options for deleting the remote volume and forcing the deletion.
 type EndMetroVolumeOptions struct {
 	// DeleteRemoteVolume specifies whether or not to delete the remote volume when ending the metro session.
 	DeleteRemoteVolume bool `json:"delete_remote_volume,omitempty"`

@@ -163,22 +163,25 @@ func Test_PerformanceMetricsSmb2BuiltinclientByNode(t *testing.T) {
 func Test_PerformanceMetricsNfsByNode(t *testing.T) {
 	resp, err := C.PerformanceMetricsNfsByNode(context.Background(), "N1", gopowerstore.FiveMins)
 	checkAPIErr(t, err)
-	assert.NotEmpty(t, resp)
-	assert.Equal(t, "performance_metrics_nfs_by_node", resp[0].Entity)
+	if assert.NotEmpty(t, resp) {
+		assert.Equal(t, "performance_metrics_nfs_by_node", resp[0].Entity)
+	}
 }
 
 func Test_PerformanceMetricsNfsv3ByNode(t *testing.T) {
 	resp, err := C.PerformanceMetricsNfsv3ByNode(context.Background(), "N1", gopowerstore.FiveMins)
 	checkAPIErr(t, err)
-	assert.NotEmpty(t, resp)
-	assert.Equal(t, "performance_metrics_nfsv3_by_node", resp[0].Entity)
+	if assert.NotEmpty(t, resp) {
+		assert.Equal(t, "performance_metrics_nfsv3_by_node", resp[0].Entity)
+	}
 }
 
 func Test_PerformanceMetricsNfsv4ByNode(t *testing.T) {
 	resp, err := C.PerformanceMetricsNfsv4ByNode(context.Background(), "N1", gopowerstore.FiveMins)
 	checkAPIErr(t, err)
-	assert.NotEmpty(t, resp)
-	assert.Equal(t, "performance_metrics_nfsv4_by_node", resp[0].Entity)
+	if assert.NotEmpty(t, resp) {
+		assert.Equal(t, "performance_metrics_nfsv4_by_node", resp[0].Entity)
+	}
 }
 
 func Test_WearMetricsByDrive(t *testing.T) {

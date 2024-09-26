@@ -85,3 +85,26 @@ func Includes(list *[]string, target string) bool {
 	}
 	return false
 }
+
+// GetRemoteSystemForMetro queries the source PowerStore array for configured remote systems
+// to find a remote system capable of metro replication and returns the system if one is found
+// and an empty RemoteSystem struct otherwise.
+func GetRemoteSystemForMetro(client gopowerstore.Client, t *testing.T) gopowerstore.RemoteSystem {
+	systems, err := client.GetAllRemoteSystems(context.Background())
+	if err != nil {
+		t.Skip("Could not get remote systems. Skipping test...")
+	}
+
+	// try to find a valid remote system with Metro from the list of all available remote systems
+	for _, sys := range systems {
+		// check remote capabilities for metro and create MetroConfig if found
+		if Includes(&sys.Capabilities, string(gopowerstore.BlockMetro)) {
+			// make sure the connection is in a good state
+			if sys.DataConnectionState == string(gopowerstore.ConnStateOK) {
+				return sys
+			}
+		}
+	}
+
+	return gopowerstore.RemoteSystem{}
+}
