@@ -21,9 +21,11 @@ package gopowerstore
 import (
 	"context"
 	"errors"
+	"fmt"
 )
 
 const metricsURL = "metrics"
+const mirrorURL = "volume_mirror_transfer_rate_cma_view"
 
 func (c *ClientIMPL) metricsRequest(ctx context.Context, response interface{}, entity string, entityID string, interval MetricsIntervalEnum) error {
 	_, err := c.APIClient().Query(
@@ -37,6 +39,26 @@ func (c *ClientIMPL) metricsRequest(ctx context.Context, response interface{}, e
 				EntityID: entityID,
 				Interval: string(interval),
 			},
+		},
+		response)
+	if err != nil {
+		err = WrapErr(err)
+	}
+	return err
+}
+
+// mirrorTransferRate - Volume Mirror Transfer Rate
+func (c *ClientIMPL) mirrorTransferRate(ctx context.Context, response interface{}, entityID string, interval MetricsIntervalEnum) error {
+	qp := getFSDefaultQueryParams(c)
+	qp.RawArg("volume_id", fmt.Sprintf("eq.%s", entityID))
+	qp.RawArg("interval", string(interval))
+
+	_, err := c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:      "GET",
+			Endpoint:    mirrorURL,
+			QueryParams: qp,
 		},
 		response)
 	if err != nil {
@@ -63,6 +85,13 @@ func (c *ClientIMPL) PerformanceMetricsByNode(ctx context.Context, entityID stri
 func (c *ClientIMPL) PerformanceMetricsByVolume(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]PerformanceMetricsByVolumeResponse, error) {
 	var resp []PerformanceMetricsByVolumeResponse
 	err := c.metricsRequest(ctx, &resp, "performance_metrics_by_volume", entityID, interval)
+	return resp, err
+}
+
+// VolumeMirrorTransferRate - Volume Mirror Transfer Rate
+func (c *ClientIMPL) VolumeMirrorTransferRate(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]VolumeMirrorTransferRateResponse, error) {
+	var resp []VolumeMirrorTransferRateResponse
+	err := c.mirrorTransferRate(ctx, &resp, entityID, interval)
 	return resp, err
 }
 

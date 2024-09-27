@@ -1194,6 +1194,24 @@ type PerformanceMetricsByVolumeResponse struct {
 	CommonMaxAvgIopsBandwidthFields
 }
 
+// VolumeMirrorTransferRateResponse is returned by volume_mirror_transfer_rate
+type VolumeMirrorTransferRateResponse struct {
+	// Unique identifier representing a specific volume.
+	ID string `json:"id,omitempty"`
+
+	// The timestamp of the last read or write operation.
+	Timestamp int64 `json:"timestamp,omitempty"`
+
+	// The read or write bandwidth in bytes per second.
+	SynchronizationBandwidth int64 `json:"synchronization_bandwidth,omitempty"`
+
+	// The read or write bandwidth in bytes per second.
+	MirrorBandwidth int64 `json:"mirror_bandwidth,omitempty"`
+
+	// The amount of data remaining in the bandwidth
+	DataRemaining int64 `json:"data_remaining,omitempty"`
+}
+
 type CommonAvgFields struct {
 	// Average size of read and write operations in bytes.
 	AvgIoSize float32 `json:"avg_io_size,omitempty"`
