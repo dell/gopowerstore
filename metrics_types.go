@@ -1200,16 +1200,16 @@ type VolumeMirrorTransferRateResponse struct {
 	ID string `json:"id,omitempty"`
 
 	// The timestamp of the last read or write operation.
-	Timestamp int64 `json:"timestamp,omitempty"`
+	Timestamp strfmt.DateTime `json:"timestamp,omitempty"`
 
 	// The read or write bandwidth in bytes per second.
-	SynchronizationBandwidth int64 `json:"synchronization_bandwidth,omitempty"`
+	SynchronizationBandwidth float32 `json:"synchronization_bandwidth,omitempty"`
 
 	// The read or write bandwidth in bytes per second.
-	MirrorBandwidth int64 `json:"mirror_bandwidth,omitempty"`
+	MirrorBandwidth float32 `json:"mirror_bandwidth,omitempty"`
 
 	// The amount of data remaining in the bandwidth
-	DataRemaining int64 `json:"data_remaining,omitempty"`
+	DataRemaining float32 `json:"data_remaining,omitempty"`
 }
 
 type CommonAvgFields struct {
