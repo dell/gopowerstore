@@ -22,6 +22,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/http"
 )
 
 const metricsURL = "metrics"
@@ -50,9 +51,15 @@ func (c *ClientIMPL) metricsRequest(ctx context.Context, response interface{}, e
 // mirrorTransferRate - Volume Mirror Transfer Rate
 func (c *ClientIMPL) mirrorTransferRate(ctx context.Context, response interface{}, entityID string, limit int, interval MetricsIntervalEnum) error {
 	qp := getFSDefaultQueryParams(c)
-	qp.RawArg("volume_id", fmt.Sprintf("eq.%s", entityID))
-	qp.RawArg("limit", fmt.Sprintf("%d", limit))
-	qp.RawArg("interval", string(interval))
+	qp.RawArg("id", fmt.Sprintf("eq.%s", entityID))
+	qp.Limit(limit)
+	//qp.RawArg("interval", string(interval))
+	qp.RawArg("select", "id,timestamp,synchronization_bandwidth,mirror_bandwidth,data_remaining")
+
+	customHeader := http.Header{}
+	customHeader.Add("DELL-VISIBILITY", "Internal")
+	apiClient := c.APIClient()
+	apiClient.SetCustomHTTPHeaders(customHeader)
 
 	_, err := c.APIClient().Query(
 		ctx,
@@ -62,9 +69,11 @@ func (c *ClientIMPL) mirrorTransferRate(ctx context.Context, response interface{
 			QueryParams: qp,
 		},
 		response)
+
 	if err != nil {
 		err = WrapErr(err)
 	}
+
 	return err
 }
 
