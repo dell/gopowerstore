@@ -62,3 +62,16 @@ func TestAPIError_ReplicationSessionAlreadyCreated(t *testing.T) {
 	apiError.StatusCode = http.StatusBadRequest
 	assert.True(t, apiError.ReplicationSessionAlreadyCreated())
 }
+
+func TestAPIError_VolumeAlreadyRemovedFromVolumeGroup(t *testing.T) {
+	apiError := NewAPIError()
+	apiError.StatusCode = http.StatusBadRequest
+	assert.False(t, apiError.VolumeAlreadyRemovedFromVolumeGroup())
+
+	apiError.StatusCode = http.StatusUnprocessableEntity
+	assert.False(t, apiError.VolumeAlreadyRemovedFromVolumeGroup())
+
+	apiError.StatusCode = http.StatusUnprocessableEntity
+	apiError.Message = "One or more volumes to be removed are not part of the volume group"
+	assert.True(t, apiError.VolumeAlreadyRemovedFromVolumeGroup())
+}
