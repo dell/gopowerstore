@@ -39,6 +39,7 @@ const (
 	RsStatePaused                     RSStateEnum = "Paused"
 	RsStatePausedForMigration         RSStateEnum = "Paused_For_Migration"
 	RsStatePausedForNdu               RSStateEnum = "Paused_For_NDU"
+	RsStateFractured                  RSStateEnum = "Fractured"
 	RsStateResuming                   RSStateEnum = "Resuming"
 	RsStateFailingOver                RSStateEnum = "Failing_Over"
 	RsStateFailingOverForDR           RSStateEnum = "Failing_Over_For_DR"

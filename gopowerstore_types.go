@@ -20,6 +20,7 @@ package gopowerstore
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/dell/gopowerstore/api"
 )
@@ -132,6 +133,11 @@ func (err *APIError) UnableToFailoverFromDestination() bool {
 // ReplicationSessionAlreadyCreated returns true if API error indicate that replication session has already been created
 func (err *APIError) ReplicationSessionAlreadyCreated() bool {
 	return err.StatusCode == http.StatusBadRequest
+}
+
+// VolumeAlreadyRemovedFromVolumeGroup returns true if API error indicate that volume is not part of the volume group
+func (err *APIError) VolumeAlreadyRemovedFromVolumeGroup() bool {
+	return err.StatusCode == http.StatusUnprocessableEntity && strings.Contains(err.Message, "not part")
 }
 
 // NewNotFoundError returns new VolumeIsNotExistError
