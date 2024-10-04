@@ -46,6 +46,7 @@ const (
 	RsStateFailedOver                 RSStateEnum = "Failed_Over"
 	RsStateReprotecting               RSStateEnum = "Reprotecting"
 	RsStatePartialCutoverForMigration RSStateEnum = "Partial_Cutover_For_Migration"
+	RsStateSwitchingToMetroSync       RSStateEnum = "Switching_To_Metro_Sync"
 	RsStateError                      RSStateEnum = "Error"
 )
 
