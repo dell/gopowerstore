@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2020-2022 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2020-2024 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,11 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-const metricsMockURL = APIMockURL + metricsURL
+const (
+	metricsMockURL        = APIMockURL + metricsURL
+	metricsMockVolMirrURL = APIMockURL + mirrorURL
+	volumeID              = "4ffcd8e8-2a93-49ed-b9b3-2e68c8ddc5e4"
+)
 
 func TestClientIMPL_GetCapacity(t *testing.T) {
 	totalSpace0 := 12077448036352
@@ -134,6 +138,20 @@ func TestClientIMPL_PerformanceMetricsByVolume(t *testing.T) {
 	assert.Equal(t, "performance_metrics_by_volume", resp[0].Entity)
 	assert.Equal(t, "Volume-1", resp[0].VolumeID)
 	assert.Equal(t, float64(1000), resp[0].TotalIops)
+}
+
+func TestClientIMPL_VolumeMirrorTransferRate(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	setResponder := func(respData string) {
+		httpmock.RegisterResponder("GET", metricsMockVolMirrURL,
+			httpmock.NewStringResponder(200, respData))
+	}
+	respData := fmt.Sprintf(`[{"id": "%s"}]`, volumeID)
+	setResponder(respData)
+	volMirr, err := C.VolumeMirrorTransferRate(context.Background(), volumeID)
+	assert.Nil(t, err)
+	assert.Equal(t, volumeID, volMirr[0].ID)
 }
 
 func TestClientIMPL_PerformanceMetricsByCluster(t *testing.T) {

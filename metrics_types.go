@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2020-2022 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2020-2024 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1192,6 +1192,24 @@ type PerformanceMetricsByVolumeResponse struct {
 	CommonAvgFields
 
 	CommonMaxAvgIopsBandwidthFields
+}
+
+// VolumeMirrorTransferRateResponse is returned by volume_mirror_transfer_rate
+type VolumeMirrorTransferRateResponse struct {
+	// Unique identifier representing a specific volume.
+	ID string `json:"id,omitempty"`
+
+	// The timestamp of the last read or write operation.
+	Timestamp strfmt.DateTime `json:"timestamp,omitempty"`
+
+	// The read or write bandwidth in bytes per second.
+	SynchronizationBandwidth float32 `json:"synchronization_bandwidth,omitempty"`
+
+	// The read or write bandwidth in bytes per second.
+	MirrorBandwidth float32 `json:"mirror_bandwidth,omitempty"`
+
+	// The amount of data remaining in the bandwidth
+	DataRemaining float32 `json:"data_remaining,omitempty"`
 }
 
 type CommonAvgFields struct {

@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2020-2022 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2020-2024 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,15 @@ package gopowerstore
 import (
 	"context"
 	"errors"
+	"fmt"
+	"net/http"
 )
 
-const metricsURL = "metrics"
+const (
+	metricsURL = "metrics"
+	mirrorURL  = "volume_mirror_transfer_rate_cma_view"
+	limit      = 2000
+)
 
 func (c *ClientIMPL) metricsRequest(ctx context.Context, response interface{}, entity string, entityID string, interval MetricsIntervalEnum) error {
 	_, err := c.APIClient().Query(
@@ -45,6 +51,35 @@ func (c *ClientIMPL) metricsRequest(ctx context.Context, response interface{}, e
 	return err
 }
 
+// mirrorTransferRate - Volume Mirror Transfer Rate
+func (c *ClientIMPL) mirrorTransferRate(ctx context.Context, response interface{}, entityID string, limit int) error {
+	qp := getFSDefaultQueryParams(c)
+	qp.RawArg("id", fmt.Sprintf("eq.%s", entityID))
+	qp.Limit(limit)
+	qp.RawArg("select", "id,timestamp,synchronization_bandwidth,mirror_bandwidth,data_remaining")
+
+	customHeader := http.Header{}
+	customHeader.Add("DELL-VISIBILITY", "Internal")
+	apiClient := c.APIClient()
+	apiClient.SetCustomHTTPHeaders(customHeader)
+
+	_, err := c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:      "GET",
+			Endpoint:    mirrorURL,
+			QueryParams: qp,
+		},
+		response)
+	if err != nil {
+		err = WrapErr(err)
+	}
+	customHeader.Del("DELL-VISIBILITY")
+	apiClient.SetCustomHTTPHeaders(customHeader)
+
+	return err
+}
+
 // PerformanceMetricsByAppliance - Appliance performance metrics
 func (c *ClientIMPL) PerformanceMetricsByAppliance(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]PerformanceMetricsByApplianceResponse, error) {
 	var resp []PerformanceMetricsByApplianceResponse
@@ -63,6 +98,13 @@ func (c *ClientIMPL) PerformanceMetricsByNode(ctx context.Context, entityID stri
 func (c *ClientIMPL) PerformanceMetricsByVolume(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]PerformanceMetricsByVolumeResponse, error) {
 	var resp []PerformanceMetricsByVolumeResponse
 	err := c.metricsRequest(ctx, &resp, "performance_metrics_by_volume", entityID, interval)
+	return resp, err
+}
+
+// VolumeMirrorTransferRate - Volume Mirror Transfer Rate
+func (c *ClientIMPL) VolumeMirrorTransferRate(ctx context.Context, entityID string) ([]VolumeMirrorTransferRateResponse, error) {
+	var resp []VolumeMirrorTransferRateResponse
+	err := c.mirrorTransferRate(ctx, &resp, entityID, limit)
 	return resp, err
 }
 
