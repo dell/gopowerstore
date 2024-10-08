@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2020-2022 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2020-2024 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,9 +32,8 @@ import (
 const (
 	metricsMockURL        = APIMockURL + metricsURL
 	metricsMockVolMirrURL = APIMockURL + mirrorURL
+	volumeID              = "4ffcd8e8-2a93-49ed-b9b3-2e68c8ddc5e4"
 )
-
-const volumeID = "4ffcd8e8-2a93-49ed-b9b3-2e68c8ddc5e4"
 
 func TestClientIMPL_GetCapacity(t *testing.T) {
 	totalSpace0 := 12077448036352
