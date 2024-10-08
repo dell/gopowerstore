@@ -3711,6 +3711,34 @@ func (_m *Client) PerformanceMetricsByVolume(ctx context.Context, entityID strin
 	return r0, r1
 }
 
+func (_m *Client) VolumeMirrorTransferRate(ctx context.Context, entityID string) ([]gopowerstore.VolumeMirrorTransferRateResponse, error) {
+	ret := _m.Called(ctx, entityID)
+
+	if len(ret) == 0 {
+		panic("no return value specified for VolumeMirrorTransferRate")
+	}
+
+	var r0 []gopowerstore.VolumeMirrorTransferRateResponse
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, string) ([]gopowerstore.VolumeMirrorTransferRateResponse, error)); ok {
+		return rf(ctx, entityID)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, string) []gopowerstore.VolumeMirrorTransferRateResponse); ok {
+		r0 = rf(ctx, entityID)
+	} else {
+		r0 = ret.Get(0).([]gopowerstore.VolumeMirrorTransferRateResponse)
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = rf(ctx, entityID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+
 // PerformanceMetricsNfsByNode provides a mock function with given fields: ctx, entityID, interval
 func (_m *Client) PerformanceMetricsNfsByNode(ctx context.Context, entityID string, interval gopowerstore.MetricsIntervalEnum) ([]gopowerstore.PerformanceMetricsByNfsResponse, error) {
 	ret := _m.Called(ctx, entityID, interval)

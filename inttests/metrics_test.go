@@ -60,6 +60,19 @@ func Test_PerformanceMetricsByVolume(t *testing.T) {
 	assert.Equal(t, "performance_metrics_by_volume", resp[0].Entity)
 }
 
+func Test_VolumeMirrorTransferRate(t *testing.T) {
+	volumesResp, err := C.GetVolumes(context.Background())
+	checkAPIErr(t, err)
+	if len(volumesResp) == 0 {
+		t.Skip("no volumes are available to check for metrics")
+		return
+	}
+	resp, err := C.VolumeMirrorTransferRate(context.Background(), volumesResp[0].ID)
+	checkAPIErr(t, err)
+	assert.NotEmpty(t, resp)
+	assert.Equal(t, "volume_mirror_transfer_rate", resp[0].ID)
+}
+
 func Test_PerformanceMetricsByCluster(t *testing.T) {
 	resp, err := C.PerformanceMetricsByCluster(context.Background(), "0", gopowerstore.FiveMins)
 	checkAPIErr(t, err)

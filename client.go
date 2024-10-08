@@ -142,7 +142,7 @@ type Client interface {
 	PerformanceMetricsByAppliance(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]PerformanceMetricsByApplianceResponse, error)
 	PerformanceMetricsByNode(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]PerformanceMetricsByNodeResponse, error)
 	PerformanceMetricsByVolume(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]PerformanceMetricsByVolumeResponse, error)
-	VolumeMirrorTransferRate(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]VolumeMirrorTransferRateResponse, error)
+	VolumeMirrorTransferRate(ctx context.Context, entityID string) ([]VolumeMirrorTransferRateResponse, error)
 	PerformanceMetricsByCluster(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]PerformanceMetricsByClusterResponse, error)
 	PerformanceMetricsByVM(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]PerformanceMetricsByVMResponse, error)
 	PerformanceMetricsByVg(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]PerformanceMetricsByVgResponse, error)

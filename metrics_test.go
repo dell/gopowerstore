@@ -30,6 +30,9 @@ import (
 )
 
 const metricsMockURL = APIMockURL + metricsURL
+const metricsMockVolMirrURL = APIMockURL + mirrorURL
+
+const volId = "4ffcd8e8-2a93-49ed-b9b3-2e68c8ddc5e4"
 
 func TestClientIMPL_GetCapacity(t *testing.T) {
 	totalSpace0 := 12077448036352
@@ -134,6 +137,20 @@ func TestClientIMPL_PerformanceMetricsByVolume(t *testing.T) {
 	assert.Equal(t, "performance_metrics_by_volume", resp[0].Entity)
 	assert.Equal(t, "Volume-1", resp[0].VolumeID)
 	assert.Equal(t, float64(1000), resp[0].TotalIops)
+}
+
+func TestClientIMPL_VolumeMirrorTransferRate(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	setResponder := func(respData string) {
+		httpmock.RegisterResponder("GET", metricsMockVolMirrURL,
+			httpmock.NewStringResponder(200, respData))
+	}
+	respData := fmt.Sprintf(`[{"id": "%s"}]`, volId)
+	setResponder(respData)
+	volMirr, err := C.VolumeMirrorTransferRate(context.Background(), volId)
+	assert.Nil(t, err)
+	assert.Equal(t, volId, volMirr[0].ID)
 }
 
 func TestClientIMPL_PerformanceMetricsByCluster(t *testing.T) {

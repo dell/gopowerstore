@@ -49,11 +49,10 @@ func (c *ClientIMPL) metricsRequest(ctx context.Context, response interface{}, e
 }
 
 // mirrorTransferRate - Volume Mirror Transfer Rate
-func (c *ClientIMPL) mirrorTransferRate(ctx context.Context, response interface{}, entityID string, limit int, interval MetricsIntervalEnum) error {
+func (c *ClientIMPL) mirrorTransferRate(ctx context.Context, response interface{}, entityID string, limit int) error {
 	qp := getFSDefaultQueryParams(c)
 	qp.RawArg("id", fmt.Sprintf("eq.%s", entityID))
 	qp.Limit(limit)
-	//qp.RawArg("interval", string(interval))
 	qp.RawArg("select", "id,timestamp,synchronization_bandwidth,mirror_bandwidth,data_remaining")
 
 	customHeader := http.Header{}
@@ -99,9 +98,9 @@ func (c *ClientIMPL) PerformanceMetricsByVolume(ctx context.Context, entityID st
 }
 
 // VolumeMirrorTransferRate - Volume Mirror Transfer Rate
-func (c *ClientIMPL) VolumeMirrorTransferRate(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]VolumeMirrorTransferRateResponse, error) {
+func (c *ClientIMPL) VolumeMirrorTransferRate(ctx context.Context, entityID string) ([]VolumeMirrorTransferRateResponse, error) {
 	var resp []VolumeMirrorTransferRateResponse
-	err := c.mirrorTransferRate(ctx, &resp, entityID, 2000, interval)
+	err := c.mirrorTransferRate(ctx, &resp, entityID, 2000)
 	return resp, err
 }
 
