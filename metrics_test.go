@@ -29,8 +29,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-const metricsMockURL = APIMockURL + metricsURL
-const metricsMockVolMirrURL = APIMockURL + mirrorURL
+const (
+	metricsMockURL        = APIMockURL + metricsURL
+	metricsMockVolMirrURL = APIMockURL + mirrorURL
+)
 
 const volumeID = "4ffcd8e8-2a93-49ed-b9b3-2e68c8ddc5e4"
 
