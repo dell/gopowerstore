@@ -3738,7 +3738,6 @@ func (_m *Client) VolumeMirrorTransferRate(ctx context.Context, entityID string)
 	return r0, r1
 }
 
-
 // PerformanceMetricsNfsByNode provides a mock function with given fields: ctx, entityID, interval
 func (_m *Client) PerformanceMetricsNfsByNode(ctx context.Context, entityID string, interval gopowerstore.MetricsIntervalEnum) ([]gopowerstore.PerformanceMetricsByNfsResponse, error) {
 	ret := _m.Called(ctx, entityID, interval)
@@ -4370,7 +4369,8 @@ func (_m *Client) WearMetricsByDrive(ctx context.Context, entityID string, inter
 func NewClient(t interface {
 	mock.TestingT
 	Cleanup(func())
-}) *Client {
+},
+) *Client {
 	mock := &Client{}
 	mock.Mock.Test(t)
 

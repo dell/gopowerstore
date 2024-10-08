@@ -25,8 +25,10 @@ import (
 	"net/http"
 )
 
-const metricsURL = "metrics"
-const mirrorURL = "volume_mirror_transfer_rate_cma_view"
+const (
+	metricsURL = "metrics"
+	mirrorURL  = "volume_mirror_transfer_rate_cma_view"
+)
 
 func (c *ClientIMPL) metricsRequest(ctx context.Context, response interface{}, entity string, entityID string, interval MetricsIntervalEnum) error {
 	_, err := c.APIClient().Query(
@@ -68,7 +70,6 @@ func (c *ClientIMPL) mirrorTransferRate(ctx context.Context, response interface{
 			QueryParams: qp,
 		},
 		response)
-
 	if err != nil {
 		err = WrapErr(err)
 	}
