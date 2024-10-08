@@ -28,6 +28,7 @@ import (
 const (
 	metricsURL = "metrics"
 	mirrorURL  = "volume_mirror_transfer_rate_cma_view"
+	limit      = 2000
 )
 
 func (c *ClientIMPL) metricsRequest(ctx context.Context, response interface{}, entity string, entityID string, interval MetricsIntervalEnum) error {
@@ -73,6 +74,7 @@ func (c *ClientIMPL) mirrorTransferRate(ctx context.Context, response interface{
 	if err != nil {
 		err = WrapErr(err)
 	}
+	customHeader.Del("DELL-VISIBILITY")
 
 	return err
 }
@@ -101,7 +103,7 @@ func (c *ClientIMPL) PerformanceMetricsByVolume(ctx context.Context, entityID st
 // VolumeMirrorTransferRate - Volume Mirror Transfer Rate
 func (c *ClientIMPL) VolumeMirrorTransferRate(ctx context.Context, entityID string) ([]VolumeMirrorTransferRateResponse, error) {
 	var resp []VolumeMirrorTransferRateResponse
-	err := c.mirrorTransferRate(ctx, &resp, entityID, 2000)
+	err := c.mirrorTransferRate(ctx, &resp, entityID, limit)
 	return resp, err
 }
 
