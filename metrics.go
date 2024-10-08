@@ -75,6 +75,7 @@ func (c *ClientIMPL) mirrorTransferRate(ctx context.Context, response interface{
 		err = WrapErr(err)
 	}
 	customHeader.Del("DELL-VISIBILITY")
+	apiClient.SetCustomHTTPHeaders(customHeader)
 
 	return err
 }
