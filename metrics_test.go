@@ -29,12 +29,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-const (
-	metricsMockURL        = APIMockURL + metricsURL
-	metricsMockVolMirrURL = APIMockURL + mirrorURL
-)
+const metricsMockURL = APIMockURL + metricsURL
+const metricsMockVolMirrURL = APIMockURL + mirrorURL
 
-const volId = "4ffcd8e8-2a93-49ed-b9b3-2e68c8ddc5e4"
+const volID = "4ffcd8e8-2a93-49ed-b9b3-2e68c8ddc5e4"
 
 func TestClientIMPL_GetCapacity(t *testing.T) {
 	totalSpace0 := 12077448036352
@@ -148,11 +146,11 @@ func TestClientIMPL_VolumeMirrorTransferRate(t *testing.T) {
 		httpmock.RegisterResponder("GET", metricsMockVolMirrURL,
 			httpmock.NewStringResponder(200, respData))
 	}
-	respData := fmt.Sprintf(`[{"id": "%s"}]`, volId)
+	respData := fmt.Sprintf(`[{"id": "%s"}]`, volID)
 	setResponder(respData)
-	volMirr, err := C.VolumeMirrorTransferRate(context.Background(), volId)
+	volMirr, err := C.VolumeMirrorTransferRate(context.Background(), volID)
 	assert.Nil(t, err)
-	assert.Equal(t, volId, volMirr[0].ID)
+	assert.Equal(t, volID, volMirr[0].ID)
 }
 
 func TestClientIMPL_PerformanceMetricsByCluster(t *testing.T) {
