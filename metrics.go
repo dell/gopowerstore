@@ -28,7 +28,7 @@ import (
 const (
 	metricsURL = "metrics"
 	mirrorURL  = "volume_mirror_transfer_rate_cma_view"
-	limit      = 2000
+	limit      = 1
 )
 
 func (c *ClientIMPL) metricsRequest(ctx context.Context, response interface{}, entity string, entityID string, interval MetricsIntervalEnum) error {
@@ -56,6 +56,7 @@ func (c *ClientIMPL) mirrorTransferRate(ctx context.Context, response interface{
 	qp := getFSDefaultQueryParams(c)
 	qp.RawArg("id", fmt.Sprintf("eq.%s", entityID))
 	qp.Limit(limit)
+	qp.RawArg("order", "timestamp.desc")
 	qp.RawArg("select", "id,timestamp,synchronization_bandwidth,mirror_bandwidth,data_remaining")
 
 	customHeader := http.Header{}
