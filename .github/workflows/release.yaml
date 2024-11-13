@@ -6,9 +6,8 @@ on:  # yamllint disable-line rule:truthy
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version to release (major, minor, patch)'
+        description: 'Version to release (major, minor, patch) Ex: 1.0.0'
         required: true
-        default: 'none'
 jobs:
   csm-release:
     uses: dell/common-github-actions/.github/workflows/csm-release-libs.yaml@main
