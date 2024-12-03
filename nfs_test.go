@@ -153,5 +153,4 @@ func TestClientIMPL_GetFileInterface(t *testing.T) {
 	fileInterface, err := C.GetFileInterface(context.Background(), "test")
 	assert.Nil(t, err)
 	assert.Equal(t, nfsID, fileInterface.ID)
-	httpmock.Reset()
 }
