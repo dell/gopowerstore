@@ -42,3 +42,10 @@ func TestClientOptions_RequestIDKey(t *testing.T) {
 	co.SetRequestIDKey("foobar")
 	assert.Equal(t, "foobar", string(co.RequestIDKey()))
 }
+
+func TestClientOptions_RateLimit(t *testing.T) {
+	co := NewClientOptions()
+	value := 10
+	co.SetRateLimit(value)
+	assert.Equal(t, value, co.RateLimit())
+}

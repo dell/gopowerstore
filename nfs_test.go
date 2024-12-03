@@ -30,6 +30,7 @@ import (
 const (
 	nfsMockURL       = APIMockURL + nfsURL
 	nfsServerMockURL = APIMockURL + nfsServerURL
+	fileMockURL      = APIMockURL + fileInterfaceURL
 )
 
 var (
@@ -118,4 +119,39 @@ func TestClientIMPL_CreateNFSServer(t *testing.T) {
 	nfsServer, err := C.CreateNFSServer(context.Background(), &createReq)
 	assert.Nil(t, err)
 	assert.Equal(t, nfsServerID, nfsServer.ID)
+}
+
+func TestClientIMPL_GetNFSExportByFileSystemID(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	setResponder := func(respData string) {
+		httpmock.RegisterResponder("GET", nfsMockURL,
+			httpmock.NewStringResponder(200, respData))
+	}
+	respData := fmt.Sprintf(`[{"id": "%s"}]`, nfsID)
+	setResponder(respData)
+	nfs, err := C.GetNFSExportByFileSystemID(context.Background(), "test")
+	assert.Nil(t, err)
+	assert.Equal(t, nfsID, nfs.ID)
+	httpmock.Reset()
+	setResponder("")
+	_, err = C.GetNFSExportByFileSystemID(context.Background(), "test")
+	assert.NotNil(t, err)
+	apiError := err.(APIError)
+	assert.True(t, apiError.NotFound())
+}
+
+func TestClientIMPL_GetFileInterface(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	setResponder := func(respData string) {
+		httpmock.RegisterResponder("GET", fmt.Sprintf("%s/%s", fileMockURL, "test"),
+			httpmock.NewStringResponder(200, respData))
+	}
+	respData := fmt.Sprintf(`{"id": "%s"}`, nfsID)
+	setResponder(respData)
+	fileInterface, err := C.GetFileInterface(context.Background(), "test")
+	assert.Nil(t, err)
+	assert.Equal(t, nfsID, fileInterface.ID)
+	httpmock.Reset()
 }
