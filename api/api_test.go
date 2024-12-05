@@ -153,7 +153,7 @@ func TestClient_Query_Forbidden(t *testing.T) {
 	}
 
 	httpmock.RegisterResponder("POST", fmt.Sprintf("%s/%s/%s/%s?foo=bar", apiURL, testURL, id, action),
-		func(r *http.Request) (*http.Response, error) {
+		func(_ *http.Request) (*http.Response, error) {
 			code := statusCodeFn()
 			return httpmock.NewStringResponse(code, respData), nil
 		})
@@ -249,6 +249,7 @@ func TestClientIMPL_SetLogger(t *testing.T) {
 	log := &defaultLogger{}
 	c := ClientIMPL{apiThrottle: NewTimeoutSemaphore(10, 10, log)}
 	c.SetLogger(&defaultLogger{})
+	assert.NotNil(t, c.logger)
 }
 
 func TestClientIMPL_GetCustomHTTPHeaders(t *testing.T) {
