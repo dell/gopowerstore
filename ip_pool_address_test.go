@@ -58,3 +58,25 @@ func TestClientIMPL_GetIPPoolAddress_NotFound(t *testing.T) {
 	_, err := C.GetStorageISCSITargetAddresses(context.Background())
 	assert.NotNil(t, err)
 }
+
+func TestClientIMPL_GetStorageNVMETCPTargetAddresses(t *testing.T) {
+	want := []IPPoolAddress{
+		{ID: "ip1"},
+	}
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	setResponder := func(respData string) {
+		httpmock.RegisterResponder("GET", ipPoolAddressMockURL,
+			httpmock.NewStringResponder(200, respData))
+	}
+	respData := `[{"id": "ip1"}]`
+	setResponder(respData)
+	resp, err := C.GetStorageNVMETCPTargetAddresses(context.Background())
+	assert.Nil(t, err)
+	assert.Equal(t, resp, want)
+	respData = `[]`
+	setResponder(respData)
+	_, err = C.GetStorageNVMETCPTargetAddresses(context.Background())
+	assert.NotNil(t, err)
+	httpmock.Reset()
+}

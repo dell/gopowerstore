@@ -98,6 +98,8 @@ type testResp struct {
 }
 
 func TestClient_Query(t *testing.T) {
+	os.Setenv("GOPOWERSTORE_DEBUG", "true")
+	defer os.Unsetenv("GOPOWERSTORE_DEBUG")
 	apiURL := "https://foo"
 	testURL := "mock"
 	action := "attach"
@@ -120,6 +122,82 @@ func TestClient_Query(t *testing.T) {
 	}, resp)
 	assert.Nil(t, err)
 	assert.Equal(t, resp.Name, "Foo")
+}
+
+func TestClient_Query_Forbidden(t *testing.T) {
+	os.Setenv("GOPOWERSTORE_DEBUG", "true")
+	defer os.Unsetenv("GOPOWERSTORE_DEBUG")
+	apiURL := "https://foo"
+	testURL := "mock"
+	action := "attach"
+	login := "login_session"
+	id := "5bfebae3-a278-4c50-af16-011a1dfc1b6f"
+	c := testClient(t, apiURL)
+	ctx := context.Background()
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	respData := `{"name": "Foo"}`
+	loginData := `[{"id": "id"}]`
+	qp := QueryParams{}
+	qp.RawArg("foo", "bar")
+
+	requestCount := -1
+	statusCodeFn := func() int {
+		requestCount++
+		switch requestCount {
+		case 0:
+			return http.StatusForbidden
+		default:
+			return http.StatusCreated
+		}
+	}
+
+	httpmock.RegisterResponder("POST", fmt.Sprintf("%s/%s/%s/%s?foo=bar", apiURL, testURL, id, action),
+		func(_ *http.Request) (*http.Response, error) {
+			code := statusCodeFn()
+			return httpmock.NewStringResponse(code, respData), nil
+		})
+	httpmock.RegisterResponder("GET", fmt.Sprintf("%s/%s", apiURL, login),
+		httpmock.NewStringResponder(http.StatusOK, loginData))
+
+	reqBody := make(map[string]string)
+	reqBody["foo"] = "bar"
+	resp := &testResp{}
+	_, err := c.Query(ctx, RequestConfig{
+		Method: "POST", Endpoint: testURL, ID: id, Action: action, QueryParams: &qp, Body: reqBody,
+	}, resp)
+	assert.Nil(t, err)
+	assert.Equal(t, "Foo", resp.Name)
+}
+
+func TestClient_Query_Login_Error(t *testing.T) {
+	os.Setenv("GOPOWERSTORE_DEBUG", "true")
+	defer os.Unsetenv("GOPOWERSTORE_DEBUG")
+	apiURL := "https://foo"
+	testURL := "mock"
+	action := "attach"
+	login := "login_session"
+	id := "5bfebae3-a278-4c50-af16-011a1dfc1b6f"
+	c := testClient(t, apiURL)
+	ctx := context.Background()
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	respData := `{"name": "Foo"}`
+	qp := QueryParams{}
+	qp.RawArg("foo", "bar")
+
+	httpmock.RegisterResponder("POST", fmt.Sprintf("%s/%s/%s/%s?foo=bar", apiURL, testURL, id, action),
+		httpmock.NewStringResponder(http.StatusForbidden, respData))
+	httpmock.RegisterResponder("GET", fmt.Sprintf("%s/%s", apiURL, login),
+		httpmock.NewStringResponder(http.StatusUnauthorized, respData))
+
+	reqBody := make(map[string]string)
+	reqBody["foo"] = "bar"
+	resp := &testResp{}
+	_, err := c.Query(ctx, RequestConfig{
+		Method: "POST", Endpoint: testURL, ID: id, Action: action, QueryParams: &qp, Body: reqBody,
+	}, resp)
+	assert.NotNil(t, err)
 }
 
 func TestClientIMPL_prepareRequestURL(t *testing.T) {
@@ -165,6 +243,25 @@ func TestClientIMPL_updatePaginationInfoInMeta(t *testing.T) {
 	header.Set(paginationHeader, "b-bb/aaa")
 	c.updatePaginationInfoInMeta(&meta, resp)
 	assert.False(t, meta.Pagination.IsPaginate)
+}
+
+func TestClientIMPL_SetLogger(t *testing.T) {
+	log := &defaultLogger{}
+	c := ClientIMPL{apiThrottle: NewTimeoutSemaphore(10, 10, log)}
+	c.SetLogger(&defaultLogger{})
+	assert.NotNil(t, c.logger)
+}
+
+func TestClientIMPL_GetCustomHTTPHeaders(t *testing.T) {
+	c := ClientIMPL{}
+
+	want := http.Header{
+		"foo": {"bar"},
+	}
+	c.SetCustomHTTPHeaders(want)
+
+	got := c.GetCustomHTTPHeaders()
+	assert.Equal(t, want, got)
 }
 
 type qpTest struct{}

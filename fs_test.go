@@ -28,8 +28,9 @@ import (
 )
 
 const (
-	nasMockURL = APIMockURL + nasURL
-	fsMockURL  = APIMockURL + fsURL
+	nasMockURL       = APIMockURL + nasURL
+	fsMockURL        = APIMockURL + fsURL
+	nfsMockServerURL = APIMockURL + nfsServerURL
 )
 
 var (
@@ -164,6 +165,17 @@ func TestClientIMPL_CreateNAS(t *testing.T) {
 	assert.Equal(t, nasID, nas.ID)
 }
 
+func TestClientIMPL_GetNAS(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	respData := fmt.Sprintf(`{"id": "%s"}`, nasID)
+	httpmock.RegisterResponder("GET", fmt.Sprintf("%s/%s", nasMockURL, nasID),
+		httpmock.NewStringResponder(200, respData))
+	nas, err := C.GetNAS(context.Background(), nasID)
+	assert.Nil(t, err)
+	assert.Equal(t, nasID, nas.ID)
+}
+
 func TestClientIMPL_DeleteNAS(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
@@ -172,4 +184,76 @@ func TestClientIMPL_DeleteNAS(t *testing.T) {
 	resp, err := C.DeleteNAS(context.Background(), nasID)
 	assert.Nil(t, err)
 	assert.Len(t, string(resp), 0)
+}
+
+func TestClientIMPL_GetNfsServer(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	respData := fmt.Sprintf(`{"id": "%s"}`, nasID)
+	httpmock.RegisterResponder("GET", fmt.Sprintf("%s/%s", nfsMockServerURL, nfsID),
+		httpmock.NewStringResponder(200, respData))
+	resp, err := C.GetNfsServer(context.Background(), nfsID)
+	assert.Nil(t, err)
+	assert.Equal(t, nasID, resp.ID)
+}
+
+func TestClientIMPL_CreateFsSnapshot(t *testing.T) {
+	id := "5e8d8e8e-671b-336f-db4e-cee0fbdc981e"
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	respData := fmt.Sprintf(`{"id": "%s"}`, id)
+	httpmock.RegisterResponder("POST", fmt.Sprintf("%s/%s/snapshot", fsMockURL, id),
+		httpmock.NewStringResponder(200, respData))
+	resp, err := C.CreateFsSnapshot(context.Background(), &SnapshotFSCreate{}, id)
+	assert.Nil(t, err)
+	assert.Equal(t, id, resp.ID)
+}
+
+func TestClientIMPL_GetFsSnapshot(t *testing.T) {
+	id := "5e8d8e8e-671b-336f-db4e-cee0fbdc981e"
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	respData := fmt.Sprintf(`{"id": "%s"}`, id)
+	httpmock.RegisterResponder("GET", fmt.Sprintf("%s/%s", fsMockURL, id),
+		httpmock.NewStringResponder(200, respData))
+	resp, err := C.GetFsSnapshot(context.Background(), id)
+	assert.Nil(t, err)
+	assert.Equal(t, id, resp.ID)
+}
+
+func TestClientIMPL_GetFsSnapshots(t *testing.T) {
+	id := "5e8d8e8e-671b-336f-db4e-cee0fbdc981e"
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	respData := fmt.Sprintf(`[{"id": "%s"}]`, id)
+	httpmock.RegisterResponder("GET", fsMockURL,
+		httpmock.NewStringResponder(200, respData))
+	resp, err := C.GetFsSnapshots(context.Background())
+	assert.Nil(t, err)
+	assert.Equal(t, id, resp[0].ID)
+}
+
+func TestClientIMPL_GetFsSnapshotsByVolumeID(t *testing.T) {
+	id := "5e8d8e8e-671b-336f-db4e-cee0fbdc981e"
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	respData := fmt.Sprintf(`[{"id": "%s"}]`, id)
+	httpmock.RegisterResponder("GET", fsMockURL,
+		httpmock.NewStringResponder(200, respData))
+	resp, err := C.GetFsSnapshotsByVolumeID(context.Background(), id)
+	assert.Nil(t, err)
+	assert.Equal(t, id, resp[0].ID)
+}
+
+func TestClientIMPL_CreateFsFromSnapshot(t *testing.T) {
+	id := "5e8d8e8e-671b-336f-db4e-cee0fbdc981e"
+	name := "test"
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	respData := fmt.Sprintf(`{"id": "%s"}`, id)
+	httpmock.RegisterResponder("POST", fmt.Sprintf("%s/%s/clone", fsMockURL, id),
+		httpmock.NewStringResponder(200, respData))
+	resp, err := C.CreateFsFromSnapshot(context.Background(), &FsClone{Name: &name}, id)
+	assert.Nil(t, err)
+	assert.Equal(t, id, resp.ID)
 }
