@@ -281,8 +281,7 @@ func (c *ClientIMPL) ExecuteActionOnReplicationSession(ctx context.Context, id s
 }
 
 // ModifyReplicationRule modifies replication rule
-func (c *ClientIMPL) ModifyReplicationRule(ctx context.Context,
-	modifyParams *ReplicationRuleModify, id string) (resp EmptyResponse, err error) {
+func (c *ClientIMPL) ModifyReplicationRule(ctx context.Context, modifyParams *ReplicationRuleModify, id string) (resp EmptyResponse, err error) {
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{
