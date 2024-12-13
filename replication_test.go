@@ -91,6 +91,22 @@ func TestClientIMPL_CreateReplicationRuleSync(t *testing.T) {
 	assert.Equal(t, volID, resp.ID)
 }
 
+func TestClientIMPL_ModifyReplicationRule(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	httpmock.RegisterResponder("PATCH", fmt.Sprintf("%s/%s", replicationRuleMockURL, replicationRuleID),
+		httpmock.NewStringResponder(201, ""))
+
+	modifyParams := ReplicationRuleModify{
+		Name: "rr-test-modified",
+		Rpo:  "One_Day",
+	}
+
+	resp, err := C.ModifyReplicationRule(context.Background(), &modifyParams, replicationRuleID)
+	assert.Nil(t, err)
+	assert.Equal(t, EmptyResponse(""), resp)
+}
+
 func TestClientIMPL_DeleteProtectionPolicy(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
