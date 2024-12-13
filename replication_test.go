@@ -95,7 +95,7 @@ func TestClientIMPL_ModifyReplicationRule(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 	httpmock.RegisterResponder("PATCH", fmt.Sprintf("%s/%s", replicationRuleMockURL, replicationRuleID),
-		httpmock.NewStringResponder(201, ""))
+		httpmock.NewStringResponder(204, ""))
 
 	modifyParams := ReplicationRuleModify{
 		Name: "rr-test-modified",
