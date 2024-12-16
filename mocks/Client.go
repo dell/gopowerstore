@@ -4364,6 +4364,34 @@ func (_m *Client) WearMetricsByDrive(ctx context.Context, entityID string, inter
 	return r0, r1
 }
 
+// ModifyReplicationRule provides a mock function with given fields: ctx, modifyParams, id
+func (_m *Client) ModifyReplicationRule(ctx context.Context, modifyParams *gopowerstore.ReplicationRuleModify, id string) (gopowerstore.EmptyResponse, error) {
+	ret := _m.Called(ctx, modifyParams, id)
+
+	if len(ret) == 0 {
+		panic("no return value specified for ModifyReplicationRule")
+	}
+
+	var r0 gopowerstore.EmptyResponse
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, *gopowerstore.ReplicationRuleModify, string) (gopowerstore.EmptyResponse, error)); ok {
+		return rf(ctx, modifyParams, id)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, *gopowerstore.ReplicationRuleModify, string) gopowerstore.EmptyResponse); ok {
+		r0 = rf(ctx, modifyParams, id)
+	} else {
+		r0 = ret.Get(0).(gopowerstore.EmptyResponse)
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, *gopowerstore.ReplicationRuleModify, string) error); ok {
+		r1 = rf(ctx, modifyParams, id)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // NewClient creates a new instance of Client. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
 // The first argument is typically a *testing.T value.
 func NewClient(t interface {
