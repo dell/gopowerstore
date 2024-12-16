@@ -67,6 +67,8 @@ type ReplicationRuleCreate struct {
 	Rpo RPOEnum `json:"rpo"`
 	// Unique identifier of the remote system to which this rule will replicate the associated resources
 	RemoteSystemID string `json:"remote_system_id"`
+	AlertThreshold int    `json:"alert_threshold,omitempty"`
+	IsReadOnly     bool   `json:"is_read_only,omitempty"`
 }
 
 type ReplicationRule struct {
@@ -80,10 +82,12 @@ type ReplicationRule struct {
 	// RemoteSystemID - unique identifier of the remote system to which this rule will replicate the associated resources.
 	RemoteSystemID     string             `json:"remote_system_id"`
 	ProtectionPolicies []ProtectionPolicy `json:"policies"`
+	AlertThreshold     int                `json:"alert_threshold"`
+	IsReadOnly         bool               `json:"is_read_only,omitempty"`
 }
 
 func (rule *ReplicationRule) Fields() []string {
-	return []string{"id", "name", "rpo", "remote_system_id"}
+	return []string{"id", "name", "rpo", "remote_system_id", "alert_threshold", "is_read_only"}
 }
 
 // VirtualMachines - Details of virtual machine
@@ -187,3 +191,15 @@ const (
 	ReplicationRoleMetroPreferred    ReplicationRoleEnum = "Metro_Preferred"
 	ReplicationRoleMetroNonPreferred ReplicationRoleEnum = "Metro_Non_Preferred"
 )
+
+// ReplicationRuleModify modifies replication rule
+type ReplicationRuleModify struct {
+	// Name of the replication rule.
+	Name string `json:"name,omitempty"`
+	// Recovery point objective (RPO), which is the acceptable amount of data, measured in units of time, that may be lost in case of a failure.
+	// If RPO is Zero, it indicates the replication_type is 'sync'.
+	Rpo RPOEnum `json:"rpo,omitempty"`
+	// Unique identifier of the remote system to which this rule will replicate the associated resources
+	RemoteSystemID string `json:"remote_system_id,omitempty"`
+	AlertThreshold int    `json:"alert_threshold,omitempty"`
+}
