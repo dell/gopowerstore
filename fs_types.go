@@ -106,8 +106,8 @@ type SnapshotFSCreate struct {
 	Name string `json:"name,omitempty"`
 	// Description of the snapshot.
 	Description string `json:"description,omitempty"`
-	// Expiration time of the snapshot.
-	ExpirationTime string `json:"expiration_timestamp"`
+	// Expiration timestamp of the snapshot.
+	ExpirationTimestamp string `json:"expiration_timestamp,omitempty"`
 	// Access type of the snapshot which can be 'Protocol' / 'Snapshot'
 	AccessType string `json:"access_type,omitempty"`
 }
@@ -146,8 +146,8 @@ type FileSystem struct {
 	SizeUsed int64 `json:"size_used,omitempty"`
 	// Id of a parent filesystem
 	ParentID string `json:"parent_id,omitempty"`
-	// Expiration time in unix timestamp
-	ExpirationTime string `json:"expiration_timestamp,omitempty"`
+	// Expiration timestamp in unix timestamp
+	ExpirationTimestamp string `json:"expiration_timestamp,omitempty"`
 	// Access type of the file system
 	AccessType string `json:"access_type,omitempty"`
 }
