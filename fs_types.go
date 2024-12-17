@@ -103,10 +103,13 @@ type NASCreate struct {
 // SnapshotFSCreate params for creating 'create snapshot' request
 type SnapshotFSCreate struct {
 	// Unique name for the snapshot to be created.
-	Name           string `json:"name,omitempty"`
-	Description    string `json:"description,omitempty"`
+	Name string `json:"name,omitempty"`
+	// Description of the snapshot.
+	Description string `json:"description,omitempty"`
+	// Expiration time of the snapshot.
 	ExpirationTime string `json:"expiration_timestamp"`
-	AccessType     string `json:"access_type,omitempty"`
+	// Access type of the snapshot which can be 'Protocol' / 'Snapshot'
+	AccessType string `json:"access_type,omitempty"`
 }
 
 // FsClone request for cloning snapshot/fs
