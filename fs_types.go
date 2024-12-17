@@ -182,7 +182,7 @@ func (n *NAS) Fields() []string {
 
 // Fields returns fields which must be requested to fill struct
 func (n *FileSystem) Fields() []string {
-	return []string{"description", "id", "name", "nas_server_id", "filesystem_type", "size_total", "size_used", "parent_id"}
+	return []string{"description", "id", "name", "nas_server_id", "filesystem_type", "size_total", "size_used", "parent_id", "expiration_timestamp", "access_type"}
 }
 
 func (n *NFSServerInstance) Fields() []string {
