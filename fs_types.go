@@ -89,8 +89,9 @@ type FSModify struct {
 	//maximum: 281474976710656
 	//
 	//Size, in bytes, presented to the host or end user. This can be used for both expand and shrink on a file system.
-	Size        int    `json:"size_total"`
-	Description string `json:"description,omitempty"`
+	Size                int    `json:"size_total,omitempty"`
+	Description         string `json:"description,omitempty"`
+	ExpirationTimestamp string `json:"expiration_timestamp,omitempty"`
 }
 
 // NASCreate params for creating 'create nas' request
@@ -102,8 +103,13 @@ type NASCreate struct {
 // SnapshotFSCreate params for creating 'create snapshot' request
 type SnapshotFSCreate struct {
 	// Unique name for the snapshot to be created.
-	Name        string `json:"name,omitempty"`
+	Name string `json:"name,omitempty"`
+	// Description of the snapshot.
 	Description string `json:"description,omitempty"`
+	// Expiration timestamp of the snapshot.
+	ExpirationTimestamp string `json:"expiration_timestamp,omitempty"`
+	// Access type of the snapshot which can be 'Protocol' / 'Snapshot'
+	AccessType string `json:"access_type,omitempty"`
 }
 
 // FsClone request for cloning snapshot/fs
@@ -140,6 +146,10 @@ type FileSystem struct {
 	SizeUsed int64 `json:"size_used,omitempty"`
 	// Id of a parent filesystem
 	ParentID string `json:"parent_id,omitempty"`
+	// Expiration timestamp in unix timestamp
+	ExpirationTimestamp string `json:"expiration_timestamp,omitempty"`
+	// Access type of the file system
+	AccessType string `json:"access_type,omitempty"`
 }
 
 // NFS server instance in NAS server
@@ -175,7 +185,7 @@ func (n *NAS) Fields() []string {
 
 // Fields returns fields which must be requested to fill struct
 func (n *FileSystem) Fields() []string {
-	return []string{"description", "id", "name", "nas_server_id", "filesystem_type", "size_total", "size_used", "parent_id"}
+	return []string{"description", "id", "name", "nas_server_id", "filesystem_type", "size_total", "size_used", "parent_id", "expiration_timestamp", "access_type"}
 }
 
 func (n *NFSServerInstance) Fields() []string {
