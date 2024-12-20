@@ -51,20 +51,30 @@ type FLRCreate struct {
 
 // FsCreate params for creating 'create fs' request
 type FsCreate struct {
-	Description              string      `json:"description,omitempty"`
-	Name                     string      `json:"name"`
-	NASServerID              string      `json:"nas_server_id"`
-	Size                     int64       `json:"size_total"`
-	ConfigType               string      `json:"config_type,omitempty"`
-	AccessPolicy             string      `json:"access_policy,omitempty"`
-	LockingPolicy            string      `json:"locking_policy,omitempty"`
-	FolderRenamePolicy       string      `json:"folder_rename_policy,omitempty"`
-	IsAsyncMTimeEnabled      bool        `json:"is_async_MTime_enabled,omitempty"`
-	ProtectionPolicyID       string      `json:"protection_policy_id,omitempty"`
-	FileEventsPublishingMode string      `json:"file_events_publishing_mode,omitempty"`
-	HostIOSize               string      `json:"host_io_size,omitempty"`
-	FlrCreate                interface{} `json:"flr_attributes,omitempty"`
+	Description                string      `json:"description,omitempty"`
+	Name                       string      `json:"name,omitempty"`
+	NASServerID                string      `json:"nas_server_id,omitempty"`
+	Size                       int64       `json:"size_total,omitempty"`
+	ConfigType                 string      `json:"config_type,omitempty"`
+	AccessPolicy               string      `json:"access_policy,omitempty"`
+	LockingPolicy              string      `json:"locking_policy,omitempty"`
+	FolderRenamePolicy         string      `json:"folder_rename_policy,omitempty"`
+	IsAsyncMTimeEnabled        *bool       `json:"is_async_MTime_enabled,omitempty"`
+	ProtectionPolicyID         string      `json:"protection_policy_id,omitempty"`
+	FileEventsPublishingMode   string      `json:"file_events_publishing_mode,omitempty"`
+	HostIOSize                 string      `json:"host_io_size,omitempty"`
+	FlrCreate                  interface{} `json:"flr_attributes,omitempty"`
+	IsSmbSyncWritesEnabled     *bool       `json:"is_smb_sync_writes_enabled,omitempty"`
+	IsSmbNoNotifyEnabled       *bool       `json:"is_smb_no_notify_enabled,omitempty"`
+	IsSmbOpLocksEnabled        *bool       `json:"is_smb_op_locks_enabled,omitempty"`
+	IsSmbNotifyOnAccessEnabled *bool       `json:"is_smb_notify_on_access_enabled,omitempty"`
+	IsSmbNotifyOnWriteEnabled  *bool       `json:"is_smb_notify_on_write_enabled,omitempty"`
+	SmbNotifyOnChangeDirDepth  int32       `json:"smb_notify_on_change_dir_depth,omitempty"`
 	MetaDataHeader
+}
+
+type FlrAttributes struct {
+	Mode string `json:"mode,omitempty"`
 }
 
 const (
@@ -89,8 +99,21 @@ type FSModify struct {
 	//maximum: 281474976710656
 	//
 	//Size, in bytes, presented to the host or end user. This can be used for both expand and shrink on a file system.
-	Size        int    `json:"size_total"`
-	Description string `json:"description,omitempty"`
+	Size                       int           `json:"size_total"`
+	Description                string        `json:"description,omitempty"`
+	AccessPolicy               string        `json:"access_policy,omitempty"`
+	LockingPolicy              string        `json:"locking_policy,omitempty"`
+	FolderRenamePolicy         string        `json:"folder_rename_policy,omitempty"`
+	IsSmbSyncWritesEnabled     *bool         `json:"is_smb_sync_writes_enabled,omitempty"`
+	IsSmbOpLocksEnabled        *bool         `json:"is_smb_op_locks_enabled,omitempty"`
+	IsSmbNotifyOnAccessEnabled *bool         `json:"is_smb_notify_on_access_enabled,omitempty"`
+	IsSmbNotifyOnWriteEnabled  *bool         `json:"is_smb_notify_on_write_enabled,omitempty"`
+	SmbNotifyOnChangeDirDepth  int32         `json:"smb_notify_on_change_dir_depth,omitempty"`
+	IsSmbNoNotifyEnabled       *bool         `json:"is_smb_no_notify_enabled,omitempty"`
+	IsAsyncMtimeEnabled        *bool         `json:"is_async_MTime_enabled,omitempty"`
+	ProtectionPolicyId         string        `json:"protection_policy_id,omitempty"`
+	FileEventsPublishingMode   string        `json:"file_events_publishing_mode,omitempty"`
+	FlrCreate                  FlrAttributes `json:"flr_attributes,omitempty"`
 }
 
 // NASCreate params for creating 'create nas' request
@@ -140,6 +163,36 @@ type FileSystem struct {
 	SizeUsed int64 `json:"size_used,omitempty"`
 	// Id of a parent filesystem
 	ParentID string `json:"parent_id,omitempty"`
+	// Indicates the file system type.
+	ConfigType string `json:"config_type,omitempty"`
+	// File system security access policies.
+	AccessPolicy string `json:"access_policy,omitempty"`
+	// [ Native, UNIX, Windows ]
+	LockingPolicy string `json:"locking_policy,omitempty"`
+	// File system folder rename policies for the file system with multiprotocol access enabled.
+	FolderRenamePolicy string `json:"folder_rename_policy,omitempty"`
+	// Indicates whether asynchronous MTIME is enabled on the file system
+	IsAsyncMTimeEnabled bool `json:"is_async_MTime_enabled,omitempty"`
+	// Unique identifier of the protection policy
+	ProtectionPolicyID string `json:"protection_policy_id,omitempty"`
+	// State of the event notification services for all file systems
+	FileEventsPublishingMode string `json:"file_events_publishing_mode,omitempty"`
+	// Typical size of writes
+	HostIOSize string `json:"host_io_size,omitempty"`
+	// Flr attributes
+	FlrCreate FlrAttributes `json:"flr_attributes,omitempty"`
+	// Indicates whether the synchronous writes option is enabled
+	IsSmbSyncWritesEnabled bool `json:"is_smb_sync_writes_enabled,omitempty"`
+	// Indicates whether notifications of changes to a directory file structure are enabled.
+	IsSmbNoNotifyEnabled bool `json:"is_smb_no_notify_enabled,omitempty"`
+	// Indicates whether opportunistic file locking is enabled on the file system.
+	IsSmbOpLocksEnabled bool `json:"is_smb_op_locks_enabled,omitempty"`
+	// Indicates whether file access notifications are enabled on the file system
+	IsSmbNotifyOnAccessEnabled bool `json:"is_smb_notify_on_access_enabled,omitempty"`
+	//Indicates whether file writes notifications are enabled on the file system.
+	IsSmbNotifyOnWriteEnabled bool `json:"is_smb_notify_on_write_enabled,omitempty"`
+	// Lowest directory level to which the enabled notifications apply
+	SmbNotifyOnChangeDirDepth int32 `json:"smb_notify_on_change_dir_depth,omitempty"`
 }
 
 // NFS server instance in NAS server
@@ -175,7 +228,7 @@ func (n *NAS) Fields() []string {
 
 // Fields returns fields which must be requested to fill struct
 func (n *FileSystem) Fields() []string {
-	return []string{"description", "id", "name", "nas_server_id", "filesystem_type", "size_total", "size_used", "parent_id"}
+	return []string{"description", "id", "name", "nas_server_id", "filesystem_type", "size_total", "size_used", "parent_id", "config_type", "access_policy", "locking_policy", "folder_rename_policy", "is_async_MTime_enabled", "protection_policy_id", "file_events_publishing_mode", "host_io_size", "flr_attributes", "is_smb_sync_writes_enabled", "is_smb_no_notify_enabled", "is_smb_op_locks_enabled", "is_smb_notify_on_access_enabled", "is_smb_notify_on_write_enabled", "smb_notify_on_change_dir_depth"}
 }
 
 func (n *NFSServerInstance) Fields() []string {
