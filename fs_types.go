@@ -111,7 +111,7 @@ type FSModify struct {
 	SmbNotifyOnChangeDirDepth  int32         `json:"smb_notify_on_change_dir_depth,omitempty"`
 	IsSmbNoNotifyEnabled       *bool         `json:"is_smb_no_notify_enabled,omitempty"`
 	IsAsyncMtimeEnabled        *bool         `json:"is_async_MTime_enabled,omitempty"`
-	ProtectionPolicyId         string        `json:"protection_policy_id,omitempty"`
+	ProtectionPolicyID         string        `json:"protection_policy_id,omitempty"`
 	FileEventsPublishingMode   string        `json:"file_events_publishing_mode,omitempty"`
 	FlrCreate                  FlrAttributes `json:"flr_attributes,omitempty"`
 	ExpirationTimestamp        string        `json:"expiration_timestamp,omitempty"`
@@ -195,7 +195,7 @@ type FileSystem struct {
 	IsSmbOpLocksEnabled bool `json:"is_smb_op_locks_enabled,omitempty"`
 	// Indicates whether file access notifications are enabled on the file system
 	IsSmbNotifyOnAccessEnabled bool `json:"is_smb_notify_on_access_enabled,omitempty"`
-	//Indicates whether file writes notifications are enabled on the file system.
+	// Indicates whether file writes notifications are enabled on the file system.
 	IsSmbNotifyOnWriteEnabled bool `json:"is_smb_notify_on_write_enabled,omitempty"`
 	// Lowest directory level to which the enabled notifications apply
 	SmbNotifyOnChangeDirDepth int32 `json:"smb_notify_on_change_dir_depth,omitempty"`
