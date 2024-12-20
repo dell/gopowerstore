@@ -279,3 +279,17 @@ func (c *ClientIMPL) ExecuteActionOnReplicationSession(ctx context.Context, id s
 		&res)
 	return resp, WrapErr(err)
 }
+
+// ModifyReplicationRule modifies replication rule
+func (c *ClientIMPL) ModifyReplicationRule(ctx context.Context, modifyParams *ReplicationRuleModify, id string) (resp EmptyResponse, err error) {
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:   "PATCH",
+			Endpoint: replicationRuleURL,
+			ID:       id,
+			Body:     modifyParams,
+		},
+		&resp)
+	return resp, WrapErr(err)
+}

@@ -116,6 +116,7 @@ type Client interface {
 	ModifyFS(ctx context.Context, modifyParams *FSModify, volID string) (EmptyResponse, error)
 	CloneFS(ctx context.Context, createParams *FsClone, fsID string) (CreateResponse, error)
 	CreateReplicationRule(ctx context.Context, createParams *ReplicationRuleCreate) (CreateResponse, error)
+	ModifyReplicationRule(ctx context.Context, modifyParams *ReplicationRuleModify, id string) (EmptyResponse, error)
 	GetReplicationRule(ctx context.Context, id string) (resp ReplicationRule, err error)
 	GetReplicationRuleByName(ctx context.Context, name string) (ReplicationRule, error)
 	CreateProtectionPolicy(ctx context.Context, createParams *ProtectionPolicyCreate) (CreateResponse, error)

@@ -114,6 +114,7 @@ type FSModify struct {
 	ProtectionPolicyId         string        `json:"protection_policy_id,omitempty"`
 	FileEventsPublishingMode   string        `json:"file_events_publishing_mode,omitempty"`
 	FlrCreate                  FlrAttributes `json:"flr_attributes,omitempty"`
+	ExpirationTimestamp        string        `json:"expiration_timestamp,omitempty"`
 }
 
 // NASCreate params for creating 'create nas' request
@@ -125,8 +126,13 @@ type NASCreate struct {
 // SnapshotFSCreate params for creating 'create snapshot' request
 type SnapshotFSCreate struct {
 	// Unique name for the snapshot to be created.
-	Name        string `json:"name,omitempty"`
+	Name string `json:"name,omitempty"`
+	// Description of the snapshot.
 	Description string `json:"description,omitempty"`
+	// Expiration timestamp of the snapshot.
+	ExpirationTimestamp string `json:"expiration_timestamp,omitempty"`
+	// Access type of the snapshot which can be 'Protocol' / 'Snapshot'
+	AccessType string `json:"access_type,omitempty"`
 }
 
 // FsClone request for cloning snapshot/fs
@@ -193,6 +199,10 @@ type FileSystem struct {
 	IsSmbNotifyOnWriteEnabled bool `json:"is_smb_notify_on_write_enabled,omitempty"`
 	// Lowest directory level to which the enabled notifications apply
 	SmbNotifyOnChangeDirDepth int32 `json:"smb_notify_on_change_dir_depth,omitempty"`
+	// Expiration timestamp in unix timestamp
+	ExpirationTimestamp string `json:"expiration_timestamp,omitempty"`
+	// Access type of the file system
+	AccessType string `json:"access_type,omitempty"`
 }
 
 // NFS server instance in NAS server
@@ -228,7 +238,7 @@ func (n *NAS) Fields() []string {
 
 // Fields returns fields which must be requested to fill struct
 func (n *FileSystem) Fields() []string {
-	return []string{"description", "id", "name", "nas_server_id", "filesystem_type", "size_total", "size_used", "parent_id", "config_type", "access_policy", "locking_policy", "folder_rename_policy", "is_async_MTime_enabled", "protection_policy_id", "file_events_publishing_mode", "host_io_size", "flr_attributes", "is_smb_sync_writes_enabled", "is_smb_no_notify_enabled", "is_smb_op_locks_enabled", "is_smb_notify_on_access_enabled", "is_smb_notify_on_write_enabled", "smb_notify_on_change_dir_depth"}
+	return []string{"description", "id", "name", "nas_server_id", "filesystem_type", "size_total", "size_used", "parent_id", "expiration_timestamp", "access_type", "config_type", "access_policy", "locking_policy", "folder_rename_policy", "is_async_MTime_enabled", "protection_policy_id", "file_events_publishing_mode", "host_io_size", "flr_attributes", "is_smb_sync_writes_enabled", "is_smb_no_notify_enabled", "is_smb_op_locks_enabled", "is_smb_notify_on_access_enabled", "is_smb_notify_on_write_enabled", "smb_notify_on_change_dir_depth"}
 }
 
 func (n *NFSServerInstance) Fields() []string {
