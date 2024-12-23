@@ -74,7 +74,10 @@ type FsCreate struct {
 }
 
 type FlrAttributes struct {
-	Mode string `json:"mode,omitempty"`
+	Mode             string `json:"mode,omitempty"`
+	MinimumRetention string `json:"minimum_retention,omitempty"`
+	DefaultRetention string `json:"default_retention,omitempty"`
+	MaximumRetention string `json:"maximum_retention,omitempty"`
 }
 
 const (
