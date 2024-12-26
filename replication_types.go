@@ -84,10 +84,13 @@ type ReplicationRule struct {
 	ProtectionPolicies []ProtectionPolicy `json:"policies"`
 	AlertThreshold     int                `json:"alert_threshold"`
 	IsReadOnly         bool               `json:"is_read_only,omitempty"`
+	IsReplica          bool               `json:"is_replica,omitempty"`
+	ManagedBy          string             `json:"managed_by,omitempty"`
+	ManagedByID        string             `json:"managed_by_id,omitempty"`
 }
 
 func (rule *ReplicationRule) Fields() []string {
-	return []string{"id", "name", "rpo", "remote_system_id", "alert_threshold", "is_read_only"}
+	return []string{"id", "name", "rpo", "remote_system_id", "alert_threshold", "is_read_only", "is_replica", "managed_by", "managed_by_id", "policies(id,name)"}
 }
 
 // VirtualMachines - Details of virtual machine
