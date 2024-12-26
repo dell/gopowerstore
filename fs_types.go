@@ -102,7 +102,7 @@ type FSModify struct {
 	//maximum: 281474976710656
 	//
 	//Size, in bytes, presented to the host or end user. This can be used for both expand and shrink on a file system.
-	Size                       int           `json:"size_total"`
+	Size                       int           `json:"size_total,omitempty"`
 	Description                string        `json:"description,omitempty"`
 	AccessPolicy               string        `json:"access_policy,omitempty"`
 	LockingPolicy              string        `json:"locking_policy,omitempty"`
