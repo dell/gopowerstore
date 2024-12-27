@@ -102,7 +102,7 @@ type FSModify struct {
 	//maximum: 281474976710656
 	//
 	//Size, in bytes, presented to the host or end user. This can be used for both expand and shrink on a file system.
-	Size                       int           `json:"size_total"`
+	Size                       int           `json:"size_total,omitempty"`
 	Description                string        `json:"description,omitempty"`
 	AccessPolicy               string        `json:"access_policy,omitempty"`
 	LockingPolicy              string        `json:"locking_policy,omitempty"`
@@ -113,7 +113,7 @@ type FSModify struct {
 	IsSmbNotifyOnWriteEnabled  *bool         `json:"is_smb_notify_on_write_enabled,omitempty"`
 	SmbNotifyOnChangeDirDepth  int32         `json:"smb_notify_on_change_dir_depth,omitempty"`
 	IsSmbNoNotifyEnabled       *bool         `json:"is_smb_no_notify_enabled,omitempty"`
-	IsAsyncMtimeEnabled        bool          `json:"is_async_MTime_enabled"`
+	IsAsyncMtimeEnabled        *bool         `json:"is_async_MTime_enabled,omitempty"`
 	ProtectionPolicyID         string        `json:"protection_policy_id,omitempty"`
 	FileEventsPublishingMode   string        `json:"file_events_publishing_mode,omitempty"`
 	FlrCreate                  FlrAttributes `json:"flr_attributes,omitempty"`
