@@ -40,7 +40,7 @@ type VolumeGroupCreate struct {
 	ProtectionPolicyID string `json:"protection_policy_id,omitempty"`
 	// For a primary or a clone volume group, this property determines whether snapshot sets of the group will be write order consistent.
 	// If not specified, this parameter defaults to true in PowerStore API.
-	IsWriteOrderConsistent bool `json:"is_write_order_consistent,omitempty"`
+	IsWriteOrderConsistent *bool `json:"is_write_order_consistent,omitempty"`
 	// A list of identifiers of existing volumes that should be added to the volume group.
 	// All the volumes must be on the same Cyclone appliance and should not be part of another volume group.
 	// If a list of volumes is not specified or if the specified list is empty, an
@@ -109,7 +109,7 @@ type VolumeGroupModify struct {
 	ProtectionPolicyID     string  `json:"protection_policy_id"` // empty to unassign
 	Description            string  `json:"description"`
 	Name                   string  `json:"name,omitempty"`
-	IsWriteOrderConsistent bool    `json:"is_write_order_consistent,omitempty"`
+	IsWriteOrderConsistent *bool    `json:"is_write_order_consistent,omitempty"`
 	ExpirationTimestamp    *string `json:"expiration_timestamp,omitempty"`
 }
 
@@ -117,7 +117,7 @@ type VolumeGroupModify struct {
 type VolumeGroupSnapshotModify struct {
 	Description            string  `json:"description"`
 	Name                   string  `json:"name,omitempty"`
-	IsWriteOrderConsistent bool    `json:"is_write_order_consistent,omitempty"`
+	IsWriteOrderConsistent *bool    `json:"is_write_order_consistent,omitempty"`
 	ExpirationTimestamp    *string `json:"expiration_timestamp,omitempty"`
 }
 

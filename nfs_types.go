@@ -38,6 +38,28 @@ type NFSExportCreate struct {
 	FileSystemID string `json:"file_system_id"`
 	// Local path to a location within the file system.
 	Path string `json:"path"`
+	// Default access level for all hosts that can access the Export
+	DefaultAccess NFSExportDefaultAccessEnum `json:"default_access,omitempty"`
+	// NFS enforced security type for users accessing an NFS Export.
+	MinSecurity string `json:"min_security,omitempty"`
+	// Hosts with no access to the NFS export or its snapshots.
+	NoAccessHosts []string `json:"no_access_hosts,omitempty"`
+	// Hosts with read-only access to the NFS export and its snapshots.
+	ReadOnlyHosts []string `json:"read_only_hosts,omitempty"`
+	// Hosts with read-only and ready-only for root user access to the NFS Export and its snapshots.
+	ReadOnlyRootHosts []string `json:"read_only_root_hosts,omitempty"`
+	// Hosts with read and write access to the NFS export and its snapshots.
+	ReadWriteHosts []string `json:"read_write_hosts,omitempty"`
+	// Hosts with read and write and read and write for root user access to the NFS Export and its snapshots.
+	ReadWriteRootHosts []string `json:"read_write_root_hosts,omitempty"`
+	// Specifies the user ID of the anonymous account.
+	AnonymousUID int32 `json:"anonymous_UID,omitempty"`
+	// Specifies the group ID of the anonymous account.
+	AnonymousGID int32 `json:"anonymous_GID,omitempty"`
+	// If set, do not allow access to set SUID. Otherwise, allow access.
+	IsNoSUID bool `json:"is_no_SUID"`
+	// (*Applies to NFS shares of VMware NFS storage resources.*) Default owner of the NFS Export associated with the datastore. Required if secure NFS enabled. For NFSv3 or NFSv4 without Kerberos, the default owner is root. Was added in version 3.0.0.0.
+	NFSOwnerUsername string `json:"nfs_owner_username,omitempty"`
 }
 
 // NFSExportModify details about modification of exiting NFS export
@@ -75,6 +97,29 @@ type NFSExportModify struct {
 	AddNoAccessHosts []string `json:"add_no_access_hosts,omitempty"`
 	// Hosts to remove from the current no_access_hosts list. Hosts can be entered by Hostname, IP addresses
 	RemoveNoAccessHosts []string `json:"remove_no_access_hosts,omitempty"`
+
+	// Default access level for all hosts that can access the Export.
+	DefaultAccess string `json:"default_access,omitempty"`
+	// NFS enforced security type for users accessing an NFS Export.
+	MinSecurity string `json:"min_security,omitempty"`
+	// Hosts with no access to the NFS export or its snapshots.
+	NoAccessHosts []string `json:"no_access_hosts,omitempty"`
+	// Hosts with read-only access to the NFS export and its snapshots.
+	ReadOnlyHosts []string `json:"read_only_hosts,omitempty"`
+	// Hosts with read-only and ready-only for root user access to the NFS Export and its snapshots.
+	ReadOnlyRootHosts []string `json:"read_only_root_hosts,omitempty"`
+	// Hosts with read and write access to the NFS export and its snapshots.
+	ReadWriteHosts []string `json:"read_write_hosts,omitempty"`
+	// Hosts with read and write and read and write for root user access to the NFS Export and its snapshots.
+	ReadWriteRootHosts []string `json:"read_write_root_hosts,omitempty"`
+	// Specifies the user ID of the anonymous account.
+	AnonymousUID int32 `json:"anonymous_UID,omitempty"`
+	// Specifies the group ID of the anonymous account.
+	AnonymousGID int32 `json:"anonymous_GID,omitempty"`
+	// If set, do not allow access to set SUID. Otherwise, allow access.
+	IsNoSUID bool `json:"is_no_SUID"`
+	// (*Applies to NFS shares of VMware NFS storage resources.*) Default owner of the NFS Export associated with the datastore. Required if secure NFS enabled. For NFSv3 or NFSv4 without Kerberos, the default owner is root. Was added in version 3.0.0.0.
+	NFSOwnerUsername string `json:"nfs_owner_usernamestring,omitempty"`
 }
 
 // NFSServerCreate details about creation of new NFS server
@@ -116,6 +161,21 @@ type NFSExport struct {
 	RWRootHosts []string `json:"read_write_root_hosts,omitempty"`
 	// Read-Only, allow Roots hosts
 	RORootHosts []string `json:"read_only_root_hosts,omitempty"`
+	// NFS enforced security type for users accessing an NFS Export.
+	// [ Sys, Kerberos, Kerberos_With_Integrity, Kerberos_With_Encryption ]
+	MinSecurity string `json:"min_security,omitempty"`
+	// (*Applies to NFS shares of VMware NFS storage resources.*)
+	// Default owner of the NFS Export associated with the datastore.
+	// Required if secure NFS enabled.
+	NFSOwnerUsername string `json:"nfs_owner_username,omitempty"`
+	// Hosts with no access to the NFS export or its snapshots.
+	NoAccessHosts []string `json:"no_access_hosts,omitempty"`
+	// Specifies the user ID of the anonymous account.
+	AnonymousUID int32 `json:"anonymous_UID,omitempty"`
+	// Specifies the group ID of the anonymous account.
+	AnonymousGID int32 `json:"anonymous_GID,omitempty"`
+	// If set, do not allow access to set SUID. Otherwise, allow access.
+	IsNoSUID bool `json:"is_no_SUID"`
 }
 
 // Details about the file interface
@@ -128,7 +188,8 @@ type FileInterface struct {
 
 // Fields returns fields which must be requested to fill struct
 func (n *NFSExport) Fields() []string {
-	return []string{"description", "id", "name", "file_system_id", "default_access", "path", "read_only_hosts", "read_only_root_hosts", "read_write_hosts", "read_write_root_hosts"}
+	return []string{"description", "id", "name", "file_system_id", "default_access", "path", "read_only_hosts", "read_only_root_hosts", "read_write_hosts", "read_write_root_hosts",
+		"min_security", "nfs_owner_username", "no_access_hosts", "anonymous_UID", "anonymous_GID", "is_no_SUID"}
 }
 
 // Fields returns fields which must be requested to fill struct
