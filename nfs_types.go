@@ -188,8 +188,7 @@ type FileInterface struct {
 
 // Fields returns fields which must be requested to fill struct
 func (n *NFSExport) Fields() []string {
-	return []string{"description", "id", "name", "file_system_id", "default_access", "path", "read_only_hosts", "read_only_root_hosts", "read_write_hosts", "read_write_root_hosts",
-		"min_security", "nfs_owner_username", "no_access_hosts", "anonymous_UID", "anonymous_GID", "is_no_SUID"}
+	return []string{"description", "id", "name", "file_system_id", "default_access", "path", "read_only_hosts", "read_only_root_hosts", "read_write_hosts", "read_write_root_hosts", "min_security", "nfs_owner_username", "no_access_hosts", "anonymous_UID", "anonymous_GID", "is_no_SUID"}
 }
 
 // Fields returns fields which must be requested to fill struct
