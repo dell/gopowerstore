@@ -46,7 +46,7 @@ type NFSExportCreate struct {
 	NoAccessHosts []string `json:"no_access_hosts,omitempty"`
 	// Hosts with read-only access to the NFS export and its snapshots.
 	ReadOnlyHosts []string `json:"read_only_hosts,omitempty"`
-	// Hosts with read-only and ready-only for root user access to the NFS Export and its snapshots.
+	// Hosts with read-only and read-only for root user access to the NFS Export and its snapshots.
 	ReadOnlyRootHosts []string `json:"read_only_root_hosts,omitempty"`
 	// Hosts with read and write access to the NFS export and its snapshots.
 	ReadWriteHosts []string `json:"read_write_hosts,omitempty"`
@@ -106,7 +106,7 @@ type NFSExportModify struct {
 	NoAccessHosts []string `json:"no_access_hosts,omitempty"`
 	// Hosts with read-only access to the NFS export and its snapshots.
 	ReadOnlyHosts []string `json:"read_only_hosts,omitempty"`
-	// Hosts with read-only and ready-only for root user access to the NFS Export and its snapshots.
+	// Hosts with read-only and read-only for root user access to the NFS Export and its snapshots.
 	ReadOnlyRootHosts []string `json:"read_only_root_hosts,omitempty"`
 	// Hosts with read and write access to the NFS export and its snapshots.
 	ReadWriteHosts []string `json:"read_write_hosts,omitempty"`
