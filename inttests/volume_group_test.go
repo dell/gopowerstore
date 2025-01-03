@@ -149,11 +149,12 @@ func (s *MetroVolumeGroupTestSuite) SetupTest() {
 	// Create a unique vg name for each test run.
 	s.vg.this.Name = VGPrefix + randString(8)
 
+	isWriteOrderConsistent := true
 	// Create a volume group to run tests against.
 	resp, err := s.client.CreateVolumeGroup(context.Background(), &g.VolumeGroupCreate{
 		Name:                   s.vg.this.Name,
 		VolumeIDs:              s.vg.volumeIDs,
-		IsWriteOrderConsistent: true,
+		IsWriteOrderConsistent: &isWriteOrderConsistent,
 	})
 	assert.NoError(s.T(), err)
 
@@ -318,11 +319,12 @@ func (s *EndMetroVolumeGroupTestSuite) SetupTest() {
 	// Create a unique vg name for each test run.
 	s.vg.this.Name = VGPrefix + randString(8)
 
+	isWriteOrderConsistent := true
 	// Create a volume group to run tests against.
 	resp, err := s.client.CreateVolumeGroup(context.Background(), &g.VolumeGroupCreate{
 		Name:                   s.vg.this.Name,
 		VolumeIDs:              s.vg.volumeIDs,
-		IsWriteOrderConsistent: true,
+		IsWriteOrderConsistent: &isWriteOrderConsistent,
 	})
 	assert.NoError(s.T(), err)
 

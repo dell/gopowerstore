@@ -128,12 +128,13 @@ func (suite *ReplicationTestSuiteSync) TestReplicationSync() {
 	assert.NoError(t, err)
 	assert.Equal(t, rs.ID, remoteSystem)
 
+	isWriteOrderConsistent := true
 	// create a volume group with a protection policy
 	// A protection policy with a synchronous replication rule can only be applied to a write-order consistent volume group
 	suite.vg, err = C.CreateVolumeGroup(context.Background(), &gopowerstore.VolumeGroupCreate{
 		Name:                   "intcsi" + suite.randomString + "-vgtst",
 		ProtectionPolicyID:     suite.pp.ID,
-		IsWriteOrderConsistent: true,
+		IsWriteOrderConsistent: &isWriteOrderConsistent,
 	})
 	assert.NoError(t, err)
 
