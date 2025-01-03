@@ -293,3 +293,29 @@ func (c *ClientIMPL) ModifyReplicationRule(ctx context.Context, modifyParams *Re
 		&resp)
 	return resp, WrapErr(err)
 }
+
+// GetReplicationRules returns a list of replication rules
+func (c *ClientIMPL) GetReplicationRules(ctx context.Context) ([]ReplicationRule, error) {
+	var result []ReplicationRule
+	err := c.readPaginatedData(func(offset int) (api.RespMeta, error) {
+		var page []ReplicationRule
+		policy := ReplicationRule{}
+		qp := c.APIClient().QueryParamsWithFields(&policy)
+		qp.Order("name")
+		qp.Offset(offset).Limit(paginationDefaultPageSize)
+		meta, err := c.APIClient().Query(
+			ctx,
+			RequestConfig{
+				Method:      "GET",
+				Endpoint:    replicationRuleURL,
+				QueryParams: qp,
+			},
+			&page)
+		err = WrapErr(err)
+		if err == nil {
+			result = append(result, page...)
+		}
+		return meta, err
+	})
+	return result, err
+}

@@ -80,14 +80,19 @@ type ReplicationRule struct {
 	// If RPO is Zero, it indicates the replication_type is 'sync'.
 	Rpo RPOEnum `json:"rpo"`
 	// RemoteSystemID - unique identifier of the remote system to which this rule will replicate the associated resources.
-	RemoteSystemID     string             `json:"remote_system_id"`
-	ProtectionPolicies []ProtectionPolicy `json:"policies"`
-	AlertThreshold     int                `json:"alert_threshold"`
-	IsReadOnly         bool               `json:"is_read_only,omitempty"`
+	RemoteSystemID     string               `json:"remote_system_id"`
+	ProtectionPolicies []ProtectionPolicy   `json:"policies"`
+	AlertThreshold     int                  `json:"alert_threshold"`
+	IsReadOnly         bool                 `json:"is_read_only,omitempty"`
+	IsReplica          bool                 `json:"is_replica,omitempty"`
+	ManagedBy          string               `json:"managed_by,omitempty"`
+	ManagedByID        string               `json:"managed_by_id,omitempty"`
+	RemoteSystem       RemoteSystem         `json:"remote_system,omitempty"`
+	ReplicationSession []ReplicationSession `json:"replication_sessions,omitempty"`
 }
 
 func (rule *ReplicationRule) Fields() []string {
-	return []string{"id", "name", "rpo", "remote_system_id", "alert_threshold", "is_read_only"}
+	return []string{"id", "name", "rpo", "remote_system_id", "alert_threshold", "is_read_only", "is_replica", "managed_by", "managed_by_id", "policies(id,name)", "remote_system(id,name)", "replication_sessions(id,state)"}
 }
 
 // VirtualMachines - Details of virtual machine
