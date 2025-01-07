@@ -208,10 +208,12 @@ func TestClientIMPL_ModifyVolumeGroupSnapshot(t *testing.T) {
 	httpmock.RegisterResponder("PATCH", fmt.Sprintf("%s/%s", volumeGroupMockURL, volID),
 		httpmock.NewStringResponder(201, respData))
 
+	IsWriteOrderConsistent := false
+
 	modifyParams := VolumeGroupSnapshotModify{
 		Description:            "test description",
 		Name:                   "test name",
-		IsWriteOrderConsistent: false,
+		IsWriteOrderConsistent: &IsWriteOrderConsistent,
 	}
 
 	resp, err := C.ModifyVolumeGroupSnapshot(context.Background(), &modifyParams, volID)
