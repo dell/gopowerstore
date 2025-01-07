@@ -74,10 +74,16 @@ type FsCreate struct {
 }
 
 type FlrAttributes struct {
-	Mode             string `json:"mode,omitempty"`
-	MinimumRetention string `json:"minimum_retention,omitempty"`
-	DefaultRetention string `json:"default_retention,omitempty"`
-	MaximumRetention string `json:"maximum_retention,omitempty"`
+	Mode                 string `json:"mode,omitempty"`
+	MinimumRetention     string `json:"minimum_retention,omitempty"`
+	DefaultRetention     string `json:"default_retention,omitempty"`
+	MaximumRetention     string `json:"maximum_retention,omitempty"`
+	AutoLock             bool   `json:"auto_lock,omitempty"`
+	AutoDelete           bool   `json:"auto_delete,omitempty"`
+	PolicyInterval       int32  `json:"policy_interval,omitempty"`
+	HasProtectedFiles    bool   `json:"has_protected_files,omitempty"`
+	ClockTime            string `json:"clock_time,omitempty"`
+	MaximumRetentionDate string `json:"maximum_retention_date,omitempty"`
 }
 
 const (
@@ -206,6 +212,24 @@ type FileSystem struct {
 	ExpirationTimestamp string `json:"expiration_timestamp,omitempty"`
 	// Access type of the file system
 	AccessType string `json:"access_type,omitempty"`
+	// Indicates whether quota is enabled
+	IsQuotaEnabled bool `json:"is_quota_enabled,omitempty"`
+	// Grace period of soft limit
+	GracePeriod int32 `json:"grace_period,omitempty"`
+	// Default hard limit of user quotas and tree quotas
+	DefaultHardLimit int64 `json:"default_hard_limit,omitempty"`
+	// Default soft limit of user quotas and tree quotas
+	DefaultSoftLimit int64 `json:"default_soft_limit,omitempty"`
+	// Time, in seconds, when the snapshot was created.
+	CreationTimestamp string `json:"creation_timestamp,omitempty"`
+	// Time, in seconds, when the snapshot was last refreshed.
+	LastRefreshTimestamp string `json:"last_refresh_timestamp,omitempty"`
+	// The time (in seconds) of last mount
+	LastWritableTimestamp string `json:"last_writable_timestamp,omitempty"`
+	// Indicates whether the snapshot may have changed since it was created
+	IsModified bool `json:"is_modified,omitempty"`
+	// Snapshot creator types
+	CreatorType string `json:"creator_type,omitempty"`
 }
 
 // NFS server instance in NAS server
@@ -241,7 +265,7 @@ func (n *NAS) Fields() []string {
 
 // Fields returns fields which must be requested to fill struct
 func (n *FileSystem) Fields() []string {
-	return []string{"description", "id", "name", "nas_server_id", "filesystem_type", "size_total", "size_used", "parent_id", "expiration_timestamp", "access_type", "config_type", "access_policy", "locking_policy", "folder_rename_policy", "is_async_MTime_enabled", "protection_policy_id", "file_events_publishing_mode", "host_io_size", "flr_attributes", "is_smb_sync_writes_enabled", "is_smb_no_notify_enabled", "is_smb_op_locks_enabled", "is_smb_notify_on_access_enabled", "is_smb_notify_on_write_enabled", "smb_notify_on_change_dir_depth"}
+	return []string{"description", "id", "name", "nas_server_id", "filesystem_type", "size_total", "size_used", "parent_id", "expiration_timestamp", "access_type", "config_type", "access_policy", "locking_policy", "folder_rename_policy", "is_async_MTime_enabled", "protection_policy_id", "file_events_publishing_mode", "host_io_size", "flr_attributes", "is_smb_sync_writes_enabled", "is_smb_no_notify_enabled", "is_smb_op_locks_enabled", "is_smb_notify_on_access_enabled", "is_smb_notify_on_write_enabled", "smb_notify_on_change_dir_depth", "is_quota_enabled", "grace_period", "default_hard_limit", "default_soft_limit", "creation_timestamp", "last_refresh_timestamp", "last_writable_timestamp", "is_modified", "creator_type"}
 }
 
 func (n *NFSServerInstance) Fields() []string {
