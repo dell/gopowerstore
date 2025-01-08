@@ -21,7 +21,7 @@ require (
 	github.com/oklog/ulid v1.3.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect
-	go.mongodb.org/mongo-driver v1.17.1 // indirect
-	golang.org/x/sys v0.28.0 // indirect
+	go.mongodb.org/mongo-driver v1.17.2 // indirect
+	golang.org/x/sys v0.29.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
