@@ -111,6 +111,7 @@ type Client interface {
 	GetFsSnapshots(ctx context.Context) ([]FileSystem, error)
 	GetFsSnapshot(ctx context.Context, snapID string) (FileSystem, error)
 	CreateFsFromSnapshot(ctx context.Context, createParams *FsClone, snapID string) (CreateResponse, error)
+	GetFsByFilter(ctx context.Context, filter map[string]string) ([]FileSystem, error)
 	CloneVolume(ctx context.Context, createParams *VolumeClone, volID string) (CreateResponse, error)
 	ModifyVolume(ctx context.Context, modifyParams *VolumeModify, volID string) (EmptyResponse, error)
 	ModifyFS(ctx context.Context, modifyParams *FSModify, volID string) (EmptyResponse, error)

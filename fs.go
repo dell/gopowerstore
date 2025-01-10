@@ -324,3 +324,30 @@ func (c *ClientIMPL) CloneFS(ctx context.Context,
 		&resp)
 	return resp, WrapErr(err)
 }
+
+
+func (c *ClientIMPL) GetFsByFilter(ctx context.Context, filter map[string]string) ([]FileSystem, error) {
+	var result []FileSystem
+	err := c.readPaginatedData(func(offset int) (api.RespMeta, error) {
+		var page []FileSystem
+		qp := getFSDefaultQueryParams(c)
+		for k, v := range filter {
+			qp.RawArg(k, v)
+		}
+		qp.Offset(offset).Limit(paginationDefaultPageSize)
+		meta, err := c.APIClient().Query(
+			ctx,
+			RequestConfig{
+				Method:      "GET",
+				Endpoint:    fsURL,
+				QueryParams: qp,
+			},
+			&page)
+		err = WrapErr(err)
+		if err == nil {
+			result = append(result, page...)
+		}
+		return meta, err
+	})
+	return result, err
+}
