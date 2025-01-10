@@ -258,7 +258,6 @@ func TestClientIMPL_CreateFsFromSnapshot(t *testing.T) {
 	assert.Equal(t, id, resp.ID)
 }
 
-
 func TestClientIMPL_GetFsByFilter(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()

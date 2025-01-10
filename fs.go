@@ -325,7 +325,6 @@ func (c *ClientIMPL) CloneFS(ctx context.Context,
 	return resp, WrapErr(err)
 }
 
-
 func (c *ClientIMPL) GetFsByFilter(ctx context.Context, filter map[string]string) ([]FileSystem, error) {
 	var result []FileSystem
 	err := c.readPaginatedData(func(offset int) (api.RespMeta, error) {
