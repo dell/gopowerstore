@@ -257,3 +257,14 @@ func TestClientIMPL_CreateFsFromSnapshot(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, id, resp.ID)
 }
+
+func TestClientIMPL_GetFsByFilter(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	respData := fmt.Sprintf(`[{"id": "%s"}]`, fsID)
+	httpmock.RegisterResponder("GET", fsMockURL,
+		httpmock.NewStringResponder(200, respData))
+	resp, err := C.GetFsByFilter(context.Background(), nil)
+	assert.Nil(t, err)
+	assert.Equal(t, fsID, resp[0].ID)
+}
