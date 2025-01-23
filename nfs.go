@@ -41,6 +41,7 @@ func getFileInterfaceDefaultQueryParams(c Client) api.QueryParamsEncoder {
 	return c.APIClient().QueryParamsWithFields(&fi)
 }
 
+// GetNFSExport returns NFS export from storage array by id
 func (c *ClientIMPL) GetNFSExport(ctx context.Context, id string) (resp NFSExport, err error) {
 	_, err = c.APIClient().Query(
 		ctx,
@@ -54,8 +55,7 @@ func (c *ClientIMPL) GetNFSExport(ctx context.Context, id string) (resp NFSExpor
 	return resp, WrapErr(err)
 }
 
-
-
+// GetNFSExportByFilter query and return NFS export by filter
 func (c *ClientIMPL) GetNFSExportByFilter(ctx context.Context, filter map[string]string) ([]NFSExport, error) {
 	var result []NFSExport
 	err := c.readPaginatedData(func(offset int) (api.RespMeta, error) {
