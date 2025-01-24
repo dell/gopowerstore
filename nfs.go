@@ -41,6 +41,47 @@ func getFileInterfaceDefaultQueryParams(c Client) api.QueryParamsEncoder {
 	return c.APIClient().QueryParamsWithFields(&fi)
 }
 
+// GetNFSExport returns NFS export from storage array by id
+func (c *ClientIMPL) GetNFSExport(ctx context.Context, id string) (resp NFSExport, err error) {
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:      "GET",
+			Endpoint:    nfsURL,
+			ID:          id,
+			QueryParams: getNFSExportDefaultQueryParams(c),
+		},
+		&resp)
+	return resp, WrapErr(err)
+}
+
+// GetNFSExportByFilter query and return NFS export by filter
+func (c *ClientIMPL) GetNFSExportByFilter(ctx context.Context, filter map[string]string) ([]NFSExport, error) {
+	var result []NFSExport
+	err := c.readPaginatedData(func(offset int) (api.RespMeta, error) {
+		var page []NFSExport
+		qp := getNFSExportDefaultQueryParams(c)
+		for k, v := range filter {
+			qp.RawArg(k, v)
+		}
+		qp.Offset(offset).Limit(paginationDefaultPageSize)
+		meta, err := c.APIClient().Query(
+			ctx,
+			RequestConfig{
+				Method:      "GET",
+				Endpoint:    nfsURL,
+				QueryParams: qp,
+			},
+			&page)
+		err = WrapErr(err)
+		if err == nil {
+			result = append(result, page...)
+		}
+		return meta, err
+	})
+	return result, err
+}
+
 // GetNFSExportByName query and return specific NFS export by name
 func (c *ClientIMPL) GetNFSExportByName(ctx context.Context, name string) (resp NFSExport, err error) {
 	var nfsList []NFSExport

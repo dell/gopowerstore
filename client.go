@@ -96,6 +96,8 @@ type Client interface {
 	GetFSByName(ctx context.Context, name string) (FileSystem, error)
 	GetFS(ctx context.Context, id string) (FileSystem, error)
 	GetFileInterface(ctx context.Context, id string) (FileInterface, error)
+	GetNFSExport(ctx context.Context, id string) (resp NFSExport, err error)
+	GetNFSExportByFilter(ctx context.Context, filter map[string]string) ([]NFSExport, error)
 	GetNFSExportByName(ctx context.Context, name string) (NFSExport, error)
 	GetNFSExportByFileSystemID(ctx context.Context, fsID string) (NFSExport, error)
 	CreateNAS(ctx context.Context, createParams *NASCreate) (CreateResponse, error)

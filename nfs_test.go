@@ -38,6 +38,28 @@ var (
 	nfsServerID = "5e8d8e8e-671b-336f-db4e-cee0fbdc981e"
 )
 
+func TestClientIMPL_GetNFSExport(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	respData := fmt.Sprintf(`{"id": "%s"}`, nfsID)
+	httpmock.RegisterResponder("GET", fmt.Sprintf("%s/%s", nfsMockURL, nfsID),
+		httpmock.NewStringResponder(200, respData))
+	nfs, err := C.GetNFSExport(context.Background(), nfsID)
+	assert.Nil(t, err)
+	assert.Equal(t, nfsID, nfs.ID)
+}
+
+func TestClientIMPL_GetNFSExportByFilter(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	respData := fmt.Sprintf(`[{"id": "%s"}]`, nfsID)
+	httpmock.RegisterResponder("GET", nfsMockURL,
+		httpmock.NewStringResponder(200, respData))
+	nfs, err := C.GetNFSExportByFilter(context.Background(), nil)
+	assert.Nil(t, err)
+	assert.Equal(t, nfsID, nfs[0].ID)
+}
+
 func TestClientIMPL_GetNFSExportByName(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
