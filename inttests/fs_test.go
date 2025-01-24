@@ -138,6 +138,12 @@ func (suite *FsTestSuite) TestGetFsSnapshots() {
 	checkAPIErr(t, err)
 }
 
+func (suite *FsTestSuite) TestGetNASServers() {
+	t := suite.T()
+	_, err := C.GetNASServers(context.Background())
+	checkAPIErr(t, err)
+}
+
 func (suite *FsTestSuite) TestGetNonExistingFsSnapshot() {
 	t := suite.T()
 	fsID, fsName := createFS(t, suite.nasID)

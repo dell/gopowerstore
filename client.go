@@ -89,6 +89,7 @@ type Client interface {
 	GetSnapshotByName(ctx context.Context, snapName string) (Volume, error)
 	ComputeDifferences(ctx context.Context, snapdiffParams *VolumeComputeDifferences, volID string) (VolumeComputeDifferencesResponse, error)
 	CreateVolumeFromSnapshot(ctx context.Context, createParams *VolumeClone, snapID string) (CreateResponse, error)
+	GetNASServers(ctx context.Context) ([]NAS, error)
 	GetNAS(ctx context.Context, id string) (NAS, error)
 	GetNASByName(ctx context.Context, name string) (NAS, error)
 	GetNfsServer(ctx context.Context, id string) (NFSServerInstance, error)
