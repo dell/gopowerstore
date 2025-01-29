@@ -253,7 +253,7 @@ type NAS struct {
 	// NAS server operational status: [ Stopped, Starting, Started, Stopping, Failover, Degraded, Unknown ]
 	OperationalStatus NASServerOperationalStatusEnum `json:"operational_status,omitempty"`
 	// IPv4 file interface id nas server currently uses
-	CurrentPreferredIPv4InterfaceID string `json:"current_preferred_IPv4_interface_id"`
+	CurrentPreferredIPv4InterfaceID string `json:"current_preferred_IPv4_interface_id,omitempty"`
 	// IPv6 file interface id nas server currently uses
 	CurrentPreferredIPv6InterfaceID string `json:"current_preferred_IPv6_interface_id,omitempty"`
 	// NfsServers define NFS server instance if nfs exports are present
@@ -267,9 +267,9 @@ type NAS struct {
 	// CurrentUnixDirectoryService represents the current Unix directory service in use by the NAS server.
 	CurrentUnixDirectoryService string `json:"current_unix_directory_service,omitempty"`
 	// Whether username translation is enabled.
-	IsUsernameTranslationEnabled bool `json:"is_username_translation_enabled"`
+	IsUsernameTranslationEnabled bool `json:"is_username_translation_enabled,omitempty"`
 	// Whether auto user mapping is enabled.
-	IsAutoUserMappingEnabled bool `json:"is_auto_user_mapping_enabled"`
+	IsAutoUserMappingEnabled bool `json:"is_auto_user_mapping_enabled,omitempty"`
 	// Production IPv4 interface ID.
 	ProductionIPv4InterfaceID string `json:"production_IPv4_interface_id,omitempty"`
 	// Production IPv6 interface ID.
@@ -283,11 +283,11 @@ type NAS struct {
 	// File events publishing mode.
 	FileEventsPublishingMode string `json:"file_events_publishing_mode,omitempty"`
 	// Whether the NAS server is a replication destination.
-	IsReplicationDestination bool `json:"is_replication_destination"`
+	IsReplicationDestination bool `json:"is_replication_destination,omitempty"`
 	// Whether production mode is enabled.
-	IsProductionModeEnabled bool `json:"is_production_mode_enabled"`
+	IsProductionModeEnabled bool `json:"is_production_mode_enabled,omitempty"`
 	// Indicates if the NAS is in DR Test mode.
-	IsDRTest bool `json:"is_dr_test"`
+	IsDRTest bool `json:"is_dr_test,omitempty"`
 	// Localized operational status of the NAS server.
 	OperationalStatusL10n string `json:"operational_status_l10n,omitempty"`
 	// Localized Unix directory service of the NAS server.
