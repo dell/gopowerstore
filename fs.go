@@ -45,6 +45,30 @@ func getNfsServerDefaultQueryParams(c Client) api.QueryParamsEncoder {
 	return c.APIClient().QueryParamsWithFields(&nfsServer)
 }
 
+// GetNASServers query and return all NAS servers
+func (c *ClientIMPL) GetNASServers(ctx context.Context) ([]NAS, error) {
+	var result []NAS
+	err := c.readPaginatedData(func(offset int) (api.RespMeta, error) {
+		var page []NAS
+		qp := getNASDefaultQueryParams(c)
+		qp.Offset(offset).Limit(paginationDefaultPageSize)
+		meta, err := c.APIClient().Query(
+			ctx,
+			RequestConfig{
+				Method:      "GET",
+				Endpoint:    nasURL,
+				QueryParams: qp,
+			},
+			&page)
+		err = WrapErr(err)
+		if err == nil {
+			result = append(result, page...)
+		}
+		return meta, err
+	})
+	return result, err
+}
+
 // GetNASByName query and return specific NAS by name
 func (c *ClientIMPL) GetNASByName(ctx context.Context, name string) (resp NAS, err error) {
 	var nasList []NAS

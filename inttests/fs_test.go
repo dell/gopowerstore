@@ -162,6 +162,12 @@ func (suite *FsTestSuite) TestGetNASByName() {
 	assert.Equal(t, suite.nasName, nas.Name)
 }
 
+func (suite *FsTestSuite) TestGetNASServers() {
+	t := suite.T()
+	_, err := C.GetNASServers(context.Background())
+	checkAPIErr(t, err)
+}
+
 func (suite *FsTestSuite) TestGetFSByName() {
 	t := suite.T()
 	fsID, fsName := createFS(t, suite.nasID)

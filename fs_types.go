@@ -253,14 +253,52 @@ type NAS struct {
 	// NAS server operational status: [ Stopped, Starting, Started, Stopping, Failover, Degraded, Unknown ]
 	OperationalStatus NASServerOperationalStatusEnum `json:"operational_status,omitempty"`
 	// IPv4 file interface id nas server currently uses
-	CurrentPreferredIPv4InterfaceID string `json:"current_preferred_IPv4_interface_id"`
+	CurrentPreferredIPv4InterfaceID string `json:"current_preferred_IPv4_interface_id,omitempty"`
+	// IPv6 file interface id nas server currently uses
+	CurrentPreferredIPv6InterfaceID string `json:"current_preferred_IPv6_interface_id,omitempty"`
 	// NfsServers define NFS server instance if nfs exports are present
 	NfsServers []NFSServerInstance `json:"nfs_servers"`
+	// PreferredNodeID represents the preferred node ID for the NAS server.
+	PreferredNodeID string `json:"preferred_node_id,omitempty"`
+	// DefaultUnixUser represents the default Unix user of the NAS server.
+	DefaultUnixUser string `json:"default_unix_user,omitempty"`
+	// DefaultWindowsUser represents the default Windows user of the NAS server.
+	DefaultWindowsUser string `json:"default_windows_user,omitempty"`
+	// CurrentUnixDirectoryService represents the current Unix directory service in use by the NAS server.
+	CurrentUnixDirectoryService string `json:"current_unix_directory_service,omitempty"`
+	// Whether username translation is enabled.
+	IsUsernameTranslationEnabled bool `json:"is_username_translation_enabled,omitempty"`
+	// Whether auto user mapping is enabled.
+	IsAutoUserMappingEnabled bool `json:"is_auto_user_mapping_enabled,omitempty"`
+	// Production IPv4 interface ID.
+	ProductionIPv4InterfaceID string `json:"production_IPv4_interface_id,omitempty"`
+	// Production IPv6 interface ID.
+	ProductionIPv6InterfaceID string `json:"production_IPv6_interface_id,omitempty"`
+	// Backup IPv4 interface ID.
+	BackupIPv4InterfaceID string `json:"backup_IPv4_interface_id,omitempty"`
+	// Backup IPv6 interface ID.
+	BackupIPv6InterfaceID string `json:"backup_IPv6_interface_id,omitempty"`
+	// Protection policy ID.
+	ProtectionPolicyID string `json:"protection_policy_id,omitempty"`
+	// File events publishing mode.
+	FileEventsPublishingMode string `json:"file_events_publishing_mode,omitempty"`
+	// Whether the NAS server is a replication destination.
+	IsReplicationDestination bool `json:"is_replication_destination,omitempty"`
+	// Whether production mode is enabled.
+	IsProductionModeEnabled bool `json:"is_production_mode_enabled,omitempty"`
+	// Indicates if the NAS is in DR Test mode.
+	IsDRTest bool `json:"is_dr_test,omitempty"`
+	// Localized operational status of the NAS server.
+	OperationalStatusL10n string `json:"operational_status_l10n,omitempty"`
+	// Localized Unix directory service of the NAS server.
+	CurrentUnixDirectoryServiceL10n string `json:"current_unix_directory_service_l10n,omitempty"`
+	// Localized file events publishing mode.
+	FileEventsPublishingModeL10n string `json:"file_events_publishing_mode_l10n,omitempty"`
 }
 
 // Fields returns fields which must be requested to fill struct
 func (n *NAS) Fields() []string {
-	return []string{"description", "id", "name", "current_node_id", "operational_status", "current_preferred_IPv4_interface_id", "nfs_servers"}
+	return []string{"id", "description", "name", "current_node_id", "operational_status", "current_preferred_IPv4_interface_id", "current_preferred_IPv6_interface_id", "nfs_servers", "preferred_node_id", "default_unix_user", "default_windows_user", "current_unix_directory_service", "is_username_translation_enabled", "is_auto_user_mapping_enabled", "production_IPv4_interface_id", "production_IPv6_interface_id", "backup_IPv4_interface_id", "backup_IPv6_interface_id", "protection_policy_id", "file_events_publishing_mode", "is_replication_destination", "is_production_mode_enabled", "is_dr_test", "operational_status_l10n", "current_unix_directory_service_l10n", "file_events_publishing_mode_l10n"}
 }
 
 // Fields returns fields which must be requested to fill struct
