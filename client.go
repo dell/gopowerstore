@@ -200,6 +200,7 @@ type Client interface {
 	ConfigureMetroVolumeGroup(ctx context.Context, id string, config *MetroConfig) (resp MetroSessionResponse, err error)
 	EndMetroVolume(ctx context.Context, id string, options *EndMetroVolumeOptions) (resp EmptyResponse, err error)
 	EndMetroVolumeGroup(ctx context.Context, id string, options *EndMetroVolumeGroupOptions) (resp EmptyResponse, err error)
+	GetSMBShare(ctx context.Context, id string) (resp SMBShare, err error)
 }
 
 // ClientIMPL provides basic API client implementation
