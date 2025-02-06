@@ -18,7 +18,11 @@
 
 package gopowerstore
 
-import "context"
+import (
+	"context"
+
+	"github.com/dell/gopowerstore/api"
+)
 
 const (
 	smbShareURL = "smb_share"
@@ -39,4 +43,32 @@ func (c *ClientIMPL) GetSMBShare(ctx context.Context, id string) (resp SMBShare,
 		},
 		&resp)
 	return resp, WrapErr(err)
+}
+
+// GetSMBShares returns SMB shares satisfying the filter
+func (c *ClientIMPL) GetSMBShares(ctx context.Context, filter *string) (resp []SMBShare, err error) {
+	var result []SMBShare
+	err = c.readPaginatedData(func(offset int) (api.RespMeta, error) {
+		var page []SMBShare
+		share := SMBShare{}
+		qp := c.APIClient().QueryParamsWithFields(&share)
+		if filter != nil {
+			qp.RawArg("", *filter)
+		}
+		qp.Offset(offset).Limit(paginationDefaultPageSize)
+		meta, err := c.APIClient().Query(
+			ctx,
+			RequestConfig{
+				Method:      "GET",
+				Endpoint:    smbShareURL,
+				QueryParams: qp,
+			},
+			&page)
+		err = WrapErr(err)
+		if err == nil {
+			result = append(result, page...)
+		}
+		return meta, err
+	})
+	return result, err
 }
