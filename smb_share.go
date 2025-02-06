@@ -28,6 +28,45 @@ const (
 	smbShareURL = "smb_share"
 )
 
+// CreateSMBShare creates new SMB share
+func (c *ClientIMPL) CreateSMBShare(ctx context.Context, createParams *SMBShareCreate) (resp CreateResponse, err error) {
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:   "POST",
+			Endpoint: smbShareURL,
+			Body:     createParams,
+		},
+		&resp)
+	return resp, WrapErr(err)
+}
+
+// MpdifySMBShare modifies new SMB share
+func (c *ClientIMPL) MpdifySMBShare(ctx context.Context, id string, modifyParams *SMBShareCreate) (resp EmptyResponse, err error) {
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:   "PATCH",
+			Endpoint: smbShareURL,
+			Body:     modifyParams,
+		},
+		&resp)
+	return resp, WrapErr(err)
+}
+
+// DeleteSMBShare deletes existing SMB share
+func (c *ClientIMPL) DeleteSMBShare(ctx context.Context, id string) (resp EmptyResponse, err error) {
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:   "DELETE",
+			Endpoint: smbShareURL,
+			ID:       id,
+		},
+		&resp)
+	return resp, WrapErr(err)
+}
+
 // GetSMBShare returns specific smb share by id
 func (c *ClientIMPL) GetSMBShare(ctx context.Context, id string) (resp SMBShare, err error) {
 	share := SMBShare{}

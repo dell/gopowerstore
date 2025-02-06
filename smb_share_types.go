@@ -18,6 +18,20 @@
 
 package gopowerstore
 
+// SMBShareCreate defines struct for creating SMB share
+type SMBShareCreate struct {
+	FileSystemID                    string `json:"file_system_id"`
+	Name                            string `json:"name"`
+	Path                            string `json:"path"`
+	Description                     string `json:"description,omitempty"`
+	IsContinuousAvailabilityEnabled bool   `json:"is_continuous_availability_enabled,omitempty"`
+	IsEncryptionEnabled             bool   `json:"is_encryption_enabled,omitempty"`
+	IsABEEnabled                    bool   `json:"is_ABE_enabled,omitempty"`
+	IsBranchCacheEnabled            bool   `json:"is_branch_cache_enabled,omitempty"`
+	OfflineAvailability             string `json:"offline_availability,omitempty"`
+	Umask                           string `json:"umask,omitempty"`
+}
+
 // SMBShare details about a SMB Share
 type SMBShare struct {
 	ID                              string `json:"id"`
