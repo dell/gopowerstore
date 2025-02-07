@@ -41,7 +41,7 @@ func (c *ClientIMPL) CreateSMBShare(ctx context.Context, createParams *SMBShareC
 	return resp, WrapErr(err)
 }
 
-// ModifySMBShare modifies new SMB share
+// ModifySMBShare modifies SMB share
 func (c *ClientIMPL) ModifySMBShare(ctx context.Context, id string, modifyParams *SMBShareCreate) (resp EmptyResponse, err error) {
 	_, err = c.APIClient().Query(
 		ctx,
