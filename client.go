@@ -201,7 +201,7 @@ type Client interface {
 	EndMetroVolume(ctx context.Context, id string, options *EndMetroVolumeOptions) (resp EmptyResponse, err error)
 	EndMetroVolumeGroup(ctx context.Context, id string, options *EndMetroVolumeGroupOptions) (resp EmptyResponse, err error)
 	CreateSMBShare(ctx context.Context, createParams *SMBShareCreate) (resp CreateResponse, err error)
-	ModifySMBShare(ctx context.Context, id string, modifyParams *SMBShareCreate) (resp EmptyResponse, err error)
+	ModifySMBShare(ctx context.Context, id string, modifyParams *SMBShareModify) (resp EmptyResponse, err error)
 	DeleteSMBShare(ctx context.Context, id string) (resp EmptyResponse, err error)
 	GetSMBShare(ctx context.Context, id string) (resp SMBShare, err error)
 	GetSMBShares(ctx context.Context, filter *string) ([]SMBShare, error)
