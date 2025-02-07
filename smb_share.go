@@ -48,6 +48,7 @@ func (c *ClientIMPL) ModifySMBShare(ctx context.Context, id string, modifyParams
 		RequestConfig{
 			Method:   "PATCH",
 			Endpoint: smbShareURL,
+			ID:       id,
 			Body:     modifyParams,
 		},
 		&resp)
