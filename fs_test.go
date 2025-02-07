@@ -165,6 +165,18 @@ func TestClientIMPL_CreateNAS(t *testing.T) {
 	assert.Equal(t, nasID, nas.ID)
 }
 
+func TestClientIMPL_GetNASServers(t *testing.T) {
+	id := "6721f30c-405b-8749-439d-ee23cab1d298"
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	respData := fmt.Sprintf(`[{"id": "%s"}]`, id)
+	httpmock.RegisterResponder("GET", nasMockURL,
+		httpmock.NewStringResponder(200, respData))
+	resp, err := C.GetNASServers(context.Background())
+	assert.Nil(t, err)
+	assert.Equal(t, id, resp[0].ID)
+}
+
 func TestClientIMPL_GetNAS(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
