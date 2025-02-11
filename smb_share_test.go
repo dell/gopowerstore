@@ -56,9 +56,11 @@ func TestClientIMPL_ModifySMBShare(t *testing.T) {
 	httpmock.RegisterResponder("PATCH", fmt.Sprintf("%s/%s", smbShareMockURL, smbShareID),
 		httpmock.NewStringResponder(204, ""))
 
+	desc := "modify smb share"
+	flag := true
 	modifyParams := SMBShareModify{
-		Description:                     "modify smb share",
-		IsContinuousAvailabilityEnabled: true,
+		Description:                     &desc,
+		IsContinuousAvailabilityEnabled: &flag,
 	}
 
 	resp, err := C.ModifySMBShare(context.Background(), smbShareID, &modifyParams)

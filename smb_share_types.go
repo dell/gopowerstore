@@ -34,13 +34,13 @@ type SMBShareCreate struct {
 
 // SMBShareModify defines struct for modifying SMB share
 type SMBShareModify struct {
-	Description                     string `json:"description,omitempty"`
-	IsContinuousAvailabilityEnabled bool   `json:"is_continuous_availability_enabled,omitempty"`
-	IsEncryptionEnabled             bool   `json:"is_encryption_enabled,omitempty"`
-	IsABEEnabled                    bool   `json:"is_ABE_enabled,omitempty"`
-	IsBranchCacheEnabled            bool   `json:"is_branch_cache_enabled,omitempty"`
-	OfflineAvailability             string `json:"offline_availability,omitempty"`
-	Umask                           string `json:"umask,omitempty"`
+	Description                     *string `json:"description,omitempty"`
+	IsContinuousAvailabilityEnabled *bool   `json:"is_continuous_availability_enabled,omitempty"`
+	IsEncryptionEnabled             *bool   `json:"is_encryption_enabled,omitempty"`
+	IsABEEnabled                    *bool   `json:"is_ABE_enabled,omitempty"`
+	IsBranchCacheEnabled            *bool   `json:"is_branch_cache_enabled,omitempty"`
+	OfflineAvailability             string  `json:"offline_availability,omitempty"`
+	Umask                           string  `json:"umask,omitempty"`
 }
 
 // SMBShare details about a SMB Share
