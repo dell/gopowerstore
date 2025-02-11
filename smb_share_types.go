@@ -62,3 +62,23 @@ type SMBShare struct {
 func (share *SMBShare) Fields() []string {
 	return []string{"id", "name", "file_system_id", "path", "description", "is_continuous_availability_enabled", "is_encryption_enabled", "is_ABE_enabled", "is_branch_cache_enabled", "offline_availability", "umask", "offline_availability_l10n"}
 }
+
+// SMBShareAce defines struct for SMB ACE
+type SMBShareAce struct {
+	TrusteeType string `json:"trustee_type"`
+	TrusteeName string `json:"trustee_name"`
+	AccessLevel string `json:"access_level"`
+	AccessType  string `json:"access_type"`
+}
+
+// ModifySMBAcl defines struct for modifying SMB ACL
+type ModifySMBShareAcl struct {
+	Aces       []SMBShareAce `json:"aces,omitempty"`
+	AddAces    []SMBShareAce `json:"add_aces,omitempty"`
+	RemoveAces []SMBShareAce `json:"remove_aces,omitempty"`
+}
+
+// SMBShareAcl defines struct for SMB ACL
+type SMBShareAcl struct {
+	Aces []SMBShareAce `json:"aces"`
+}

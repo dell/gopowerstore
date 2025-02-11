@@ -204,7 +204,8 @@ type Client interface {
 	ModifySMBShare(ctx context.Context, id string, modifyParams *SMBShareModify) (resp EmptyResponse, err error)
 	DeleteSMBShare(ctx context.Context, id string) (resp EmptyResponse, err error)
 	GetSMBShare(ctx context.Context, id string) (resp SMBShare, err error)
-	GetSMBShares(ctx context.Context, filter *string) ([]SMBShare, error)
+	SetSMBShareAcl(ctx context.Context, id string, acl *ModifySMBShareAcl) (resp EmptyResponse, err error)
+	GetSMBShareAcl(ctx context.Context, id string) (resp SMBShareAcl, err error)
 }
 
 // ClientIMPL provides basic API client implementation
