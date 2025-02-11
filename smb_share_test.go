@@ -28,8 +28,8 @@ import (
 const (
 	smbShareID            = "6732e829-29c9-7fed-686a-ee23cab1d298"
 	smbShareMockURL       = APIMockURL + smbShareURL
-	smbShareSetACLMockURL = APIMockURL + smbShareURL + "/" + smbShareID + smbShareSetAclURL
-	smbShareGetACLMockURL = APIMockURL + smbShareURL + "/" + smbShareID + smbShareGetAclURL
+	smbShareSetACLMockURL = APIMockURL + smbShareURL + "/" + smbShareID + smbShareSetACLURL
+	smbShareGetACLMockURL = APIMockURL + smbShareURL + "/" + smbShareID + smbShareGetACLURL
 )
 
 func TestClientIMPL_CreateSMBShare(t *testing.T) {
@@ -94,7 +94,7 @@ func TestClientIMPL_SetSMBShareAcl(t *testing.T) {
 	httpmock.RegisterResponder("POST", smbShareSetACLMockURL,
 		httpmock.NewStringResponder(204, ""))
 
-	createReq := &ModifySMBShareAcl{
+	createReq := &ModifySMBShareACL{
 		AddAces: []SMBShareAce{
 			{
 				TrusteeType: "WellKnown",
@@ -105,12 +105,12 @@ func TestClientIMPL_SetSMBShareAcl(t *testing.T) {
 		},
 	}
 
-	resp, err := C.SetSMBShareAcl(context.Background(), smbShareID, createReq)
+	resp, err := C.SetSMBShareACL(context.Background(), smbShareID, createReq)
 	assert.Nil(t, err)
 	assert.Equal(t, EmptyResponse(""), resp)
 }
 
-func TestClientIMPL_GetSMBShareAcl(t *testing.T) {
+func TestClientIMPL_GetSMBShareACL(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 
@@ -119,7 +119,7 @@ func TestClientIMPL_GetSMBShareAcl(t *testing.T) {
 	httpmock.RegisterResponder("POST", smbShareGetACLMockURL,
 		httpmock.NewStringResponder(200, respData))
 
-	resp, err := C.GetSMBShareAcl(context.Background(), smbShareID)
+	resp, err := C.GetSMBShareACL(context.Background(), smbShareID)
 	assert.Nil(t, err)
 	assert.NotNil(t, resp.Aces)
 	assert.NotEqual(t, len(resp.Aces), 0)

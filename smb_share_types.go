@@ -71,14 +71,14 @@ type SMBShareAce struct {
 	AccessType  string `json:"access_type"`
 }
 
-// ModifySMBAcl defines struct for modifying SMB ACL
-type ModifySMBShareAcl struct {
+// ModifySMBShareACL defines struct for modifying SMB ACL
+type ModifySMBShareACL struct {
 	Aces       []SMBShareAce `json:"aces,omitempty"`
 	AddAces    []SMBShareAce `json:"add_aces,omitempty"`
 	RemoveAces []SMBShareAce `json:"remove_aces,omitempty"`
 }
 
-// SMBShareAcl defines struct for SMB ACL
-type SMBShareAcl struct {
+// SMBShareACL  defines struct for SMB ACL
+type SMBShareACL struct {
 	Aces []SMBShareAce `json:"aces"`
 }

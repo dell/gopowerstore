@@ -24,8 +24,8 @@ import (
 
 const (
 	smbShareURL       = "smb_share"
-	smbShareGetAclURL = "/get_acl"
-	smbShareSetAclURL = "/set_acl"
+	smbShareGetACLURL = "/get_acl"
+	smbShareSetACLURL = "/set_acl"
 )
 
 // CreateSMBShare creates new SMB share
@@ -85,25 +85,25 @@ func (c *ClientIMPL) GetSMBShare(ctx context.Context, id string) (resp SMBShare,
 	return resp, WrapErr(err)
 }
 
-// GetSMBShareAcl returns specific smb share ACL by id
-func (c *ClientIMPL) GetSMBShareAcl(ctx context.Context, id string) (resp SMBShareAcl, err error) {
+// GetSMBShareACL returns specific smb share ACL by id
+func (c *ClientIMPL) GetSMBShareACL(ctx context.Context, id string) (resp SMBShareACL, err error) {
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{
 			Method:   "POST",
-			Endpoint: smbShareURL + "/" + id + smbShareGetAclURL,
+			Endpoint: smbShareURL + "/" + id + smbShareGetACLURL,
 		},
 		&resp)
 	return resp, WrapErr(err)
 }
 
-// SetSMBShareAcl modifies specific smb share ACL by id
-func (c *ClientIMPL) SetSMBShareAcl(ctx context.Context, id string, aclParams *ModifySMBShareAcl) (resp EmptyResponse, err error) {
+// SetSMBShareACL modifies specific smb share ACL by id
+func (c *ClientIMPL) SetSMBShareACL(ctx context.Context, id string, aclParams *ModifySMBShareACL) (resp EmptyResponse, err error) {
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{
 			Method:   "POST",
-			Endpoint: smbShareURL + "/" + id + smbShareSetAclURL,
+			Endpoint: smbShareURL + "/" + id + smbShareSetACLURL,
 			Body:     aclParams,
 		},
 		&resp)
