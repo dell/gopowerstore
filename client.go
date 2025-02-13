@@ -204,6 +204,7 @@ type Client interface {
 	ModifySMBShare(ctx context.Context, id string, modifyParams *SMBShareModify) (resp EmptyResponse, err error)
 	DeleteSMBShare(ctx context.Context, id string) (resp EmptyResponse, err error)
 	GetSMBShare(ctx context.Context, id string) (resp SMBShare, err error)
+	GetSMBShares(ctx context.Context, args map[string]string) (resp []SMBShare, err error)
 	SetSMBShareACL(ctx context.Context, id string, acl *ModifySMBShareACL) (resp EmptyResponse, err error)
 	GetSMBShareACL(ctx context.Context, id string) (resp SMBShareACL, err error)
 }

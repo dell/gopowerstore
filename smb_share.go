@@ -20,6 +20,8 @@ package gopowerstore
 
 import (
 	"context"
+
+	"github.com/dell/gopowerstore/api"
 )
 
 const (
@@ -83,6 +85,35 @@ func (c *ClientIMPL) GetSMBShare(ctx context.Context, id string) (resp SMBShare,
 		},
 		&resp)
 	return resp, WrapErr(err)
+}
+
+// GetSMBShares returns a collection of smb shares based on args
+func (c *ClientIMPL) GetSMBShares(ctx context.Context, args map[string]string) ([]SMBShare, error) {
+	qp := c.APIClient().QueryParamsWithFields(&SMBShare{})
+	for k, v := range args {
+		qp = qp.RawArg(k, v)
+	}
+
+	var result []SMBShare
+	err := c.readPaginatedData(func(offset int) (api.RespMeta, error) {
+		var page []SMBShare
+		qp.Order("name")
+		qp.Offset(offset).Limit(paginationDefaultPageSize)
+		meta, err := c.APIClient().Query(
+			ctx,
+			RequestConfig{
+				Method:      "GET",
+				Endpoint:    smbShareURL,
+				QueryParams: qp,
+			},
+			&page)
+		err = WrapErr(err)
+		if err == nil {
+			result = append(result, page...)
+		}
+		return meta, err
+	})
+	return result, err
 }
 
 // GetSMBShareACL returns specific smb share ACL by id
