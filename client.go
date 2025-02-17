@@ -144,6 +144,7 @@ type Client interface {
 	AddMembersToVolumeGroup(ctx context.Context, params *VolumeGroupMembers, id string) (EmptyResponse, error)
 	GetReplicationSessionByLocalResourceID(ctx context.Context, id string) (ReplicationSession, error)
 	GetAllRemoteSystems(ctx context.Context) (resp []RemoteSystem, err error)
+	GetRemoteSystems(ctx context.Context, filters map[string]string) (resp []RemoteSystem, err error)
 	GetCluster(ctx context.Context) (Cluster, error)
 	PerformanceMetricsByAppliance(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]PerformanceMetricsByApplianceResponse, error)
 	PerformanceMetricsByNode(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]PerformanceMetricsByNodeResponse, error)
