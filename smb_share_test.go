@@ -90,6 +90,17 @@ func TestClientIMPL_GetSMBShare(t *testing.T) {
 	assert.Equal(t, smbShareID, smbShare.ID)
 }
 
+func TestClientIMPL_GetSMBShareByFilter(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	respData := fmt.Sprintf(`[{"id": "%s"}]`, smbShareID)
+	httpmock.RegisterResponder("GET", smbShareMockURL,
+		httpmock.NewStringResponder(200, respData))
+	smbShares, err := C.GetSMBShares(context.Background(), map[string]string{"name": "ilike.test_*"})
+	assert.Nil(t, err)
+	assert.Equal(t, smbShareID, smbShares[0].ID)
+}
+
 func TestClientIMPL_SetSMBShareAcl(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
