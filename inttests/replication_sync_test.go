@@ -154,6 +154,28 @@ func (suite *ReplicationTestSuiteSync) TestReplicationSync() {
 	assert.NoError(t, err)
 }
 
+func TestGetRemoteSystemsByFilter(t *testing.T) {
+	allSys, err := C.GetAllRemoteSystems(context.Background())
+	checkAPIErr(t, err)
+	if len(allSys) == 0 {
+		t.Skip("Skipping test as there are no remote systems configured on array.")
+	}
+
+	// check filter positive
+	sysByMgmtAddr, err := C.GetRemoteSystems(context.Background(), map[string]string{
+		"management_address": "eq." + allSys[0].ManagementAddress,
+	})
+	checkAPIErr(t, err)
+	assert.Equal(t, len(sysByMgmtAddr), 1)
+	assert.EqualExportedValues(t, allSys[0].ID, sysByMgmtAddr[0].ID)
+
+	// check filter negative
+	_, err = C.GetRemoteSystems(context.Background(), map[string]string{
+		"management_address": "inv." + allSys[0].ManagementAddress,
+	})
+	assert.Error(t, err)
+}
+
 func TestReplicationSuiteSync(t *testing.T) {
 	suite.Run(t, new(ReplicationTestSuiteSync))
 }
