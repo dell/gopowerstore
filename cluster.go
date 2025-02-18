@@ -116,3 +116,26 @@ func (c *ClientIMPL) GetAllRemoteSystems(ctx context.Context) (resp []RemoteSyst
 	}
 	return retsys, err
 }
+
+// Queries Remote Systems by filter
+func (c *ClientIMPL) GetRemoteSystems(ctx context.Context, filters map[string]string) (resp []RemoteSystem, err error) {
+	sys := RemoteSystem{}
+	var retsys []RemoteSystem
+	qp := c.APIClient().QueryParamsWithFields(&sys)
+	for k, v := range filters {
+		qp.RawArg(k, v)
+	}
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:      "GET",
+			Endpoint:    remoteSystemURL,
+			QueryParams: qp,
+		},
+		&retsys)
+	err = WrapErr(err)
+	if err != nil {
+		return resp, err
+	}
+	return retsys, err
+}
