@@ -42,6 +42,18 @@ func TestClientIMPL_GetAllRemoteSystems(t *testing.T) {
 	assert.Equal(t, volID, remoteSystems[0].ID)
 }
 
+func TestClientIMPL_GetRemoteSystems(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	respData := fmt.Sprintf(`[{"id": "%s"}, {"id": "%s"}]`, volID, volID2)
+	httpmock.RegisterResponder("GET", remoteSystemMockURL,
+		httpmock.NewStringResponder(200, respData))
+	remoteSystems, err := C.GetRemoteSystems(context.Background(), nil)
+	assert.Nil(t, err)
+	assert.Len(t, remoteSystems, 2)
+	assert.Equal(t, volID, remoteSystems[0].ID)
+}
+
 func TestClientIMPL_GetCluster(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()

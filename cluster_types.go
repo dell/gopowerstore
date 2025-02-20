@@ -27,17 +27,21 @@ type RemoteSystem struct {
 	Description string `json:"description,omitempty"`
 	// Serial number of the remote system instance
 	SerialNumber string `json:"serial_number,omitempty"`
+	// Type of the remote system instance
+	Type string `json:"type,omitempty"`
 	// Management IP address of the remote system instance
 	ManagementAddress string `json:"management_address,omitempty"`
 	// Possible data connection states of a remote system
 	DataConnectionState string `json:"data_connection_state,omitempty"`
+	// Data Network Latency
+	DataNetworkLatency string `json:"data_network_latency,omitempty"`
 	// List of supported remote protection capabilities
 	Capabilities []string `json:"capabilities,omitempty"`
 }
 
 // Fields returns fields which must be requested to fill struct
 func (r *RemoteSystem) Fields() []string {
-	return []string{"id", "name", "description", "serial_number", "management_address", "data_connection_state", "capabilities"}
+	return []string{"id", "name", "description", "serial_number", "type", "management_address", "data_connection_state", "data_network_latency", "capabilities"}
 }
 
 type DataConnectStateEnum string

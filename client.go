@@ -144,6 +144,7 @@ type Client interface {
 	AddMembersToVolumeGroup(ctx context.Context, params *VolumeGroupMembers, id string) (EmptyResponse, error)
 	GetReplicationSessionByLocalResourceID(ctx context.Context, id string) (ReplicationSession, error)
 	GetAllRemoteSystems(ctx context.Context) (resp []RemoteSystem, err error)
+	GetRemoteSystems(ctx context.Context, filters map[string]string) (resp []RemoteSystem, err error)
 	GetCluster(ctx context.Context) (Cluster, error)
 	PerformanceMetricsByAppliance(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]PerformanceMetricsByApplianceResponse, error)
 	PerformanceMetricsByNode(ctx context.Context, entityID string, interval MetricsIntervalEnum) ([]PerformanceMetricsByNodeResponse, error)
@@ -200,6 +201,13 @@ type Client interface {
 	ConfigureMetroVolumeGroup(ctx context.Context, id string, config *MetroConfig) (resp MetroSessionResponse, err error)
 	EndMetroVolume(ctx context.Context, id string, options *EndMetroVolumeOptions) (resp EmptyResponse, err error)
 	EndMetroVolumeGroup(ctx context.Context, id string, options *EndMetroVolumeGroupOptions) (resp EmptyResponse, err error)
+	CreateSMBShare(ctx context.Context, createParams *SMBShareCreate) (resp CreateResponse, err error)
+	ModifySMBShare(ctx context.Context, id string, modifyParams *SMBShareModify) (resp EmptyResponse, err error)
+	DeleteSMBShare(ctx context.Context, id string) (resp EmptyResponse, err error)
+	GetSMBShare(ctx context.Context, id string) (resp SMBShare, err error)
+	GetSMBShares(ctx context.Context, args map[string]string) (resp []SMBShare, err error)
+	SetSMBShareACL(ctx context.Context, id string, acl *ModifySMBShareACL) (resp EmptyResponse, err error)
+	GetSMBShareACL(ctx context.Context, id string) (resp SMBShareACL, err error)
 }
 
 // ClientIMPL provides basic API client implementation
