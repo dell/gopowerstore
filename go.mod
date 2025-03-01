@@ -1,8 +1,6 @@
 module github.com/dell/gopowerstore
 
-go 1.23
-
-toolchain go1.23.5
+go 1.24
 
 require (
 	github.com/go-openapi/strfmt v0.23.0
