@@ -109,7 +109,7 @@ type FSModify struct {
 	//
 	//Size, in bytes, presented to the host or end user. This can be used for both expand and shrink on a file system.
 	Size                       int           `json:"size_total,omitempty"`
-	Description                *string       `json:"description,omitempty"`
+	Description                string        `json:"description"`
 	AccessPolicy               string        `json:"access_policy,omitempty"`
 	LockingPolicy              string        `json:"locking_policy,omitempty"`
 	FolderRenamePolicy         string        `json:"folder_rename_policy,omitempty"`
@@ -120,7 +120,7 @@ type FSModify struct {
 	SmbNotifyOnChangeDirDepth  int32         `json:"smb_notify_on_change_dir_depth,omitempty"`
 	IsSmbNoNotifyEnabled       *bool         `json:"is_smb_no_notify_enabled,omitempty"`
 	IsAsyncMtimeEnabled        *bool         `json:"is_async_MTime_enabled,omitempty"`
-	ProtectionPolicyID         *string       `json:"protection_policy_id,omitempty"`
+	ProtectionPolicyID         string        `json:"protection_policy_id"`
 	FileEventsPublishingMode   string        `json:"file_events_publishing_mode,omitempty"`
 	FlrCreate                  FlrAttributes `json:"flr_attributes,omitempty"`
 	ExpirationTimestamp        string        `json:"expiration_timestamp,omitempty"`

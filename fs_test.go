@@ -141,10 +141,10 @@ func TestClientIMPL_ModifyFS(t *testing.T) {
 	defer httpmock.DeactivateAndReset()
 	httpmock.RegisterResponder("PATCH", fmt.Sprintf("%s/%s", fsMockURL, fsID),
 		httpmock.NewStringResponder(204, ""))
-	description := "New Description"
+	// description := "New Description"
 	resp, err := C.ModifyFS(context.Background(), &FSModify{
 		Size:        3221225472 * 2,
-		Description: &description,
+		Description: "New Description",
 	}, fsID)
 	assert.Nil(t, err)
 	assert.Equal(t, EmptyResponse(""), resp)
