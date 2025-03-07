@@ -202,7 +202,6 @@ func (suite *FsTestSuite) TestModifyFS() {
 	t := suite.T()
 	fsID, _ := createFS(t, suite.nasID)
 	defer deleteFS(t, fsID)
-	// description := "New Description"
 
 	_, err := C.ModifyFS(context.Background(), &gopowerstore.FSModify{
 		Size:        3221225472 * 2,
