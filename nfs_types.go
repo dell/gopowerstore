@@ -66,7 +66,8 @@ type NFSExportCreate struct {
 type NFSExportModify struct {
 	// An optional description for the host.
 	// The description should not be more than 256 UTF-8 characters long and should not have any unprintable characters.
-	Description string `json:"description,omitempty"`
+	// Empty string is a valid description value, so omitempty should not be used.
+	Description string `json:"description"`
 
 	// Read-Write
 	// Hosts to add to the current read_write_hosts list. Hosts can be entered by Hostname, IP addresses
@@ -103,23 +104,30 @@ type NFSExportModify struct {
 	// NFS enforced security type for users accessing an NFS Export.
 	MinSecurity string `json:"min_security,omitempty"`
 	// Hosts with no access to the NFS export or its snapshots.
-	NoAccessHosts []string `json:"no_access_hosts,omitempty"`
+	// Empty list is a valid value, so omitempty should not be used.
+	NoAccessHosts []string `json:"no_access_hosts"`
 	// Hosts with read-only access to the NFS export and its snapshots.
-	ReadOnlyHosts []string `json:"read_only_hosts,omitempty"`
+	// Empty list is a valid value, so omitempty should not be used.
+	ReadOnlyHosts []string `json:"read_only_hosts"`
 	// Hosts with read-only and read-only for root user access to the NFS Export and its snapshots.
-	ReadOnlyRootHosts []string `json:"read_only_root_hosts,omitempty"`
+	// Empty list is a valid value, so omitempty should not be used.
+	ReadOnlyRootHosts []string `json:"read_only_root_hosts"`
 	// Hosts with read and write access to the NFS export and its snapshots.
-	ReadWriteHosts []string `json:"read_write_hosts,omitempty"`
+	// Empty list is a valid value, so omitempty should not be used.
+	ReadWriteHosts []string `json:"read_write_hosts"`
 	// Hosts with read and write and read and write for root user access to the NFS Export and its snapshots.
-	ReadWriteRootHosts []string `json:"read_write_root_hosts,omitempty"`
+	// Empty list is a valid value, so omitempty should not be used.
+	ReadWriteRootHosts []string `json:"read_write_root_hosts"`
 	// Specifies the user ID of the anonymous account.
-	AnonymousUID int32 `json:"anonymous_UID,omitempty"`
+	// Zero ID is a valid value, so omitempty should not be used.
+	AnonymousUID int32 `json:"anonymous_UID"`
 	// Specifies the group ID of the anonymous account.
-	AnonymousGID int32 `json:"anonymous_GID,omitempty"`
+	// Zero ID is a valid value, so omitempty should not be used.
+	AnonymousGID int32 `json:"anonymous_GID"`
 	// If set, do not allow access to set SUID. Otherwise, allow access.
 	IsNoSUID bool `json:"is_no_SUID"`
 	// (*Applies to NFS shares of VMware NFS storage resources.*) Default owner of the NFS Export associated with the datastore. Required if secure NFS enabled. For NFSv3 or NFSv4 without Kerberos, the default owner is root. Was added in version 3.0.0.0.
-	NFSOwnerUsername string `json:"nfs_owner_usernamestring,omitempty"`
+	NFSOwnerUsername string `json:"nfs_owner_username,omitempty"`
 }
 
 // NFSServerCreate details about creation of new NFS server
