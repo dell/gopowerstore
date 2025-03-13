@@ -35,26 +35,27 @@ const (
 	Unknown  NASServerOperationalStatusEnum = "Unknown"
 )
 
+// NASHealthStateTypeEnum NAS health state
+type NASHealthStateTypeEnum string
+
+const (
+	None     NASHealthStateTypeEnum = "None"
+	Info     NASHealthStateTypeEnum = "Info"
+	Major    NASHealthStateTypeEnum = "Major"
+	Minor    NASHealthStateTypeEnum = "Minor"
+	Cricital NASHealthStateTypeEnum = "Critical"
+)
+
+type HealthDetails struct {
+	State NASHealthStateTypeEnum `json:"state,omitempty"`
+}
+
 type FileSystemTypeEnum string
 
 const (
 	FileSystemTypeEnumPrimary  FileSystemTypeEnum = "Primary"  // Normal file system or clone
 	FileSystemTypeEnumSnapshot FileSystemTypeEnum = "Snapshot" // Snapshot of a file system
 )
-
-// NASHealthState NAS health state
-type NASHealthState string
-
-const (
-	None     NASHealthState = "None"
-	Major    NASHealthState = "Major"
-	Minor    NASHealthState = "Minor"
-	Cricital NASHealthState = "Critical"
-)
-
-type HealthDetails struct {
-	State NASHealthState `json:"state,omitempty"`
-}
 
 type FLRCreate struct {
 	Mode             string `json:"mode,omitempty"`
