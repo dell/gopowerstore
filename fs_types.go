@@ -43,7 +43,7 @@ const (
 	Info     NASHealthStateTypeEnum = "Info"
 	Major    NASHealthStateTypeEnum = "Major"
 	Minor    NASHealthStateTypeEnum = "Minor"
-	Cricital NASHealthStateTypeEnum = "Critical"
+	Critical NASHealthStateTypeEnum = "Critical"
 )
 
 type HealthDetails struct {
