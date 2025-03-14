@@ -23,6 +23,7 @@ import (
 	"fmt"
 
 	"github.com/dell/gopowerstore/api"
+	log "github.com/sirupsen/logrus"
 )
 
 const (
@@ -48,9 +49,18 @@ func getNfsServerDefaultQueryParams(c Client) api.QueryParamsEncoder {
 // GetNASServers query and return all NAS servers
 func (c *ClientIMPL) GetNASServers(ctx context.Context) ([]NAS, error) {
 	var result []NAS
+	var qp api.QueryParamsEncoder
 	err := c.readPaginatedData(func(offset int) (api.RespMeta, error) {
 		var page []NAS
-		qp := getNASDefaultQueryParams(c)
+		arrayVerion, err := c.GetSoftwareMajorMinorVersion(ctx)
+		if err != nil {
+			log.Errorf("Couldn't find the array version %s", err.Error())
+		}
+		if arrayVerion > 3.6 {
+			qp = c.APIClient().QueryParams().Select("id", "description", "name", "current_node_id", "operational_status", "current_preferred_IPv4_interface_id", "current_preferred_IPv6_interface_id", "nfs_servers", "preferred_node_id", "default_unix_user", "default_windows_user", "current_unix_directory_service", "is_username_translation_enabled", "is_auto_user_mapping_enabled", "production_IPv4_interface_id", "production_IPv6_interface_id", "backup_IPv4_interface_id", "backup_IPv6_interface_id", "protection_policy_id", "file_events_publishing_mode", "is_replication_destination", "is_production_mode_enabled", "is_dr_test", "operational_status_l10n", "current_unix_directory_service_l10n", "file_events_publishing_mode_l10n")
+		} else {
+			qp = c.APIClient().QueryParams().Select("id", "description", "name", "current_node_id", "operational_status", "current_preferred_IPv4_interface_id", "current_preferred_IPv6_interface_id", "nfs_servers", "preferred_node_id", "default_unix_user", "default_windows_user", "current_unix_directory_service", "is_username_translation_enabled", "is_auto_user_mapping_enabled", "production_IPv4_interface_id", "production_IPv6_interface_id", "backup_IPv4_interface_id", "backup_IPv6_interface_id", "protection_policy_id", "file_events_publishing_mode", "is_replication_destination", "is_production_mode_enabled", "operational_status_l10n", "current_unix_directory_service_l10n", "file_events_publishing_mode_l10n")
+		}
 		qp.Offset(offset).Limit(paginationDefaultPageSize)
 		meta, err := c.APIClient().Query(
 			ctx,
@@ -72,7 +82,16 @@ func (c *ClientIMPL) GetNASServers(ctx context.Context) ([]NAS, error) {
 // GetNASByName query and return specific NAS by name
 func (c *ClientIMPL) GetNASByName(ctx context.Context, name string) (resp NAS, err error) {
 	var nasList []NAS
-	qp := getNASDefaultQueryParams(c)
+	var qp api.QueryParamsEncoder
+	arrayVerion, err := c.GetSoftwareMajorMinorVersion(ctx)
+	if err != nil {
+		log.Errorf("Couldn't find the array version %s", err.Error())
+	}
+	if arrayVerion > 3.6 {
+		qp = c.APIClient().QueryParams().Select("id", "description", "name", "current_node_id", "operational_status", "current_preferred_IPv4_interface_id", "current_preferred_IPv6_interface_id", "nfs_servers", "preferred_node_id", "default_unix_user", "default_windows_user", "current_unix_directory_service", "is_username_translation_enabled", "is_auto_user_mapping_enabled", "production_IPv4_interface_id", "production_IPv6_interface_id", "backup_IPv4_interface_id", "backup_IPv6_interface_id", "protection_policy_id", "file_events_publishing_mode", "is_replication_destination", "is_production_mode_enabled", "is_dr_test", "operational_status_l10n", "current_unix_directory_service_l10n", "file_events_publishing_mode_l10n")
+	} else {
+		qp = c.APIClient().QueryParams().Select("id", "description", "name", "current_node_id", "operational_status", "current_preferred_IPv4_interface_id", "current_preferred_IPv6_interface_id", "nfs_servers", "preferred_node_id", "default_unix_user", "default_windows_user", "current_unix_directory_service", "is_username_translation_enabled", "is_auto_user_mapping_enabled", "production_IPv4_interface_id", "production_IPv6_interface_id", "backup_IPv4_interface_id", "backup_IPv6_interface_id", "protection_policy_id", "file_events_publishing_mode", "is_replication_destination", "is_production_mode_enabled", "operational_status_l10n", "current_unix_directory_service_l10n", "file_events_publishing_mode_l10n")
+	}
 	qp.RawArg("name", fmt.Sprintf("eq.%s", name))
 	_, err = c.APIClient().Query(
 		ctx,
@@ -94,13 +113,23 @@ func (c *ClientIMPL) GetNASByName(ctx context.Context, name string) (resp NAS, e
 
 // GetNAS query and return specific NAS by id
 func (c *ClientIMPL) GetNAS(ctx context.Context, id string) (resp NAS, err error) {
+	var qp api.QueryParamsEncoder
+	arrayVerion, err := c.GetSoftwareMajorMinorVersion(ctx)
+	if err != nil {
+		log.Errorf("Couldn't find the array version %s", err.Error())
+	}
+	if arrayVerion > 3.6 {
+		qp = c.APIClient().QueryParams().Select("id", "description", "name", "current_node_id", "operational_status", "current_preferred_IPv4_interface_id", "current_preferred_IPv6_interface_id", "nfs_servers", "preferred_node_id", "default_unix_user", "default_windows_user", "current_unix_directory_service", "is_username_translation_enabled", "is_auto_user_mapping_enabled", "production_IPv4_interface_id", "production_IPv6_interface_id", "backup_IPv4_interface_id", "backup_IPv6_interface_id", "protection_policy_id", "file_events_publishing_mode", "is_replication_destination", "is_production_mode_enabled", "is_dr_test", "operational_status_l10n", "current_unix_directory_service_l10n", "file_events_publishing_mode_l10n")
+	} else {
+		qp = c.APIClient().QueryParams().Select("id", "description", "name", "current_node_id", "operational_status", "current_preferred_IPv4_interface_id", "current_preferred_IPv6_interface_id", "nfs_servers", "preferred_node_id", "default_unix_user", "default_windows_user", "current_unix_directory_service", "is_username_translation_enabled", "is_auto_user_mapping_enabled", "production_IPv4_interface_id", "production_IPv6_interface_id", "backup_IPv4_interface_id", "backup_IPv6_interface_id", "protection_policy_id", "file_events_publishing_mode", "is_replication_destination", "is_production_mode_enabled", "operational_status_l10n", "current_unix_directory_service_l10n", "file_events_publishing_mode_l10n")
+	}
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{
 			Method:      "GET",
 			Endpoint:    nasURL,
 			ID:          id,
-			QueryParams: getNASDefaultQueryParams(c),
+			QueryParams: qp,
 		},
 		&resp)
 	return resp, WrapErr(err)
