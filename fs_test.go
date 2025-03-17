@@ -280,3 +280,10 @@ func TestClientIMPL_GetFsByFilter(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, fsID, resp[0].ID)
 }
+
+func Test_GetNASFields(t *testing.T) {
+	fields := GetNASFields(3.7)
+	assert.NotEmpty(t, fields)
+	fields = GetNASFields(3.5)
+	assert.NotEmpty(t, fields)
+}
