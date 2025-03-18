@@ -28,9 +28,10 @@ import (
 )
 
 const (
-	nasMockURL       = APIMockURL + nasURL
-	fsMockURL        = APIMockURL + fsURL
-	nfsMockServerURL = APIMockURL + nfsServerURL
+	nasMockURL                  = APIMockURL + nasURL
+	fsMockURL                   = APIMockURL + fsURL
+	nfsMockServerURL            = APIMockURL + nfsServerURL
+	apiSoftwareInstalledMockURL = APIMockURL + apiSoftwareInstalledURL
 )
 
 var (
@@ -279,4 +280,41 @@ func TestClientIMPL_GetFsByFilter(t *testing.T) {
 	resp, err := C.GetFsByFilter(context.Background(), nil)
 	assert.Nil(t, err)
 	assert.Equal(t, fsID, resp[0].ID)
+}
+
+func Test_GetNASFields(t *testing.T) {
+	fields := GetNASFields(3.7)
+	assert.NotEmpty(t, fields)
+	fields = GetNASFields(3.5)
+	assert.NotEmpty(t, fields)
+}
+
+func Test_NASServersErr(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	respData := fmt.Sprintf(`[{"id": "%s"}]`, nasID)
+	httpmock.RegisterResponder("GET", apiSoftwareInstalledMockURL,
+		httpmock.NewStringResponder(404, respData))
+	_, err := C.GetNASServers(context.Background())
+	assert.NotNil(t, err)
+}
+
+func Test_NASServerByIdErr(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	respData := fmt.Sprintf(`[{"id": "%s"}]`, nasID)
+	httpmock.RegisterResponder("GET", apiSoftwareInstalledMockURL,
+		httpmock.NewStringResponder(404, respData))
+	_, err := C.GetNAS(context.Background(), nasID)
+	assert.NotNil(t, err)
+}
+
+func Test_NASServerByNameErr(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	respData := fmt.Sprintf(`[{"id": "%s"}]`, nasID)
+	httpmock.RegisterResponder("GET", apiSoftwareInstalledMockURL,
+		httpmock.NewStringResponder(404, respData))
+	_, err := C.GetNASByName(context.Background(), "test")
+	assert.NotNil(t, err)
 }
