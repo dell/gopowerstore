@@ -93,8 +93,8 @@ type FlrAttributes struct {
 	MinimumRetention     string `json:"minimum_retention,omitempty"`
 	DefaultRetention     string `json:"default_retention,omitempty"`
 	MaximumRetention     string `json:"maximum_retention,omitempty"`
-	AutoLock             bool   `json:"auto_lock"`
-	AutoDelete           bool   `json:"auto_delete"`
+	AutoLock             *bool   `json:"auto_lock,omitempty"`
+	AutoDelete           *bool   `json:"auto_delete,omitempty"`
 	PolicyInterval       int32  `json:"policy_interval,omitempty"`
 	HasProtectedFiles    bool   `json:"has_protected_files,omitempty"`
 	ClockTime            string `json:"clock_time,omitempty"`
