@@ -53,9 +53,11 @@ type NFSExportCreate struct {
 	// Hosts with read and write and read and write for root user access to the NFS Export and its snapshots.
 	ReadWriteRootHosts []string `json:"read_write_root_hosts,omitempty"`
 	// Specifies the user ID of the anonymous account.
-	AnonymousUID int32 `json:"anonymous_UID,omitempty"`
+	// Zero ID is a valid value, so omitempty should not be used.
+	AnonymousUID int32 `json:"anonymous_UID"`
 	// Specifies the group ID of the anonymous account.
-	AnonymousGID int32 `json:"anonymous_GID,omitempty"`
+	// Zero ID is a valid value, so omitempty should not be used.
+	AnonymousGID int32 `json:"anonymous_GID"`
 	// If set, do not allow access to set SUID. Otherwise, allow access.
 	IsNoSUID bool `json:"is_no_SUID"`
 	// (*Applies to NFS shares of VMware NFS storage resources.*) Default owner of the NFS Export associated with the datastore. Required if secure NFS enabled. For NFSv3 or NFSv4 without Kerberos, the default owner is root. Was added in version 3.0.0.0.
