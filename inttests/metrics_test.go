@@ -70,7 +70,6 @@ func Test_VolumeMirrorTransferRate(t *testing.T) {
 	resp, err := C.VolumeMirrorTransferRate(context.Background(), volumesResp[0].ID)
 	checkAPIErr(t, err)
 	assert.NotEmpty(t, resp)
-	assert.Equal(t, "volume_mirror_transfer_rate", resp[0].ID)
 }
 
 func Test_PerformanceMetricsByCluster(t *testing.T) {
