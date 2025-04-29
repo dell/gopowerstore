@@ -435,7 +435,7 @@ func (c *ClientIMPL) prepareRequest(ctx context.Context, method, requestURL, tra
 	if len(c.token) != 0 {
 		req.Header.Add(dellEmcToken, c.token)
 	}
-	for key, values := range c.customHTTPHeaders.header {
+	for key, values := range c.customHTTPHeaders.GetHeader() {
 		for _, elem := range values {
 			req.Header.Add(key, elem)
 		}
