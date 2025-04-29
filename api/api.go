@@ -147,7 +147,7 @@ type ClientIMPL struct {
 	httpClient        *http.Client
 	defaultTimeout    int64
 	requestIDKey      ContextKey
-	customHTTPHeaders safeHeader
+	customHTTPHeaders *safeHeader
 	logger            Logger
 	apiThrottle       TimeoutSemaphoreInterface
 	loginMutex        sync.Mutex
@@ -190,15 +190,16 @@ func New(apiURL string, username string,
 	throttle := NewTimeoutSemaphore(defaultTimeout, rateLimit, &defaultLogger{})
 
 	clientImpl := &ClientIMPL{
-		apiURL:         apiURL,
-		insecure:       insecure,
-		username:       username,
-		password:       password,
-		httpClient:     client,
-		defaultTimeout: defaultTimeout,
-		requestIDKey:   requestIDKey,
-		logger:         &defaultLogger{},
-		apiThrottle:    throttle,
+		apiURL:            apiURL,
+		insecure:          insecure,
+		username:          username,
+		password:          password,
+		httpClient:        client,
+		defaultTimeout:    defaultTimeout,
+		requestIDKey:      requestIDKey,
+		logger:            &defaultLogger{},
+		apiThrottle:       throttle,
+		customHTTPHeaders: NewSafeHeader(),
 	}
 
 	// Create a login session after the client is initialized

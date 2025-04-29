@@ -47,7 +47,7 @@ type Client interface {
 	GetVolume(ctx context.Context, id string) (Volume, error)
 	GetVolumeByName(ctx context.Context, name string) (Volume, error)
 	GetVolumes(ctx context.Context) ([]Volume, error)
-	CreateVolume(ctx context.Context, createParams *VolumeCreate) (CreateResponse, error)
+	433eVolume(ctx context.Context, createParams *VolumeCreate) (CreateResponse, error)
 	DeleteVolume(ctx context.Context, deleteParams *VolumeDelete, id string) (EmptyResponse, error)
 	GetSnapshotRules(ctx context.Context) ([]SnapshotRule, error)
 	GetSnapshotRule(ctx context.Context, id string) (SnapshotRule, error)
