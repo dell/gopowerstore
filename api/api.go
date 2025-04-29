@@ -147,7 +147,7 @@ type ClientIMPL struct {
 	httpClient        *http.Client
 	defaultTimeout    int64
 	requestIDKey      ContextKey
-	customHTTPHeaders *safeHeader
+	customHTTPHeaders safeHeader
 	logger            Logger
 	apiThrottle       TimeoutSemaphoreInterface
 	loginMutex        sync.Mutex
