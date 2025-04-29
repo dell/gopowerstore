@@ -254,7 +254,7 @@ func buildError(r *http.Response) *ErrorMsg {
 
 // GetCustomHTTPHeaders method retrieves http headers
 func (c *ClientIMPL) GetCustomHTTPHeaders() http.Header {
-	return c.customHTTPHeaders.header
+	return c.customHTTPHeaders.GetHeader()
 }
 
 // SetCustomHTTPHeaders method register headers which will be sent with every request
