@@ -101,7 +101,7 @@ type safeHeader struct {
 	header http.Header
 }
 
-func newSafeHeader() *safeHeader {
+func NewSafeHeader() *safeHeader {
 	return &safeHeader{
 		header: make(http.Header),
 	}
