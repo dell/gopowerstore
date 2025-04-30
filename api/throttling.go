@@ -57,15 +57,10 @@ func NewTimeoutSemaphore(timeout int64, rateLimit int, logger Logger) *TimeoutSe
 }
 
 func (ts *TimeoutSemaphore) Acquire(ctx context.Context) error {
-	// gpDeadline, _ := ctx.Deadline()
-	// ts.Logger.Info(ctx, "[Bharath] acquire a lock deadline", time.Until(gpDeadline))
-	var cancelFunc func()
-
-	acquireCtx, cancelFunc := context.WithCancel(ctx)
-	// deadline, _ := ctx.Deadline()
-	// ts.Logger.Info(ctx, "[Bharath] setting new context with deadline", time.Until(deadline))
-
+	acquireCtx, cancelFunc := context.WithTimeout(ctx, 10*time.Second)
 	defer cancelFunc()
+
+	ts.Logger.Info(ctx, "Number of elements in queue/sem channel ", len(ts.Semaphore))
 	for {
 		select {
 		case ts.Semaphore <- struct{}{}:
@@ -79,7 +74,6 @@ func (ts *TimeoutSemaphore) Acquire(ctx context.Context) error {
 			msg := "acquire context expired"
 			ts.Logger.Error(ctx, msg)
 			return &TimeoutSemaphoreError{msg}
-
 		}
 	}
 }
