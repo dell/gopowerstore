@@ -285,6 +285,7 @@ func NewClient() (Client, error) {
 	if err == nil {
 		options.SetDefaultTimeout(httpTimeout)
 	}
+
 	return NewClientWithArgs(
 		os.Getenv(APIURLEnv),
 		os.Getenv(UsernameEnv),

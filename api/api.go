@@ -162,6 +162,8 @@ type ClientIMPL struct {
 func New(apiURL string, username string,
 	password string, insecure bool, defaultTimeout int64, rateLimit int, requestIDKey ContextKey,
 ) (*ClientIMPL, error) {
+	log.Printf("[Bharath] Setting timeout to %v; rate limit = %v", defaultTimeout, rateLimit)
+
 	debug, _ = strconv.ParseBool(os.Getenv("GOPOWERSTORE_DEBUG"))
 	if apiURL == "" || username == "" || password == "" {
 		return nil, errors.New("API ApiClient can't be initialized: " +
