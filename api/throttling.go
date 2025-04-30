@@ -57,8 +57,14 @@ func NewTimeoutSemaphore(timeout int64, rateLimit int, logger Logger) *TimeoutSe
 }
 
 func (ts *TimeoutSemaphore) Acquire(ctx context.Context) error {
+	gpDeadline, _ := ctx.Deadline()
+	ts.Logger.Info(ctx, "acquire a lock deadline", gpDeadline)
 	var cancelFunc func()
 	ctx, cancelFunc = context.WithTimeout(ctx, ts.Timeout)
+
+	deadline, _ := ctx.Deadline()
+	ts.Logger.Info(ctx, "setting new context with deadline", deadline)
+
 	defer cancelFunc()
 	for {
 		select {
