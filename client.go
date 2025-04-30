@@ -298,6 +298,12 @@ func NewClientWithArgs(
 	apiURL string,
 	username, password string, options *ClientOptions,
 ) (Client, error) {
+	httpTimeout, err := strconv.ParseInt(os.Getenv(HTTPTimeoutEnv), 10, 64)
+
+	if err == nil {
+		options.SetDefaultTimeout(httpTimeout)
+	}
+
 	client, err := api.New(apiURL, username, password,
 		options.Insecure(), options.DefaultTimeout(), options.RateLimit(), options.RequestIDKey())
 	if err != nil {
