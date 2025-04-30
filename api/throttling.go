@@ -60,8 +60,8 @@ func (ts *TimeoutSemaphore) Acquire(ctx context.Context) error {
 	gpDeadline, _ := ctx.Deadline()
 	ts.Logger.Info(ctx, "[Bharath] acquire a lock deadline", time.Until(gpDeadline))
 	var cancelFunc func()
-	ctx, cancelFunc = context.WithTimeout(ctx, ts.Timeout)
 
+	ctx, cancelFunc = context.WithCancel(ctx)
 	deadline, _ := ctx.Deadline()
 	ts.Logger.Info(ctx, "[Bharath] setting new context with deadline", time.Until(deadline))
 
