@@ -57,24 +57,29 @@ func NewTimeoutSemaphore(timeout int64, rateLimit int, logger Logger) *TimeoutSe
 }
 
 func (ts *TimeoutSemaphore) Acquire(ctx context.Context) error {
-	gpDeadline, _ := ctx.Deadline()
-	ts.Logger.Info(ctx, "[Bharath] acquire a lock deadline", time.Until(gpDeadline))
+	// gpDeadline, _ := ctx.Deadline()
+	// ts.Logger.Info(ctx, "[Bharath] acquire a lock deadline", time.Until(gpDeadline))
 	var cancelFunc func()
 
-	ctx, cancelFunc = context.WithCancel(ctx)
-	deadline, _ := ctx.Deadline()
-	ts.Logger.Info(ctx, "[Bharath] setting new context with deadline", time.Until(deadline))
+	acquireCtx, cancelFunc := context.WithCancel(ctx)
+	// deadline, _ := ctx.Deadline()
+	// ts.Logger.Info(ctx, "[Bharath] setting new context with deadline", time.Until(deadline))
 
 	defer cancelFunc()
 	for {
 		select {
 		case ts.Semaphore <- struct{}{}:
-			ts.Logger.Debug(ctx, "acquire a lock")
+			ts.Logger.Info(ctx, "Acquired lock in throttling")
 			return nil
 		case <-ctx.Done():
-			msg := "lock is acquire failed, timeout expired"
+			msg := "main context expired"
 			ts.Logger.Error(ctx, msg)
 			return &TimeoutSemaphoreError{msg}
+		case <-acquireCtx.Done():
+			msg := "acquire context expired"
+			ts.Logger.Error(ctx, msg)
+			return &TimeoutSemaphoreError{msg}
+
 		}
 	}
 }
