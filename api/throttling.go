@@ -60,7 +60,7 @@ func (ts *TimeoutSemaphore) Acquire(ctx context.Context) error {
 	acquireCtx, cancelFunc := context.WithTimeout(ctx, 10*time.Second)
 	defer cancelFunc()
 
-	ts.Logger.Info(ctx, "Number of elements in queue/sem channel ", len(ts.Semaphore))
+	ts.Logger.Info(ctx, "Number of elements in queue/sem channel %d", len(ts.Semaphore))
 	for {
 		select {
 		case ts.Semaphore <- struct{}{}:

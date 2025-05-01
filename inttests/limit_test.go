@@ -20,10 +20,10 @@ package inttests
 
 import (
 	"context"
-	"net/http"
 	"testing"
 
 	"github.com/dell/gopowerstore"
+	"github.com/dell/gopowerstore/api"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
@@ -44,7 +44,7 @@ func (s *GetMaxVolumeSizeTestSuite) SetupTest() {
 func (s *GetMaxVolumeSizeTestSuite) TestGetMaxVolumeSize() {
 	customHeaders := s.C.GetCustomHTTPHeaders()
 	if customHeaders == nil {
-		customHeaders = make(http.Header)
+		customHeaders = api.NewSafeHeader().GetHeader()
 	}
 	customHeaders.Add("DELL-VISIBILITY", "internal")
 	s.C.SetCustomHTTPHeaders(customHeaders)

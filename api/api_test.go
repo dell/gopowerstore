@@ -253,7 +253,7 @@ func TestClientIMPL_SetLogger(t *testing.T) {
 }
 
 func TestClientIMPL_GetCustomHTTPHeaders(t *testing.T) {
-	c := ClientIMPL{}
+	c := ClientIMPL{customHTTPHeaders: NewSafeHeader()}
 
 	want := http.Header{
 		"foo": {"bar"},
@@ -339,7 +339,7 @@ func Test_replaceSensitiveHeaderInfo(t *testing.T) {
 type stubTypeWithMetaData struct{}
 
 func (s stubTypeWithMetaData) MetaData() http.Header {
-	h := make(http.Header)
+	h := NewSafeHeader().GetHeader()
 	h.Set("foo", "bar")
 	return h
 }

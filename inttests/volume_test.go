@@ -24,6 +24,7 @@ import (
 	"testing"
 
 	"github.com/dell/gopowerstore"
+	"github.com/dell/gopowerstore/api"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
@@ -248,7 +249,7 @@ func TestComputeDifferences(t *testing.T) {
 	}
 	defaultHeaders := pstoreClient.GetCustomHTTPHeaders()
 	if defaultHeaders == nil {
-		defaultHeaders = make(http.Header)
+		defaultHeaders = api.NewSafeHeader().GetHeader()
 	}
 	customHeaders := defaultHeaders
 	// for accessing internal REST-APIs

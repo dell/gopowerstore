@@ -111,7 +111,7 @@ const (
 // MetaData returns the metadata headers.
 func (fc *FsCreate) MetaData() http.Header {
 	fc.once.Do(func() {
-		fc.metadata = make(http.Header)
+		fc.metadata = api.NewSafeHeader().GetHeader()
 	})
 	return fc.metadata
 }

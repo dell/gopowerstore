@@ -20,6 +20,8 @@ package gopowerstore
 
 import (
 	"net/http"
+
+	"github.com/dell/gopowerstore/api"
 )
 
 // VolumeStateEnum Volume life cycle states.
@@ -199,7 +201,7 @@ type VolumeComputeDifferencesResponse struct {
 // MetaData returns the metadata headers.
 func (vc *VolumeCreate) MetaData() http.Header {
 	vc.once.Do(func() {
-		vc.metadata = make(http.Header)
+		vc.metadata = api.NewSafeHeader().GetHeader()
 	})
 	return vc.metadata
 }
@@ -236,7 +238,7 @@ type VolumeClone struct {
 // MetaData returns the metadata headers.
 func (vc *VolumeClone) MetaData() http.Header {
 	vc.once.Do(func() {
-		vc.metadata = make(http.Header)
+		vc.metadata = api.NewSafeHeader().GetHeader()
 	})
 	return vc.metadata
 }
