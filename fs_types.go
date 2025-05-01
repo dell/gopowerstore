@@ -20,6 +20,8 @@ package gopowerstore
 
 import (
 	"net/http"
+
+	"github.com/dell/gopowerstore/api"
 )
 
 // NASServerOperationalStatusEnum NAS lifecycle state.
@@ -170,7 +172,7 @@ type FsClone struct {
 // MetaData returns the metadata headers.
 func (fc *FsClone) MetaData() http.Header {
 	fc.once.Do(func() {
-		fc.metadata = make(http.Header)
+		fc.metadata = api.NewSafeHeader().GetHeader()
 	})
 	return fc.metadata
 }
