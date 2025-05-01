@@ -36,7 +36,7 @@ func TestSemaphore(t *testing.T) {
 	}
 
 	// long running function
-	ts := NewTimeoutSemaphore(1, 1, &defaultLogger{})
+	ts := NewTimeoutSemaphore(1, 1,1, &defaultLogger{})
 	go f(3, context.Background(), ts)
 	// wait for run long function
 	time.Sleep(1 * time.Second)
@@ -44,7 +44,7 @@ func TestSemaphore(t *testing.T) {
 	assert.NotNil(t, err)
 
 	// fast running function
-	ts = NewTimeoutSemaphore(3, 1, &defaultLogger{})
+	ts = NewTimeoutSemaphore(3, 1, 1,&defaultLogger{})
 	go f(1, context.Background(), ts)
 	err = f(2, context.Background(), ts)
 	assert.Nil(t, err)

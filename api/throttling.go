@@ -18,6 +18,7 @@ package api
 
 import (
 	"context"
+	"math/rand"
 	"time"
 )
 
@@ -38,11 +39,12 @@ func (e *TimeoutSemaphoreError) Error() string {
 
 type TimeoutSemaphore struct {
 	Timeout   time.Duration
+	Delay     time.Duration
 	Semaphore chan struct{}
 	Logger    Logger
 }
 
-func NewTimeoutSemaphore(timeout int64, rateLimit int, logger Logger) *TimeoutSemaphore {
+func NewTimeoutSemaphore(timeout int64, rateLimit int, delay int, logger Logger) *TimeoutSemaphore {
 	log := logger
 
 	if log == nil {
@@ -52,6 +54,7 @@ func NewTimeoutSemaphore(timeout int64, rateLimit int, logger Logger) *TimeoutSe
 	return &TimeoutSemaphore{
 		Timeout:   time.Duration(timeout) * time.Second,
 		Semaphore: make(chan struct{}, rateLimit),
+		Delay:     time.Duration(delay) * time.Millisecond,
 		Logger:    log,
 	}
 }
@@ -65,6 +68,9 @@ func (ts *TimeoutSemaphore) Acquire(ctx context.Context) error {
 		select {
 		case ts.Semaphore <- struct{}{}:
 			ts.Logger.Info(ctx, "Acquired lock in throttling")
+			s := rand.Intn(100)
+			ts.Logger.Info(ctx, "Sleeping for %d millis before moving ahead", s)
+			time.Sleep(time.Duration(s))
 			return nil
 		case <-ctx.Done():
 			msg := "main context expired"

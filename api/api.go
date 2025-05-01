@@ -193,7 +193,7 @@ func New(apiURL string, username string,
 		log.Print("Session management is enabled.")
 	}
 
-	throttle := NewTimeoutSemaphore(defaultTimeout, rateLimit, &defaultLogger{})
+	throttle := NewTimeoutSemaphore(defaultTimeout, rateLimit, 10, &defaultLogger{})
 
 	clientImpl := &ClientIMPL{
 		apiURL:            apiURL,
