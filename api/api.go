@@ -102,14 +102,12 @@ type safeHeader struct {
 }
 
 func NewSafeHeader() *safeHeader {
-	log.Print("Return new safe header")
 	return &safeHeader{
 		header: make(http.Header),
 	}
 }
 
 func (s *safeHeader) SetHeader(h http.Header) {
-	log.Printf("Setting %+v via safe header", h)
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.header = h.Clone() // clone to avoid external mutations
@@ -119,7 +117,6 @@ func (s *safeHeader) GetHeader() http.Header {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 	h := s.header.Clone()
-	log.Printf("Returning header from GetHeader : %+v", h)
 	return h // return a safe copy
 }
 
