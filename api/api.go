@@ -96,6 +96,30 @@ type RespMeta struct {
 	Pagination PaginationInfo
 }
 
+type safeHeader struct {
+	mu     sync.RWMutex
+	header http.Header
+}
+
+func NewSafeHeader() *safeHeader {
+	return &safeHeader{
+		header: make(http.Header),
+	}
+}
+
+func (s *safeHeader) SetHeader(h http.Header) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.header = h.Clone() // clone to avoid external mutations
+}
+
+func (s *safeHeader) GetHeader() http.Header {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	h := s.header.Clone()
+	return h // return a safe copy
+}
+
 // ApiClient is PowerStore API client interface
 type Client interface {
 	Traceable
@@ -124,7 +148,7 @@ type ClientIMPL struct {
 	httpClient        *http.Client
 	defaultTimeout    int64
 	requestIDKey      ContextKey
-	customHTTPHeaders http.Header
+	customHTTPHeaders *safeHeader
 	logger            Logger
 	apiThrottle       TimeoutSemaphoreInterface
 	loginMutex        sync.Mutex
@@ -167,15 +191,16 @@ func New(apiURL string, username string,
 	throttle := NewTimeoutSemaphore(defaultTimeout, rateLimit, &defaultLogger{})
 
 	clientImpl := &ClientIMPL{
-		apiURL:         apiURL,
-		insecure:       insecure,
-		username:       username,
-		password:       password,
-		httpClient:     client,
-		defaultTimeout: defaultTimeout,
-		requestIDKey:   requestIDKey,
-		logger:         &defaultLogger{},
-		apiThrottle:    throttle,
+		apiURL:            apiURL,
+		insecure:          insecure,
+		username:          username,
+		password:          password,
+		httpClient:        client,
+		defaultTimeout:    defaultTimeout,
+		requestIDKey:      requestIDKey,
+		logger:            &defaultLogger{},
+		apiThrottle:       throttle,
+		customHTTPHeaders: NewSafeHeader(),
 	}
 
 	// Create a login session after the client is initialized
@@ -226,12 +251,12 @@ func buildError(r *http.Response) *ErrorMsg {
 
 // GetCustomHTTPHeaders method retrieves http headers
 func (c *ClientIMPL) GetCustomHTTPHeaders() http.Header {
-	return c.customHTTPHeaders
+	return c.customHTTPHeaders.GetHeader()
 }
 
 // SetCustomHTTPHeaders method register headers which will be sent with every request
 func (c *ClientIMPL) SetCustomHTTPHeaders(headers http.Header) {
-	c.customHTTPHeaders = headers
+	c.customHTTPHeaders.SetHeader(headers)
 }
 
 // SetLogger set logger for use by gopowerstore
@@ -407,7 +432,7 @@ func (c *ClientIMPL) prepareRequest(ctx context.Context, method, requestURL, tra
 	if len(c.token) != 0 {
 		req.Header.Add(dellEmcToken, c.token)
 	}
-	for key, values := range c.customHTTPHeaders {
+	for key, values := range c.customHTTPHeaders.GetHeader() {
 		for _, elem := range values {
 			req.Header.Add(key, elem)
 		}
