@@ -60,26 +60,26 @@ func (ts *TimeoutSemaphore) Acquire(ctx context.Context) error {
 	// find the min timeout between default timeout and context timeout
 	timeout := ts.Timeout
 	ctxTimeout, _ := ctx.Deadline()
-	ts.Logger.Info(ctx, "timeout value : ", timeout, time.Until(ctxTimeout))
+	ts.Logger.Info(ctx, "timeout value : ", timeout.String(), time.Until(ctxTimeout).String())
 	if time.Until(ctxTimeout) < timeout {
 		timeout = time.Until(ctxTimeout)
-		ts.Logger.Info(ctx, "using context timeout for acquire lock : ", timeout)
+		ts.Logger.Info(ctx, "using context timeout for acquire lock : ", timeout.String())
 	}
 
 	var cancelFunc func()
-	acquireCtx, cancelFunc := context.WithTimeout(ctx, ts.Timeout)
+	acquireCtx, cancelFunc := context.WithTimeout(ctx, timeout)
 	defer cancelFunc()
 	for {
 		select {
 		case ts.Semaphore <- struct{}{}:
-			ts.Logger.Debug(ctx, "acquire a lock")
+			ts.Logger.Debug(ctx, "acquired lock successfully")
 			return nil
 		case <-ctx.Done():
-			msg := "lock is acquire failed (ctx), timeout expired"
+			msg := "failed to acquire lock (ctx), timeout expired"
 			ts.Logger.Error(ctx, msg)
 			return &TimeoutSemaphoreError{msg}
 		case <-acquireCtx.Done():
-			msg := "lock is acquire failed (acquireCtx), timeout expired"
+			msg := "failed to acquire lock (acquireCtx), timeout expired"
 			ts.Logger.Error(ctx, msg)
 			return &TimeoutSemaphoreError{msg}
 		}
