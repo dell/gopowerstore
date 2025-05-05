@@ -48,4 +48,11 @@ func TestSemaphore(t *testing.T) {
 	go f(1, context.Background(), ts)
 	err = f(2, context.Background(), ts)
 	assert.Nil(t, err)
+
+	// main context timeout < default timeout function
+	ts = NewTimeoutSemaphore(2, 1, &defaultLogger{})
+	testCtx, _ := context.WithDeadline(context.Background(), time.Now().Add(1*time.Second))
+	go f(1, testCtx, ts)
+	err = f(2, testCtx, ts)
+	assert.Nil(t, err)
 }

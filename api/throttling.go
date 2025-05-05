@@ -60,6 +60,7 @@ func (ts *TimeoutSemaphore) Acquire(ctx context.Context) error {
 	// find the min timeout between default timeout and context timeout
 	timeout := ts.Timeout
 	ctxTimeout, _ := ctx.Deadline()
+	ts.Logger.Info(ctx, "timeout value : ", timeout, time.Until(ctxTimeout))
 	if time.Until(ctxTimeout) < timeout {
 		timeout = time.Until(ctxTimeout)
 		ts.Logger.Info(ctx, "using context timeout for acquire lock : ", timeout)
