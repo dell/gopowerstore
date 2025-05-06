@@ -103,6 +103,7 @@ type SafeHeader struct {
 
 func NewSafeHeader() *SafeHeader {
 	return &SafeHeader{
+		mu:     &sync.RWMutex{},
 		header: make(http.Header),
 	}
 }
