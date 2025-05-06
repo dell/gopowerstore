@@ -97,7 +97,7 @@ type RespMeta struct {
 }
 
 type SafeHeader struct {
-	mu     sync.RWMutex
+	mu     *sync.RWMutex
 	header http.Header
 }
 
