@@ -291,6 +291,7 @@ func (c *ClientIMPL) Query(
 		return meta, err
 	}
 
+	c.logger.Info(ctx, "%sAsking for LOCK for : %v\n", traceMsg, req.Method+" "+req.URL.String()+" ctx deadine : ")
 	if err := c.apiThrottle.Acquire(ctx); err != nil {
 		return meta, err
 	}
