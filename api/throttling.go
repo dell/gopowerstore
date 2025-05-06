@@ -61,10 +61,8 @@ func (ts *TimeoutSemaphore) Acquire(ctx context.Context) error {
 	timeout := ts.Timeout
 	ctxTimeout, _ := ctx.Deadline()
 	timeUntil := time.Until(ctxTimeout)
-	ts.Logger.Info(ctx, "default timeout and context timeout : ", timeout.String(), timeUntil.String())
 	if timeUntil > 0 && timeUntil < timeout {
 		timeout = timeUntil
-		ts.Logger.Info(ctx, "using context timeout for acquire lock : ", timeout.String())
 	}
 
 	var cancelFunc func()
