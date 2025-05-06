@@ -96,24 +96,24 @@ type RespMeta struct {
 	Pagination PaginationInfo
 }
 
-type safeHeader struct {
+type SafeHeader struct {
 	mu     sync.RWMutex
 	header http.Header
 }
 
-func NewSafeHeader() *safeHeader {
-	return &safeHeader{
+func NewSafeHeader() *SafeHeader {
+	return &SafeHeader{
 		header: make(http.Header),
 	}
 }
 
-func (s *safeHeader) SetHeader(h http.Header) {
+func (s *SafeHeader) SetHeader(h http.Header) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.header = h.Clone() // clone to avoid external mutations
 }
 
-func (s *safeHeader) GetHeader() http.Header {
+func (s *SafeHeader) GetHeader() http.Header {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 	h := s.header.Clone()
@@ -148,7 +148,7 @@ type ClientIMPL struct {
 	httpClient        *http.Client
 	defaultTimeout    int64
 	requestIDKey      ContextKey
-	customHTTPHeaders *safeHeader
+	customHTTPHeaders *SafeHeader
 	logger            Logger
 	apiThrottle       TimeoutSemaphoreInterface
 	loginMutex        sync.Mutex

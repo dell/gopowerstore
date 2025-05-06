@@ -51,7 +51,8 @@ func TestSemaphore(t *testing.T) {
 
 	// main context timeout < default timeout function
 	ts = NewTimeoutSemaphore(2, 1, &defaultLogger{})
-	testCtx, _ := context.WithDeadline(context.Background(), time.Now().Add(1*time.Second))
+	testCtx, cancelFunc := context.WithDeadline(context.Background(), time.Now().Add(1*time.Second))
+	defer cancelFunc()
 	go f(1, testCtx, ts)
 	err = f(2, testCtx, ts)
 	assert.Nil(t, err)
