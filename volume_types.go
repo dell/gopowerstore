@@ -201,7 +201,7 @@ type VolumeComputeDifferencesResponse struct {
 // MetaData returns the metadata headers.
 func (vc *VolumeCreate) MetaData() http.Header {
 	vc.once.Do(func() {
-		vc.metadata = make(http.Header)
+		vc.metadata = api.NewSafeHeader().GetHeader()
 	})
 	return vc.metadata
 }
