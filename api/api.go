@@ -292,6 +292,7 @@ func (c *ClientIMPL) Query(
 		return meta, err
 	}
 
+	c.logger.Info(ctx, "Requesting a lock for API : [%s %s]\n", config.Method, requestURL)
 	if err := c.apiThrottle.Acquire(ctx); err != nil {
 		return meta, err
 	}
