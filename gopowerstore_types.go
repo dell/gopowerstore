@@ -140,6 +140,11 @@ func (err *APIError) VolumeAlreadyRemovedFromVolumeGroup() bool {
 	return err.StatusCode == http.StatusUnprocessableEntity && strings.Contains(err.Message, "not part")
 }
 
+// FSCreationLimitReached returns true if API error indicate that file system creation limit has been reached
+func (err *APIError) FSCreationLimitReached() bool {
+	return err.StatusCode == http.StatusUnprocessableEntity && strings.Contains(err.Message, "limit of 125 file systems for the NAS server")
+}
+
 // NewNotFoundError returns new VolumeIsNotExistError
 func NewNotFoundError() APIError {
 	return notFoundError()
