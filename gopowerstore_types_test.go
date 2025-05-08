@@ -75,3 +75,35 @@ func TestAPIError_VolumeAlreadyRemovedFromVolumeGroup(t *testing.T) {
 	apiError.Message = "One or more volumes to be removed are not part of the volume group"
 	assert.True(t, apiError.VolumeAlreadyRemovedFromVolumeGroup())
 }
+
+func TestAPIError_FSCreationLimitReached(t *testing.T) {
+	// Case 1: Wrong status code
+	apiError := NewAPIError()
+	apiError.StatusCode = http.StatusBadRequest
+	apiError.Message = "The limit of 125 file systems for the NAS server has been reached"
+	assert.False(t, apiError.FSCreationLimitReached())
+
+	// Case 2: Correct status, but unrelated message
+	apiError = NewAPIError()
+	apiError.StatusCode = http.StatusUnprocessableEntity
+	apiError.Message = "some unrelated error message"
+	assert.False(t, apiError.FSCreationLimitReached())
+
+	// Case 3: Correct status and matching message
+	apiError = NewAPIError()
+	apiError.StatusCode = http.StatusUnprocessableEntity
+	apiError.Message = "The limit of 125 file systems for the NAS server has been reached"
+	assert.True(t, apiError.FSCreationLimitReached())
+
+	// Case 4: Correct status and message contains code
+	apiError = NewAPIError()
+	apiError.StatusCode = http.StatusUnprocessableEntity
+	apiError.Message = "New file system can not be created. The limit of 125 file systems for the NAS server TEST has been reached."
+	assert.True(t, apiError.FSCreationLimitReached())
+
+	// Case 5: Leading/trailing whitespace (optional robustness)
+	apiError = NewAPIError()
+	apiError.StatusCode = http.StatusUnprocessableEntity
+	apiError.Message = "   The limit of 125 file systems for the NAS server   "
+	assert.True(t, apiError.FSCreationLimitReached())
+}
