@@ -20,6 +20,7 @@ package gopowerstore
 
 import (
 	"net/http"
+	"regexp"
 	"strings"
 
 	"github.com/dell/gopowerstore/api"
@@ -142,7 +143,8 @@ func (err *APIError) VolumeAlreadyRemovedFromVolumeGroup() bool {
 
 // FSCreationLimitReached returns true if API error indicate that file system creation limit has been reached
 func (err *APIError) FSCreationLimitReached() bool {
-	return err.StatusCode == http.StatusUnprocessableEntity && strings.Contains(err.Message, "limit of 125 file systems for the NAS server")
+	re := regexp.MustCompile(`limit of \d+ file systems for the NAS server`)
+	return err.StatusCode == http.StatusUnprocessableEntity && re.MatchString(err.Message)
 }
 
 // NewNotFoundError returns new VolumeIsNotExistError
