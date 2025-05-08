@@ -29,6 +29,9 @@ import (
 // RequestConfig represents options for request
 type RequestConfig api.RequestConfig
 
+// naslimitRegex is used to check if the error message contains a limit of file systems for the NAS server
+var naslimitRegex = regexp.MustCompile(`limit of \d+ file systems for the NAS server`)
+
 // RenderRequestConfig returns internal struct with request config
 func (rc RequestConfig) RenderRequestConfig() api.RequestConfig {
 	return api.RequestConfig(rc)
@@ -143,8 +146,7 @@ func (err *APIError) VolumeAlreadyRemovedFromVolumeGroup() bool {
 
 // FSCreationLimitReached returns true if API error indicate that file system creation limit has been reached
 func (err *APIError) FSCreationLimitReached() bool {
-	re := regexp.MustCompile(`limit of \d+ file systems for the NAS server`)
-	return err.StatusCode == http.StatusUnprocessableEntity && re.MatchString(err.Message)
+	return err.StatusCode == http.StatusUnprocessableEntity && naslimitRegex.MatchString(err.Message)
 }
 
 // NewNotFoundError returns new VolumeIsNotExistError
