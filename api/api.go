@@ -176,7 +176,7 @@ func New(apiURL string, username string,
 			Transport: &http.Transport{
 				TLSClientConfig: &tls.Config{
 					InsecureSkipVerify: insecure, // #nosec G402
-					CipherSuites:       GetSecuredCipherSuites()
+					CipherSuites: GetSecuredCipherSuites(),
 				},
 			},
 		}
