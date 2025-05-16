@@ -170,30 +170,30 @@ func New(apiURL string, username string,
 			"Missing endpoint, username, or password param")
 	}
 
-	var client *http.Client
+	var client.http = &http.Client{}
 	if insecure {
-		client = &http.Client{
-			Transport: &http.Transport{
-				TLSClientConfig: &tls.Config{
-					InsecureSkipVerify: insecure, // #nosec G402
-					CipherSuites: GetSecuredCipherSuites(),
-				},
+		client.http.Transport = &http.Transport{
+			TLSClientConfig: &tls.Config{
+				InsecureSkipVerify: true, // #nosec,G402
+				MinVersion:         tls.VersionTLS12,
+				MaxVersion:         tls.VersionTLS13,
+				CipherSuites:       GetSecuredCipherSuites(),
 			},
 		}
 	} else {
-		pool, err := systemCertPoolFunc()
-		if err != nil {
-			return nil, errSysCerts
-		}
+		pool, err := x509.SystemCertPool()
+			if err != nil {
+				return nil, err
+			}
 		client.http.Transport = &http.Transport{
-			TLSClientConfig: &tls.Config{
+			TLSClientConfig: &tls.Config{ //nolint:gosec,G402
 				RootCAs:            pool,
 				InsecureSkipVerify: false,
-				CipherSuites:       GetSecuredCipherSuites(),
 				MinVersion:         tls.VersionTLS12,
 				MaxVersion:         tls.VersionTLS13,
-			},
-		}
+				CipherSuites:       GetSecuredCipherSuites(),
+				},
+			}
 	}
 
 	// Set cookie jar to enable session management via auth_cookie
