@@ -176,7 +176,18 @@ func New(apiURL string, username string,
 			},
 		}
 	} else {
-		client = &http.Client{}
+		pool, err := systemCertPoolFunc()
+		if err != nil {
+			return nil, errSysCerts
+		}
+		c.http.Transport = &http.Transport{
+			TLSClientConfig: &tls.Config{
+				RootCAs:            pool,
+				InsecureSkipVerify: false,
+				CipherSuites:       util.GetSecuredCipherSuites(),
+				MinVersion:         tls.VersionTLS12,
+			},
+		}
 	}
 
 	// Set cookie jar to enable session management via auth_cookie
