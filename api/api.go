@@ -23,6 +23,7 @@ import (
 	"context"
 	"crypto/tls"
 	"encoding/json"
+	"crypto/x509"
 	"errors"
 	"fmt"
 	"io"
@@ -41,8 +42,11 @@ import (
 	"time"
 )
 
-var debug = false
-
+var(
+	debug = false
+	systemCertPoolFunc = x509.SystemCertPool
+	errSysCerts        = errors.New("unable to initialize certificate pool from system")
+)
 const (
 	paginationHeader = "content-range"
 	dellEmcToken     = "DELL-EMC-TOKEN" // #nosec G101
@@ -172,6 +176,7 @@ func New(apiURL string, username string,
 			Transport: &http.Transport{
 				TLSClientConfig: &tls.Config{
 					InsecureSkipVerify: insecure, // #nosec G402
+					CipherSuites:       GetSecuredCipherSuites()
 				},
 			},
 		}
@@ -180,12 +185,13 @@ func New(apiURL string, username string,
 		if err != nil {
 			return nil, errSysCerts
 		}
-		c.http.Transport = &http.Transport{
+		client.http.Transport = &http.Transport{
 			TLSClientConfig: &tls.Config{
 				RootCAs:            pool,
 				InsecureSkipVerify: false,
-				CipherSuites:       util.GetSecuredCipherSuites(),
+				CipherSuites:       GetSecuredCipherSuites(),
 				MinVersion:         tls.VersionTLS12,
+				MaxVersion:         tls.VersionTLS13,
 			},
 		}
 	}
@@ -526,4 +532,13 @@ var sensitiveDataRegexp = regexp.MustCompile(
 
 func replaceSensitiveHeaderInfo(dump []byte) string {
 	return sensitiveDataRegexp.ReplaceAllString(string(dump), "$1$3******")
+}
+
+// GetSecuredCipherSuites returns a set of secure cipher suites.
+func GetSecuredCipherSuites() (suites []uint16) {
+	securedSuite := tls.CipherSuites()
+	for _, v := range securedSuite {
+		suites = append(suites, v.ID)
+	}
+	return suites
 }
