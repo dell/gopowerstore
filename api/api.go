@@ -183,6 +183,7 @@ func New(apiURL string, username string,
 	} else {
 		pool, err := systemCertPoolFunc()
 		if err != nil {
+			log.Fatalf("failed to get system cert pool: %v", err)
 			return nil, fmt.Errorf("failed to get system cert pool: %w", err)
 		}
 		client = &http.Client{
