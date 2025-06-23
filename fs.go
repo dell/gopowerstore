@@ -58,7 +58,7 @@ func (c *ClientIMPL) GetNASServers(ctx context.Context) ([]NAS, error) {
 			log.Errorf("Couldn't find the array version %s", err.Error())
 		}
 
-		fields = GetNASFields(arrayVerion)
+		fields = GetNASServerFields(arrayVerion)
 		qp = c.APIClient().QueryParams().Select(fields...)
 
 		qp.Offset(offset).Limit(paginationDefaultPageSize)
@@ -410,6 +410,17 @@ func GetNASFields(arrayVerion float32) []string {
 
 	if arrayVerion > 3.6 {
 		fields = append(fields, "is_dr_test")
+	}
+
+	return fields
+}
+
+func GetNASServerFields(arrayVerion float32) []string {
+	var fields []string
+	fields = []string{"id","is_nfsv3_enabled", "is_nfsv4_enabled"} "current_preferred_IPv6_interface_id", "nfs_servers", "file_systems", "health_details", "preferred_node_id", "default_unix_user", "default_windows_user", "current_unix_directory_service", "is_username_translation_enabled", "is_auto_user_mapping_enabled", "production_IPv4_interface_id", "production_IPv6_interface_id", "bac}
+
+	if arrayVerion > 3.6 {
+		fields = append(fields, "")
 	}
 
 	return fields
