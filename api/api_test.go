@@ -503,7 +503,6 @@ func TestClient_Query_DebugBlock(t *testing.T) {
 
 	const mockTokenHeaderValue = "mock-token-value"
 
-
 	httpmock.RegisterResponder("POST", fmt.Sprintf("%s/%s/%s/%s?foo=bar", apiURL, testURL, id, action),
 		func(_ *http.Request) (*http.Response, error) {
 			resp := httpmock.NewStringResponse(200, `{"name": "Foo"}`)
