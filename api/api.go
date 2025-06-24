@@ -22,6 +22,7 @@ import (
 	"bytes"
 	"context"
 	"crypto/tls"
+	"crypto/x509"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -41,7 +42,11 @@ import (
 	"time"
 )
 
-var debug = false
+var (
+	debug              = false
+	systemCertPoolFunc = x509.SystemCertPool
+	errSysCerts        = errors.New("unable to initialize certificate pool from system")
+)
 
 const (
 	paginationHeader = "content-range"
@@ -171,12 +176,26 @@ func New(apiURL string, username string,
 		client = &http.Client{
 			Transport: &http.Transport{
 				TLSClientConfig: &tls.Config{
-					InsecureSkipVerify: insecure, // #nosec G402
+					InsecureSkipVerify: true, // #nosec G402
 				},
 			},
 		}
 	} else {
-		client = &http.Client{}
+		pool, err := systemCertPoolFunc()
+		if err != nil {
+			log.Fatalf("failed to get system cert pool: %v", err)
+			return nil, fmt.Errorf("failed to get system cert pool: %w", err)
+		}
+		client = &http.Client{
+			Transport: &http.Transport{
+				TLSClientConfig: &tls.Config{
+					RootCAs:            pool,
+					InsecureSkipVerify: false,
+					CipherSuites:       GetSecuredCipherSuites(),
+					MinVersion:         tls.VersionTLS12,
+				},
+			},
+		}
 	}
 
 	// Set cookie jar to enable session management via auth_cookie
@@ -515,4 +534,13 @@ var sensitiveDataRegexp = regexp.MustCompile(
 
 func replaceSensitiveHeaderInfo(dump []byte) string {
 	return sensitiveDataRegexp.ReplaceAllString(string(dump), "$1$3******")
+}
+
+// GetSecuredCipherSuites returns a set of secure cipher suites.
+func GetSecuredCipherSuites() (suites []uint16) {
+	securedSuite := tls.CipherSuites()
+	for _, v := range securedSuite {
+		suites = append(suites, v.ID)
+	}
+	return suites
 }
