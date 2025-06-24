@@ -417,7 +417,7 @@ func GetNASFields(arrayVerion float32) []string {
 
 func GetNASServerFields(arrayVerion float32) []string {
 	var fields []string
-	fields = []string{"id","is_nfsv3_enabled", "is_nfsv4_enabled"}
+	fields = []string{"id", "is_nfsv3_enabled", "is_nfsv4_enabled"}
 
 	if arrayVerion > 3.6 {
 		fields = append(fields, "")
