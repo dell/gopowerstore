@@ -37,6 +37,7 @@ const (
 var (
 	nasID = "5e8d8e8e-671b-336f-db4e-cee0fbdc981e"
 	fsID  = "3765da74-28a7-49db-a693-10cec1de91f8"
+	fsID2 = "3765da74-28a7-49db-a693-10cec1de91f9"
 )
 
 func TestClientIMPL_GetNASByName(t *testing.T) {
@@ -57,6 +58,18 @@ func TestClientIMPL_GetNASByName(t *testing.T) {
 	assert.NotNil(t, err)
 	apiError := err.(APIError)
 	assert.True(t, apiError.NotFound())
+}
+
+func TestClientIMPL_ListFS(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	respData := fmt.Sprintf(`[{"id": "%s"}, {"id": "%s"}]`, fsID, fsID2)
+	httpmock.RegisterResponder("GET", fsMockURL,
+		httpmock.NewStringResponder(200, respData))
+	fileSystems, err := C.ListFS(context.Background())
+	assert.Nil(t, err)
+	assert.Len(t, fileSystems, 2)
+	assert.Equal(t, fsID, fileSystems[0].ID)
 }
 
 func TestClientIMPL_GetFSByName(t *testing.T) {
