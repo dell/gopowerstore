@@ -511,3 +511,15 @@ func TestClient_Query_DebugBlock(t *testing.T) {
 	assert.Equal(t, "Foo", resp.Name)
 	assert.Equal(t, mockTokenHeaderValue, c.token)
 }
+
+func TestMockClient(t *testing.T) {
+	// Test MockClient with valid arguments
+	defaultTimeout := int64(120)
+	rateLimit := 60
+	requestIDKey := ContextKey("key")
+	client := MockClient(defaultTimeout, rateLimit, requestIDKey)
+	assert.NotNil(t, client)
+	assert.NotNil(t, client.apiThrottle)
+	assert.NotNil(t, client.httpClient)
+	assert.NotNil(t, client.logger)
+}

@@ -28,7 +28,7 @@ import (
 )
 
 const (
-	softwareInstalledMockURL = APIMockURL + apiSoftwareInstalledURL
+	softwareInstalledMockURL = apiSoftwareInstalledURL
 )
 
 var (

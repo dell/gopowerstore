@@ -28,7 +28,7 @@ import (
 )
 
 const (
-	fcPortMockURL = APIMockURL + apiFCPortURL
+	fcPortMockURL = apiFCPortURL
 )
 
 var (

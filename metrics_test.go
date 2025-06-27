@@ -30,8 +30,8 @@ import (
 )
 
 const (
-	metricsMockURL        = APIMockURL + metricsURL
-	metricsMockVolMirrURL = APIMockURL + mirrorURL
+	metricsMockURL        = metricsURL
+	metricsMockVolMirrURL = mirrorURL
 	volumeID              = "4ffcd8e8-2a93-49ed-b9b3-2e68c8ddc5e4"
 )
 

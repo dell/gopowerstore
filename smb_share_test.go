@@ -27,9 +27,9 @@ import (
 
 const (
 	smbShareID            = "6732e829-29c9-7fed-686a-ee23cab1d298"
-	smbShareMockURL       = APIMockURL + smbShareURL
-	smbShareSetACLMockURL = APIMockURL + smbShareURL + "/" + smbShareID + smbShareSetACLURL
-	smbShareGetACLMockURL = APIMockURL + smbShareURL + "/" + smbShareID + smbShareGetACLURL
+	smbShareMockURL       = smbShareURL
+	smbShareSetACLMockURL = smbShareURL + "/" + smbShareID + smbShareSetACLURL
+	smbShareGetACLMockURL = smbShareURL + "/" + smbShareID + smbShareGetACLURL
 )
 
 func TestClientIMPL_CreateSMBShare(t *testing.T) {

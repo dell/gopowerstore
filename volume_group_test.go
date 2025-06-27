@@ -28,8 +28,8 @@ import (
 
 const (
 	volumeGroupID              = "c4e4f58e-cdc2-4b75-a81a-685543b1420f"
-	volumeGroupMockURL         = APIMockURL + volumeGroupURL
-	volumeGroupSnapshotMockURL = APIMockURL + volumeGroupURL + "/" + volumeGroupID + snapshotURL
+	volumeGroupMockURL         = volumeGroupURL
+	volumeGroupSnapshotMockURL = volumeGroupURL + "/" + volumeGroupID + snapshotURL
 
 	volGroupSnapID  = "1966782b-60c9-40e2-a1ee-9b2b8f6b98e7"
 	volGroupSnapID2 = "34380c29-2203-4490-aeb7-2853b9a85075"

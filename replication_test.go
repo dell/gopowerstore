@@ -26,9 +26,9 @@ import (
 )
 
 const (
-	policyMockURL             = APIMockURL + policyURL
-	replicationRuleMockURL    = APIMockURL + replicationRuleURL
-	replicationSessionMockURL = APIMockURL + replicationSessionURL
+	policyMockURL             = policyURL
+	replicationRuleMockURL    = replicationRuleURL
+	replicationSessionMockURL = replicationSessionURL
 )
 
 var (

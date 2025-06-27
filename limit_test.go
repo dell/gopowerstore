@@ -28,11 +28,11 @@ import (
 	"github.com/jarcoal/httpmock"
 )
 
-const limitMockURL = APIMockURL + limitURL
+const limitMockURL = limitURL
 
 func TestClientIMPL_GetMaxVolumeSize(t *testing.T) {
 	options := NewClientOptions()
-	client, _ := api.New(APIMockURL, "admin", "Password", options.Insecure(), options.DefaultTimeout(), options.RateLimit(), options.RequestIDKey())
+	client := api.MockClient(options.DefaultTimeout(), options.RateLimit(), options.RequestIDKey())
 
 	type args struct {
 		ctx context.Context

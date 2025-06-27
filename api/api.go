@@ -229,6 +229,23 @@ func New(apiURL string, username string,
 	return clientImpl, nil
 }
 
+// MockClient returns default client for testing purposes
+func MockClient(defaultTimeout int64, rateLimit int, requestIDKey ContextKey,
+) *ClientIMPL {
+	debug, _ = strconv.ParseBool(os.Getenv("GOPOWERSTORE_DEBUG"))
+	client := &http.Client{}
+	throttle := NewTimeoutSemaphore(defaultTimeout, rateLimit, &defaultLogger{})
+	clientImpl := &ClientIMPL{
+		httpClient:        client,
+		defaultTimeout:    defaultTimeout,
+		requestIDKey:      requestIDKey,
+		logger:            &defaultLogger{},
+		apiThrottle:       throttle,
+		customHTTPHeaders: NewSafeHeader(),
+	}
+	return clientImpl
+}
+
 const errorSeverity = "Error"
 
 type apiErrorMsg struct {

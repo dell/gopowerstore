@@ -28,10 +28,10 @@ import (
 )
 
 const (
-	nasMockURL                  = APIMockURL + nasURL
-	fsMockURL                   = APIMockURL + fsURL
-	nfsMockServerURL            = APIMockURL + nfsServerURL
-	apiSoftwareInstalledMockURL = APIMockURL + apiSoftwareInstalledURL
+	nasMockURL                  = nasURL
+	fsMockURL                   = fsURL
+	nfsMockServerURL            = nfsServerURL
+	apiSoftwareInstalledMockURL = apiSoftwareInstalledURL
 )
 
 var (

@@ -30,8 +30,8 @@ import (
 )
 
 const (
-	volumeMockURL    = APIMockURL + volumeURL
-	applianceMockURL = APIMockURL + applianceURL
+	volumeMockURL    = volumeURL
+	applianceMockURL = applianceURL
 )
 
 var (
