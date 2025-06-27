@@ -175,6 +175,31 @@ func (c *ClientIMPL) DeleteNAS(ctx context.Context, id string) (resp EmptyRespon
 	return resp, WrapErr(err)
 }
 
+// ListFS returns a list of Filesystems
+func (c *ClientIMPL) ListFS(ctx context.Context) (resp []FileSystem, err error) {
+	err = c.readPaginatedData(func(offset int) (api.RespMeta, error) {
+		var page []FileSystem
+		qp := getFSDefaultQueryParams(c)
+		qp.RawArg("filesystem_type", fmt.Sprintf("not.eq.%s", FileSystemTypeEnumSnapshot))
+		qp.Order("name")
+		qp.Offset(offset).Limit(paginationDefaultPageSize)
+		meta, err := c.APIClient().Query(
+			ctx,
+			RequestConfig{
+				Method:      "GET",
+				Endpoint:    fsURL,
+				QueryParams: qp,
+			},
+			&page)
+		err = WrapErr(err)
+		if err == nil {
+			resp = append(resp, page...)
+		}
+		return meta, err
+	})
+	return resp, err
+}
+
 // GetFSByName query and return specific FS by name
 func (c *ClientIMPL) GetFSByName(ctx context.Context, name string) (resp FileSystem, err error) {
 	var fsList []FileSystem
