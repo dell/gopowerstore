@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2020-2022 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2020-2025 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -173,6 +173,31 @@ func (c *ClientIMPL) DeleteNAS(ctx context.Context, id string) (resp EmptyRespon
 		},
 		&resp)
 	return resp, WrapErr(err)
+}
+
+// ListFS returns a list of Filesystems
+func (c *ClientIMPL) ListFS(ctx context.Context) (resp []FileSystem, err error) {
+	err = c.readPaginatedData(func(offset int) (api.RespMeta, error) {
+		var page []FileSystem
+		qp := getFSDefaultQueryParams(c)
+		qp.RawArg("filesystem_type", fmt.Sprintf("not.eq.%s", FileSystemTypeEnumSnapshot))
+		qp.Order("name")
+		qp.Offset(offset).Limit(paginationDefaultPageSize)
+		meta, err := c.APIClient().Query(
+			ctx,
+			RequestConfig{
+				Method:      "GET",
+				Endpoint:    fsURL,
+				QueryParams: qp,
+			},
+			&page)
+		err = WrapErr(err)
+		if err == nil {
+			resp = append(resp, page...)
+		}
+		return meta, err
+	})
+	return resp, err
 }
 
 // GetFSByName query and return specific FS by name
