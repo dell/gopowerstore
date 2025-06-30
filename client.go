@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2020-2024 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2020-2025 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -93,6 +93,7 @@ type Client interface {
 	GetNAS(ctx context.Context, id string) (NAS, error)
 	GetNASByName(ctx context.Context, name string) (NAS, error)
 	GetNfsServer(ctx context.Context, id string) (NFSServerInstance, error)
+	ListFS(ctx context.Context) ([]FileSystem, error)
 	GetFSByName(ctx context.Context, name string) (FileSystem, error)
 	GetFS(ctx context.Context, id string) (FileSystem, error)
 	GetFileInterface(ctx context.Context, id string) (FileInterface, error)
