@@ -28,7 +28,7 @@ import (
 )
 
 const (
-	snapshotRuleMockURL = APIMockURL + snapshotRuleURL
+	snapshotRuleMockURL = snapshotRuleURL
 )
 
 var (

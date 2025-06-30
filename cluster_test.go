@@ -26,8 +26,8 @@ import (
 )
 
 const (
-	remoteSystemMockURL = APIMockURL + remoteSystemURL
-	clusterMockURL      = APIMockURL + clusterURL
+	remoteSystemMockURL = remoteSystemURL
+	clusterMockURL      = clusterURL
 )
 
 func TestClientIMPL_GetAllRemoteSystems(t *testing.T) {

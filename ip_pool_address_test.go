@@ -28,7 +28,7 @@ import (
 )
 
 const (
-	ipPoolAddressMockURL = APIMockURL + apiPoolAddressURL
+	ipPoolAddressMockURL = apiPoolAddressURL
 )
 
 func TestClientIMPL_GetIPPoolAddress(t *testing.T) {

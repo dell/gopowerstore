@@ -28,9 +28,9 @@ import (
 )
 
 const (
-	nfsMockURL       = APIMockURL + nfsURL
-	nfsServerMockURL = APIMockURL + nfsServerURL
-	fileMockURL      = APIMockURL + fileInterfaceURL
+	nfsMockURL       = nfsURL
+	nfsServerMockURL = nfsServerURL
+	fileMockURL      = fileInterfaceURL
 )
 
 var (

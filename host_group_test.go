@@ -28,7 +28,7 @@ import (
 )
 
 const (
-	hostGroupMockURL = APIMockURL + hostGroupURL
+	hostGroupMockURL = hostGroupURL
 )
 
 var (

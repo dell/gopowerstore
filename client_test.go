@@ -29,15 +29,8 @@ import (
 
 var C Client
 
-const APIMockURL = "https://mock-server/api/rest/"
-
 func initClient() {
-	clientOptions := NewClientOptions()
-	C, _ = NewClientWithArgs(
-		APIMockURL,
-		"admin",
-		"Password",
-		clientOptions)
+	C = NewMockClient(NewClientOptions())
 }
 
 func init() {

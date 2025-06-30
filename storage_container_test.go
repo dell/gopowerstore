@@ -28,7 +28,7 @@ import (
 )
 
 const (
-	storageContainerMockURL = APIMockURL + storageContainerURL
+	storageContainerMockURL = storageContainerURL
 )
 
 var (

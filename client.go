@@ -306,3 +306,9 @@ func NewClientWithArgs(
 
 	return &ClientIMPL{client}, nil
 }
+
+func NewMockClient(options *ClientOptions) Client {
+	client := api.MockClient(options.DefaultTimeout(), options.RateLimit(), options.RequestIDKey())
+
+	return &ClientIMPL{client}
+}

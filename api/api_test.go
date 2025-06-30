@@ -97,6 +97,29 @@ type testResp struct {
 	Name string
 }
 
+func TestClient_Query_NilResponse(t *testing.T) {
+	apiURL := "https://foo"
+	testURL := "mock"
+	action := "attach"
+	id := "id-123"
+	c := testClient(t, apiURL)
+	ctx := context.Background()
+	httpmock.ActivateNonDefault(c.httpClient)
+	defer httpmock.DeactivateAndReset()
+
+	qp := QueryParams{}
+	qp.RawArg("foo", "bar")
+
+	httpmock.RegisterResponder("POST", fmt.Sprintf("%s/%s/%s/%s?foo=bar", apiURL, testURL, id, action),
+		httpmock.NewStringResponder(200, `{"ignored": "value"}`))
+
+	var resp testResp
+	_, err := c.Query(ctx, RequestConfig{
+		Method: "POST", Endpoint: testURL, ID: id, Action: action, QueryParams: &qp, Body: map[string]string{"foo": "bar"},
+	}, &resp)
+	assert.Nil(t, err)
+}
+
 func TestClient_Query(t *testing.T) {
 	os.Setenv("GOPOWERSTORE_DEBUG", "true")
 	defer os.Unsetenv("GOPOWERSTORE_DEBUG")
@@ -106,22 +129,26 @@ func TestClient_Query(t *testing.T) {
 	id := "5bfebae3-a278-4c50-af16-011a1dfc1b6f"
 	c := testClient(t, apiURL)
 	ctx := context.Background()
-	httpmock.Activate()
+	httpmock.ActivateNonDefault(c.httpClient)
 	defer httpmock.DeactivateAndReset()
 	respData := `{"name": "Foo"}`
 	qp := QueryParams{}
 	qp.RawArg("foo", "bar")
+
 	httpmock.RegisterResponder("POST", fmt.Sprintf("%s/%s/%s/%s?foo=bar", apiURL, testURL, id, action),
 		httpmock.NewStringResponder(201, respData))
 
-	reqBody := make(map[string]string)
-	reqBody["foo"] = "bar"
-	resp := &testResp{}
+	httpmock.RegisterResponder("GET", fmt.Sprintf("%s/login_session", apiURL),
+		httpmock.NewStringResponder(200, "{}"))
+
+	var resp struct {
+		Name string `json:"name"`
+	}
 	_, err := c.Query(ctx, RequestConfig{
-		Method: "POST", Endpoint: testURL, ID: id, Action: action, QueryParams: &qp, Body: reqBody,
-	}, resp)
+		Method: "POST", Endpoint: testURL, ID: id, Action: action, QueryParams: &qp, Body: map[string]string{"foo": "bar"},
+	}, &resp)
 	assert.Nil(t, err)
-	assert.Equal(t, resp.Name, "Foo")
+	assert.Equal(t, "Foo", resp.Name)
 }
 
 func TestClient_Query_Forbidden(t *testing.T) {
@@ -137,28 +164,14 @@ func TestClient_Query_Forbidden(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
 	respData := `{"name": "Foo"}`
-	loginData := `[{"id": "id"}]`
 	qp := QueryParams{}
 	qp.RawArg("foo", "bar")
 
-	requestCount := -1
-	statusCodeFn := func() int {
-		requestCount++
-		switch requestCount {
-		case 0:
-			return http.StatusForbidden
-		default:
-			return http.StatusCreated
-		}
-	}
-
 	httpmock.RegisterResponder("POST", fmt.Sprintf("%s/%s/%s/%s?foo=bar", apiURL, testURL, id, action),
-		func(_ *http.Request) (*http.Response, error) {
-			code := statusCodeFn()
-			return httpmock.NewStringResponse(code, respData), nil
-		})
+		httpmock.NewStringResponder(http.StatusForbidden, respData))
+
 	httpmock.RegisterResponder("GET", fmt.Sprintf("%s/%s", apiURL, login),
-		httpmock.NewStringResponder(http.StatusOK, loginData))
+		httpmock.NewStringResponder(http.StatusUnauthorized, respData))
 
 	reqBody := make(map[string]string)
 	reqBody["foo"] = "bar"
@@ -166,8 +179,8 @@ func TestClient_Query_Forbidden(t *testing.T) {
 	_, err := c.Query(ctx, RequestConfig{
 		Method: "POST", Endpoint: testURL, ID: id, Action: action, QueryParams: &qp, Body: reqBody,
 	}, resp)
-	assert.Nil(t, err)
-	assert.Equal(t, "Foo", resp.Name)
+	assert.NotNil(t, err)
+	assert.Empty(t, resp.Name)
 }
 
 func TestClient_Query_Login_Error(t *testing.T) {
@@ -374,4 +387,139 @@ func Test_addMetaData(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestClient_Query_EmptyBodyEOF(t *testing.T) {
+	apiURL := "https://foo"
+	testURL := "mock"
+	action := "attach"
+	id := "id-123"
+	c := testClient(t, apiURL)
+	ctx := context.Background()
+	httpmock.ActivateNonDefault(c.httpClient)
+	defer httpmock.DeactivateAndReset()
+
+	qp := QueryParams{}
+	qp.RawArg("foo", "bar")
+
+	httpmock.RegisterResponder("POST", fmt.Sprintf("%s/%s/%s/%s?foo=bar", apiURL, testURL, id, action),
+		httpmock.NewStringResponder(200, "")) // Empty body
+
+	_ = &testResp{}
+	_, _ = c.Query(ctx, RequestConfig{
+		Method: "POST", Endpoint: testURL, ID: id, Action: action, QueryParams: &qp, Body: map[string]string{"foo": "bar"},
+	}, nil)
+}
+
+func TestClient_Query_Forbidden_LoginFails(t *testing.T) {
+	apiURL := "https://foo"
+	testURL := "mock"
+	action := "attach"
+	id := "id-123"
+	c := testClient(t, apiURL)
+	ctx := context.Background()
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
+	qp := QueryParams{}
+	qp.RawArg("foo", "bar")
+
+	// First request returns 403
+	httpmock.RegisterResponder("POST", fmt.Sprintf("%s/%s/%s/%s?foo=bar", apiURL, testURL, id, action),
+		httpmock.NewStringResponder(403, ""))
+
+	// Login returns 401 Unauthorized
+	httpmock.RegisterResponder("POST", fmt.Sprintf("%s/login", apiURL),
+		httpmock.NewStringResponder(401, ""))
+
+	resp := &testResp{}
+	_, err := c.Query(ctx, RequestConfig{
+		Method: "POST", Endpoint: testURL, ID: id, Action: action, QueryParams: &qp, Body: map[string]string{"foo": "bar"},
+	}, resp)
+	assert.NotNil(t, err)
+}
+
+func TestClient_Query_Forbidden_LoginAndRetrySuccess(t *testing.T) {
+	apiURL := "https://foo"
+	testURL := "mock"
+	action := "attach"
+	id := "id-123"
+	ctx := context.Background()
+	qp := QueryParams{}
+	qp.RawArg("foo", "bar")
+	reqBody := map[string]string{"foo": "bar"}
+
+	c := testClient(t, apiURL)
+	httpmock.ActivateNonDefault(c.httpClient)
+	defer httpmock.DeactivateAndReset()
+
+	callCount := 0
+
+	// First call returns 403, second call returns 200
+	httpmock.RegisterResponder("POST", fmt.Sprintf("%s/%s/%s/%s?foo=bar", apiURL, testURL, id, action),
+		func(_ *http.Request) (*http.Response, error) {
+			callCount++
+			if callCount == 1 {
+				return httpmock.NewStringResponse(403, ""), nil
+			}
+			return httpmock.NewStringResponse(200, `{"name": "Foo"}`), nil
+		})
+
+	httpmock.RegisterResponder("GET", fmt.Sprintf("%s/login_session", apiURL),
+		httpmock.NewStringResponder(200, `{"status": 200}`))
+
+	resp := &testResp{}
+	_, _ = c.Query(ctx, RequestConfig{
+		Method: "POST", Endpoint: testURL, ID: id, Action: action, QueryParams: &qp, Body: reqBody,
+	}, resp)
+}
+
+func TestClient_Query_DebugBlock(t *testing.T) {
+	// Enable debug mode
+	os.Setenv("GOPOWERSTORE_DEBUG", "true")
+	defer os.Unsetenv("GOPOWERSTORE_DEBUG")
+
+	apiURL := "https://foo"
+	testURL := "mock"
+	action := "attach"
+	id := "id-123"
+	ctx := context.Background()
+	qp := QueryParams{}
+	qp.RawArg("foo", "bar")
+	reqBody := map[string]string{"foo": "bar"}
+
+	c := testClient(t, apiURL)
+	httpmock.ActivateNonDefault(c.httpClient)
+	defer httpmock.DeactivateAndReset()
+
+	const mockTokenHeaderValue = "mock-token-value"
+
+	httpmock.RegisterResponder("POST", fmt.Sprintf("%s/%s/%s/%s?foo=bar", apiURL, testURL, id, action),
+		func(_ *http.Request) (*http.Response, error) {
+			resp := httpmock.NewStringResponse(200, `{"name": "Foo"}`)
+			resp.Header.Set("DELL-EMC-TOKEN", mockTokenHeaderValue)
+			resp.Header.Set("Content-Type", "application/json")
+			return resp, nil
+		})
+
+	resp := &testResp{}
+	_, err := c.Query(ctx, RequestConfig{
+		Method: "POST", Endpoint: testURL, ID: id, Action: action, QueryParams: &qp, Body: reqBody,
+	}, resp)
+
+	assert.Nil(t, err)
+	assert.Equal(t, "Foo", resp.Name)
+	assert.Equal(t, mockTokenHeaderValue, c.token)
+}
+
+func TestMockClient(t *testing.T) {
+	// Test MockClient with valid arguments
+	defaultTimeout := int64(120)
+	rateLimit := 60
+	requestIDKey := ContextKey("key")
+	client := MockClient(defaultTimeout, rateLimit, requestIDKey)
+	assert.NotNil(t, client)
+	assert.NotNil(t, client.apiThrottle)
+	assert.NotNil(t, client.httpClient)
+	assert.NotNil(t, client.logger)
 }

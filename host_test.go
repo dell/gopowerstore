@@ -28,8 +28,8 @@ import (
 )
 
 const (
-	hostMockURL        = APIMockURL + hostURL
-	hostMappingMockURL = APIMockURL + hostMappingURL
+	hostMockURL        = hostURL
+	hostMappingMockURL = hostMappingURL
 )
 
 var (
