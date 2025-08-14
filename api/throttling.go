@@ -48,9 +48,9 @@ func NewTimeoutSemaphore(timeout int64, rateLimit int, logger Logger) *TimeoutSe
 	if log == nil {
 		log = &defaultLogger{}
 	}
-	logger.Info(context.Background(), "Bharath - NewTimeoutSemaphore: %d, %d", timeout, time.Duration(timeout)*time.Second)
+	logger.Info(context.Background(), "Bharath - NewTimeoutSemaphore: %d, %d", timeout, time.Duration(timeout))
 	return &TimeoutSemaphore{
-		Timeout:   time.Duration(timeout) * time.Second,
+		Timeout:   time.Duration(timeout),
 		Semaphore: make(chan struct{}, rateLimit),
 		Logger:    log,
 	}
@@ -69,7 +69,7 @@ func (ts *TimeoutSemaphore) Acquire(ctx context.Context) error {
 	}
 
 	var cancelFunc func()
-	acquireCtx, cancelFunc := context.WithTimeout(ctx, t)
+	acquireCtx, cancelFunc := context.WithTimeout(ctx, t*time.Second)
 	defer cancelFunc()
 	for {
 		select {
