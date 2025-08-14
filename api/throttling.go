@@ -57,19 +57,18 @@ func NewTimeoutSemaphore(timeout int64, rateLimit int, logger Logger) *TimeoutSe
 }
 
 func (ts *TimeoutSemaphore) Acquire(ctx context.Context) error {
-
-	var t time.Duration = ts.Timeout
 	// find the min timeout between default timeout and context timeout
+	var t time.Duration = ts.Timeout
 	if ctxTimeout, ok := ctx.Deadline(); ok {
 		ctxTimeRemaining := time.Until(ctxTimeout)
 		ts.Logger.Info(ctx, "context timeout: %s, default timeout: %s", ctxTimeRemaining.String(), ts.Timeout.String())
-		if ctxTimeRemaining < t {
+		if ctxTimeRemaining > 0 && ctxTimeRemaining < t {
 			t = ctxTimeRemaining
 		}
 	}
 
 	var cancelFunc func()
-	acquireCtx, cancelFunc := context.WithTimeout(ctx, t*time.Second)
+	acquireCtx, cancelFunc := context.WithTimeout(ctx, t)
 	defer cancelFunc()
 	for {
 		select {
