@@ -311,29 +311,29 @@ func (c *ClientIMPL) Query(
 ) (RespMeta, error) {
 	config := cfg.RenderRequestConfig()
 	meta := RespMeta{}
-	var cancelFuncPtr *func()
-	ctx, cancelFuncPtr = c.setupContext(ctx)
-	if cancelFuncPtr != nil {
-		defer (*cancelFuncPtr)()
+	var queryCtxCancel *func()
+	queryCtx, queryCtxCancel := c.setupContext(ctx)
+	if queryCtxCancel != nil {
+		defer (*queryCtxCancel)()
 	}
 
-	traceMsg := c.prepareTraceMsg(ctx)
+	traceMsg := c.prepareTraceMsg(queryCtx)
 
 	requestURL, err := c.prepareRequestURL(config.Endpoint, config.ID, config.Action, config.QueryParams)
 	if err != nil {
 		return meta, err
 	}
 
-	req, err := c.prepareRequest(ctx, config.Method, requestURL, traceMsg, config.Body)
+	req, err := c.prepareRequest(queryCtx, config.Method, requestURL, traceMsg, config.Body)
 	if err != nil {
 		return meta, err
 	}
 
-	c.logger.Debug(ctx, "Requesting a lock for API : [%s %s]\n", config.Method, requestURL)
-	if err := c.apiThrottle.Acquire(ctx); err != nil {
+	c.logger.Debug(queryCtx, "Requesting a lock for API : [%s %s]\n", config.Method, requestURL)
+	if err := c.apiThrottle.Acquire(queryCtx); err != nil {
 		return meta, err
 	}
-	defer c.apiThrottle.Release(ctx)
+	defer c.apiThrottle.Release(queryCtx)
 
 	r, err := c.httpClient.Do(req)
 	if err != nil {
@@ -344,7 +344,7 @@ func (c *ClientIMPL) Query(
 	if debug {
 		dump, _ := httputil.DumpResponse(r, true)
 		replacedHeader := prepareHTTPDump(dump) // Replace sensitive parts of response headers
-		c.logger.Debug(ctx, "%sRESPONSE: %v\n", traceMsg, replacedHeader)
+		c.logger.Debug(queryCtx, "%sRESPONSE: %v\n", traceMsg, replacedHeader)
 	}
 	meta.Status = r.StatusCode
 	switch {
@@ -364,14 +364,14 @@ func (c *ClientIMPL) Query(
 		}
 		return meta, err
 	case r.StatusCode == http.StatusForbidden:
-		loginResp, err := c.login(ctx)
+		loginResp, err := c.login(queryCtx)
 		// Invalid credentials - No need to retry if response of login api was 401 Unauthorized.
 		if err != nil || loginResp.Status == http.StatusUnauthorized {
 			return meta, buildError(r)
 		}
 
 		// login successful - resend the failed request
-		return c.Query(ctx, cfg, resp)
+		return c.Query(queryCtx, cfg, resp)
 	default:
 		return meta, buildError(r)
 	}
