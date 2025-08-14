@@ -48,9 +48,9 @@ func NewTimeoutSemaphore(timeout int64, rateLimit int, logger Logger) *TimeoutSe
 	if log == nil {
 		log = &defaultLogger{}
 	}
-	logger.Info(context.Background(), "Bharath - NewTimeoutSemaphore: %d, %d", timeout, time.Duration(timeout))
+	logger.Info(context.Background(), "Bharath - NewTimeoutSemaphore: %d, duration %d", timeout, time.Duration(timeout)*time.Second)
 	return &TimeoutSemaphore{
-		Timeout:   time.Duration(timeout),
+		Timeout:   time.Duration(timeout) * time.Second,
 		Semaphore: make(chan struct{}, rateLimit),
 		Logger:    log,
 	}
@@ -60,7 +60,7 @@ func (ts *TimeoutSemaphore) Acquire(ctx context.Context) error {
 	// find the min timeout between default timeout and context timeout
 	var t time.Duration = ts.Timeout
 	if ctxTimeout, ok := ctx.Deadline(); ok {
-		ts.Logger.Info(ctx, "ctxTimeout: %s", ctxTimeout.String())
+		ts.Logger.Info(ctx, "current time : %s  - ctxTimeout: %s", time.Now().String(), ctxTimeout.String())
 		ctxTimeRemaining := time.Until(ctxTimeout)
 		ts.Logger.Info(ctx, "context timeout: %s, default timeout: %s", ctxTimeRemaining.String(), ts.Timeout.String())
 		if ctxTimeRemaining > 0 && ctxTimeRemaining < t {

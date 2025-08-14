@@ -500,6 +500,7 @@ func (c *ClientIMPL) setupContext(ctx context.Context) (context.Context, *func()
 	_, timeoutIsSet := ctx.Deadline()
 	if !timeoutIsSet {
 		var f func()
+		c.logger.Info(ctx, "In setupContext - default timeout: %d - duration: %d", c.defaultTimeout, time.Duration(c.defaultTimeout)*time.Second)
 		ctx, f = context.WithTimeout(ctx, time.Duration(c.defaultTimeout)*time.Second)
 		return ctx, &f
 	}
