@@ -42,17 +42,15 @@ type TimeoutSemaphore struct {
 	Logger    Logger
 }
 
-func NewTimeoutSemaphore(timeout int64, rateLimit int, logger Logger) *TimeoutSemaphore {
+func NewTimeoutSemaphore(timeout time.Duration, rateLimit int, logger Logger) *TimeoutSemaphore {
 	log := logger
 
 	if log == nil {
 		log = &defaultLogger{}
 	}
 
-	logger.Info(context.TODO(), "Timeout set to: %v [in seconds = %v]", timeout, time.Duration(timeout)*time.Second)
-
 	return &TimeoutSemaphore{
-		Timeout:   time.Duration(timeout),
+		Timeout:   timeout,
 		Semaphore: make(chan struct{}, rateLimit),
 		Logger:    log,
 	}

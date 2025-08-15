@@ -152,7 +152,7 @@ type ClientIMPL struct {
 	username          string
 	password          string
 	httpClient        *http.Client
-	defaultTimeout    int64
+	defaultTimeout    time.Duration
 	requestIDKey      ContextKey
 	customHTTPHeaders *SafeHeader
 	logger            Logger
@@ -163,7 +163,7 @@ type ClientIMPL struct {
 
 // New creates and initialize API client
 func New(apiURL string, username string,
-	password string, insecure bool, defaultTimeout int64, rateLimit int, requestIDKey ContextKey,
+	password string, insecure bool, defaultTimeout time.Duration, rateLimit int, requestIDKey ContextKey,
 ) (*ClientIMPL, error) {
 	debug, _ = strconv.ParseBool(os.Getenv("GOPOWERSTORE_DEBUG"))
 	if apiURL == "" || username == "" || password == "" {
@@ -230,7 +230,7 @@ func New(apiURL string, username string,
 }
 
 // MockClient returns default client for testing purposes
-func MockClient(defaultTimeout int64, rateLimit int, requestIDKey ContextKey,
+func MockClient(defaultTimeout time.Duration, rateLimit int, requestIDKey ContextKey,
 ) *ClientIMPL {
 	debug, _ = strconv.ParseBool(os.Getenv("GOPOWERSTORE_DEBUG"))
 	client := &http.Client{}
@@ -499,8 +499,7 @@ func (c *ClientIMPL) setupContext(ctx context.Context) (context.Context, *func()
 	_, timeoutIsSet := ctx.Deadline()
 	if !timeoutIsSet {
 		var f func()
-		c.logger.Info(ctx, "SETUP context - Default timeout is set to %v, %v", c.defaultTimeout, c.defaultTimeout*int64(time.Second))
-		ctx, f = context.WithTimeout(ctx, time.Duration(c.defaultTimeout))
+		ctx, f = context.WithTimeout(ctx, c.defaultTimeout)
 		return ctx, &f
 	}
 	return ctx, nil
