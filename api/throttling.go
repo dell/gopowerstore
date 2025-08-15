@@ -49,8 +49,10 @@ func NewTimeoutSemaphore(timeout int64, rateLimit int, logger Logger) *TimeoutSe
 		log = &defaultLogger{}
 	}
 
+	logger.Info(context.TODO(), "Timeout set to: %v [in seconds = %v]", timeout, time.Duration(timeout)*time.Second)
+
 	return &TimeoutSemaphore{
-		Timeout:   time.Duration(timeout) * time.Second,
+		Timeout:   time.Duration(timeout),
 		Semaphore: make(chan struct{}, rateLimit),
 		Logger:    log,
 	}
