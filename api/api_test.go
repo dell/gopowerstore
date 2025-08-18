@@ -25,6 +25,7 @@ import (
 	"os"
 	"reflect"
 	"testing"
+	"time"
 
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"
@@ -71,7 +72,7 @@ func TestNew(t *testing.T) {
 	url := "test_url"
 	user := "admin"
 	password := "password"
-	timeout := int64(120)
+	timeout := time.Duration(120)
 	limit := int(1000)
 	var err error
 	var c *ClientIMPL
@@ -86,7 +87,7 @@ func TestNew(t *testing.T) {
 }
 
 func testClient(t *testing.T, apiURL string) *ClientIMPL {
-	c, err := New(apiURL, "admin", "password", false, int64(10), int(1000), "key")
+	c, err := New(apiURL, "admin", "password", false, time.Duration(10*time.Second), int(1000), "key")
 	if err != nil {
 		t.FailNow()
 	}
@@ -514,7 +515,7 @@ func TestClient_Query_DebugBlock(t *testing.T) {
 
 func TestMockClient(t *testing.T) {
 	// Test MockClient with valid arguments
-	defaultTimeout := int64(120)
+	defaultTimeout := time.Duration(120)
 	rateLimit := 60
 	requestIDKey := ContextKey("key")
 	client := MockClient(defaultTimeout, rateLimit, requestIDKey)
