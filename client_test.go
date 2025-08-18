@@ -22,6 +22,7 @@ import (
 	"context"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/dell/gopowerstore/api"
 	"github.com/stretchr/testify/assert"
@@ -30,7 +31,9 @@ import (
 var C Client
 
 func initClient() {
-	C = NewMockClient(NewClientOptions())
+	clientOptions := &ClientOptions{}
+	clientOptions.SetDefaultTimeout(1 * time.Second)
+	C = NewMockClient(clientOptions)
 }
 
 func init() {

@@ -20,6 +20,7 @@ package gopowerstore
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -32,7 +33,7 @@ func TestClientOptions_Insecure(t *testing.T) {
 
 func TestClientOptions_DefaultTimeout(t *testing.T) {
 	co := NewClientOptions()
-	value := int64(120)
+	value := time.Duration(120)
 	co.SetDefaultTimeout(value)
 	assert.Equal(t, value, co.DefaultTimeout())
 }

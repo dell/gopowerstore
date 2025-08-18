@@ -23,6 +23,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/dell/gopowerstore/api"
 )
@@ -284,7 +285,7 @@ func NewClient() (Client, error) {
 	httpTimeout, err := strconv.ParseInt(os.Getenv(HTTPTimeoutEnv), 10, 64)
 
 	if err == nil {
-		options.SetDefaultTimeout(httpTimeout)
+		options.SetDefaultTimeout(time.Duration(httpTimeout))
 	}
 	return NewClientWithArgs(
 		os.Getenv(APIURLEnv),

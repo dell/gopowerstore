@@ -23,6 +23,7 @@ import (
 	"errors"
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/dell/gopowerstore/api"
 	"github.com/jarcoal/httpmock"
@@ -32,6 +33,7 @@ const limitMockURL = limitURL
 
 func TestClientIMPL_GetMaxVolumeSize(t *testing.T) {
 	options := NewClientOptions()
+	options.SetDefaultTimeout(1 * time.Second)
 	client := api.MockClient(options.DefaultTimeout(), options.RateLimit(), options.RequestIDKey())
 
 	type args struct {
