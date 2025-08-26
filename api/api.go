@@ -493,16 +493,9 @@ func (c *ClientIMPL) prepareTraceMsg(ctx context.Context) string {
 }
 
 func (c *ClientIMPL) setupContext(ctx context.Context) (context.Context, *func()) {
-	if ctx == nil {
-		ctx = context.Background()
-	}
-	_, timeoutIsSet := ctx.Deadline()
-	if !timeoutIsSet {
-		var f func()
-		ctx, f = context.WithTimeout(ctx, c.defaultTimeout)
-		return ctx, &f
-	}
-	return ctx, nil
+	var f func()
+	ctx, f = context.WithTimeout(ctx, c.defaultTimeout)
+	return ctx, &f
 }
 
 func (c *ClientIMPL) updatePaginationInfoInMeta(meta *RespMeta, r *http.Response) {
