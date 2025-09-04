@@ -200,6 +200,19 @@ func (c *ClientIMPL) ListFS(ctx context.Context) (resp []FileSystem, err error) 
 	return resp, err
 }
 
+// ListFSIds returns a list of Filesystem IDs
+func (c *ClientIMPL) ListFSIds(ctx context.Context) (resp []FileSystem, err error) {
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:      "GET",
+			Endpoint:    fsURL,
+			QueryParams: getFSDefaultQueryParams(c),
+		},
+		&resp)
+	return resp, WrapErr(err)
+}
+
 // GetFSByName query and return specific FS by name
 func (c *ClientIMPL) GetFSByName(ctx context.Context, name string) (resp FileSystem, err error) {
 	var fsList []FileSystem
