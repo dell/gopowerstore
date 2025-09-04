@@ -205,9 +205,8 @@ func (c *ClientIMPL) ListFSIds(ctx context.Context) (resp []FileSystem, err erro
 	_, err = c.APIClient().Query(
 		ctx,
 		RequestConfig{
-			Method:      "GET",
-			Endpoint:    fsURL,
-			QueryParams: getFSDefaultQueryParams(c),
+			Method:   "GET",
+			Endpoint: fsURL,
 		},
 		&resp)
 	return resp, WrapErr(err)
