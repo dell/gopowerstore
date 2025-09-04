@@ -72,6 +72,18 @@ func TestClientIMPL_ListFS(t *testing.T) {
 	assert.Equal(t, fsID, fileSystems[0].ID)
 }
 
+func TestClientIMPL_ListFSIs(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	respData := fmt.Sprintf(`[{"id": "%s"}, {"id": "%s"}]`, fsID, fsID2)
+	httpmock.RegisterResponder("GET", fsMockURL,
+		httpmock.NewStringResponder(200, respData))
+	fileSystems, err := C.ListFSIds(context.Background())
+	assert.Nil(t, err)
+	assert.Len(t, fileSystems, 2)
+	assert.Equal(t, fsID, fileSystems[0].ID)
+}
+
 func TestClientIMPL_GetFSByName(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()

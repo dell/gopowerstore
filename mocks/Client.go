@@ -3451,6 +3451,36 @@ func (_m *Client) ListFS(ctx context.Context) ([]gopowerstore.FileSystem, error)
 	return r0, r1
 }
 
+// ListFSIds provides a mock function with given fields: ctx
+func (_m *Client) ListFSIds(ctx context.Context) ([]gopowerstore.FileSystem, error) {
+	ret := _m.Called(ctx)
+
+	if len(ret) == 0 {
+		panic("no return value specified for ListFSIds")
+	}
+
+	var r0 []gopowerstore.FileSystem
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context) ([]gopowerstore.FileSystem, error)); ok {
+		return rf(ctx)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context) []gopowerstore.FileSystem); ok {
+		r0 = rf(ctx)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]gopowerstore.FileSystem)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = rf(ctx)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // ModifyFS provides a mock function with given fields: ctx, modifyParams, volID
 func (_m *Client) ModifyFS(ctx context.Context, modifyParams *gopowerstore.FSModify, volID string) (gopowerstore.EmptyResponse, error) {
 	ret := _m.Called(ctx, modifyParams, volID)

@@ -95,6 +95,7 @@ type Client interface {
 	GetNASByName(ctx context.Context, name string) (NAS, error)
 	GetNfsServer(ctx context.Context, id string) (NFSServerInstance, error)
 	ListFS(ctx context.Context) ([]FileSystem, error)
+	ListFSIds(ctx context.Context) ([]FileSystem, error)
 	GetFSByName(ctx context.Context, name string) (FileSystem, error)
 	GetFS(ctx context.Context, id string) (FileSystem, error)
 	GetFileInterface(ctx context.Context, id string) (FileInterface, error)
