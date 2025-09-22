@@ -210,6 +210,8 @@ type Client interface {
 	GetSMBShares(ctx context.Context, args map[string]string) (resp []SMBShare, err error)
 	SetSMBShareACL(ctx context.Context, id string, acl *ModifySMBShareACL) (resp EmptyResponse, err error)
 	GetSMBShareACL(ctx context.Context, id string) (resp SMBShareACL, err error)
+	GetEvents(ctx context.Context) ([]Event, error)
+	GetAlerts(ctx context.Context) ([]Alert, error)
 }
 
 // ClientIMPL provides basic API client implementation
