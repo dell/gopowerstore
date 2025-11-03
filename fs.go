@@ -210,8 +210,7 @@ func (c *ClientIMPL) GetInProgressJobsByFsName(ctx context.Context, name string)
 	var jobList []Job
 	qp := getJobDefaultQueryParams(c)
 	qp.RawArg("resource_name", fmt.Sprintf("eq.%s", name))
-	dkhan marked this conversation as resolved.
-		qp.RawArg("state", fmt.Sprintf("eq.%s", jobStatusInProgress))
+	qp.RawArg("state", fmt.Sprintf("eq.%s", jobStatusInProgress))
 	qp.RawArg("resource_type", "eq.file_system")
 	_, err = c.APIClient().Query(
 		ctx,
