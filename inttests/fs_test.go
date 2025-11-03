@@ -168,6 +168,14 @@ func (suite *FsTestSuite) TestGetNASServers() {
 	checkAPIErr(t, err)
 }
 
+func (suite *FsTestSuite) TestGetInProgressJobsByFsName() {
+	t := suite.T()
+	fsID, fsName := createFS(t, suite.nasID)
+	defer deleteFS(t, fsID)
+	_, err := C.GetInProgressJobsByFsName(context.Background(), fsName)
+	checkAPIErr(t, err)
+}
+
 func (suite *FsTestSuite) TestGetFSByName() {
 	t := suite.T()
 	fsID, fsName := createFS(t, suite.nasID)
