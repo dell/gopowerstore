@@ -27,8 +27,10 @@ import (
 )
 
 const (
-	nasURL = "nas_server"
-	fsURL  = "file_system"
+	nasURL              = "nas_server"
+	fsURL               = "file_system"
+	jobsURL             = "job"
+	jobStatusInProgress = "IN_PROGRESS"
 )
 
 func getNASDefaultQueryParams(c Client) api.QueryParamsEncoder {
