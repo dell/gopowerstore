@@ -261,7 +261,7 @@ func TestClientIMPL_updatePaginationInfoInMeta(t *testing.T) {
 
 func TestClientIMPL_SetLogger(t *testing.T) {
 	log := &defaultLogger{}
-	c := ClientIMPL{apiThrottle: NewTimeoutSemaphore(10, 10, log)}
+	c := ClientIMPL{apiThrottle: NewTimeoutSemaphore(10*time.Second, 10, log)}
 	c.SetLogger(&defaultLogger{})
 	assert.NotNil(t, c.logger)
 }

@@ -95,6 +95,7 @@ type Client interface {
 	GetNASByName(ctx context.Context, name string) (NAS, error)
 	GetNfsServer(ctx context.Context, id string) (NFSServerInstance, error)
 	ListFS(ctx context.Context) ([]FileSystem, error)
+	GetInProgressJobsByFsName(ctx context.Context, name string) ([]Job, error)
 	GetFSByName(ctx context.Context, name string) (FileSystem, error)
 	GetFS(ctx context.Context, id string) (FileSystem, error)
 	GetFileInterface(ctx context.Context, id string) (FileInterface, error)
@@ -285,7 +286,7 @@ func NewClient() (Client, error) {
 	httpTimeout, err := strconv.ParseInt(os.Getenv(HTTPTimeoutEnv), 10, 64)
 
 	if err == nil {
-		options.SetDefaultTimeout(time.Duration(httpTimeout))
+		options.SetDefaultTimeout(time.Duration(httpTimeout) * time.Second)
 	}
 	return NewClientWithArgs(
 		os.Getenv(APIURLEnv),

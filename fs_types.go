@@ -177,6 +177,14 @@ func (fc *FsClone) MetaData() http.Header {
 	return fc.metadata
 }
 
+type Job struct {
+	ID           string `json:"id,omitempty"`
+	Action       string `json:"resource_action,omitempty"`
+	Type         string `json:"resource_type,omitempty"`
+	ResourceName string `json:"resource_name,omitempty"`
+	State        string `json:"state,omitempty"`
+}
+
 // Details about the FileSystem
 type FileSystem struct {
 	// File system id
@@ -331,4 +339,9 @@ func (n *FileSystem) Fields() []string {
 
 func (n *NFSServerInstance) Fields() []string {
 	return []string{"id", "is_nfsv3_enabled", "is_nfsv4_enabled"}
+}
+
+// Fields returns fields which must be requested to fill struct
+func (j *Job) Fields() []string {
+	return []string{"id", "resource_action", "resource_type", "resource_name", "state"}
 }
