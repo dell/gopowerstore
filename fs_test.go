@@ -32,12 +32,15 @@ const (
 	fsMockURL                   = fsURL
 	nfsMockServerURL            = nfsServerURL
 	apiSoftwareInstalledMockURL = apiSoftwareInstalledURL
+	jobsMockURL                 = jobsURL
 )
 
 var (
-	nasID = "5e8d8e8e-671b-336f-db4e-cee0fbdc981e"
-	fsID  = "3765da74-28a7-49db-a693-10cec1de91f8"
-	fsID2 = "3765da74-28a7-49db-a693-10cec1de91f9"
+	nasID  = "5e8d8e8e-671b-336f-db4e-cee0fbdc981e"
+	fsID   = "3765da74-28a7-49db-a693-10cec1de91f8"
+	fsID2  = "3765da74-28a7-49db-a693-10cec1de91f9"
+	jobID  = "3765da74-28a7-49db-a693-10cec1de91f0"
+	jobID2 = "3765da74-28a7-49db-a693-10cec1de91f1"
 )
 
 func TestClientIMPL_GetNASByName(t *testing.T) {
@@ -70,6 +73,27 @@ func TestClientIMPL_ListFS(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Len(t, fileSystems, 2)
 	assert.Equal(t, fsID, fileSystems[0].ID)
+}
+
+func TestClientIMPL_GetInProgressJobsByFsName(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	respData := fmt.Sprintf(`[{"id": "%s"}, {"id": "%s"}]`, jobID, jobID2)
+	setResponder := func(respData string) {
+		httpmock.RegisterResponder("GET", jobsMockURL,
+			httpmock.NewStringResponder(200, respData))
+	}
+	setResponder(respData)
+	job, err := C.GetInProgressJobsByFsName(context.Background(), "test")
+	assert.Nil(t, err)
+	assert.Equal(t, jobID, job[0].ID)
+	httpmock.Reset()
+	setResponder = func(respData string) {
+		httpmock.RegisterResponder("GET", jobsMockURL,
+			httpmock.NewStringResponder(404, respData))
+	}
+	_, err = C.GetInProgressJobsByFsName(context.Background(), "test")
+	assert.NotNil(t, err)
 }
 
 func TestClientIMPL_GetFSByName(t *testing.T) {

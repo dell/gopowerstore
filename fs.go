@@ -27,8 +27,10 @@ import (
 )
 
 const (
-	nasURL = "nas_server"
-	fsURL  = "file_system"
+	nasURL              = "nas_server"
+	fsURL               = "file_system"
+	jobsURL             = "job"
+	jobStatusInProgress = "IN_PROGRESS"
 )
 
 func getNASDefaultQueryParams(c Client) api.QueryParamsEncoder {
@@ -44,6 +46,11 @@ func getFSDefaultQueryParams(c Client) api.QueryParamsEncoder {
 func getNfsServerDefaultQueryParams(c Client) api.QueryParamsEncoder {
 	nfsServer := NFSServerInstance{}
 	return c.APIClient().QueryParamsWithFields(&nfsServer)
+}
+
+func getJobDefaultQueryParams(c Client) api.QueryParamsEncoder {
+	job := Job{}
+	return c.APIClient().QueryParamsWithFields(&job)
 }
 
 // GetNASServers query and return all NAS servers
@@ -198,6 +205,28 @@ func (c *ClientIMPL) ListFS(ctx context.Context) (resp []FileSystem, err error) 
 		return meta, err
 	})
 	return resp, err
+}
+
+// GetInProgressJobsByFsName query and return all jobs that are in progress by name of the filesystem involved
+func (c *ClientIMPL) GetInProgressJobsByFsName(ctx context.Context, name string) (resp []Job, err error) {
+	var jobList []Job
+	qp := getJobDefaultQueryParams(c)
+	qp.RawArg("resource_name", fmt.Sprintf("eq.%s", name))
+	qp.RawArg("state", fmt.Sprintf("eq.%s", jobStatusInProgress))
+	qp.RawArg("resource_type", "eq.file_system")
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:      "GET",
+			Endpoint:    jobsURL,
+			QueryParams: qp,
+		},
+		&jobList)
+	err = WrapErr(err)
+	if err != nil {
+		return resp, err
+	}
+	return jobList, err
 }
 
 // GetFSByName query and return specific FS by name
