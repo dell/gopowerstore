@@ -143,6 +143,13 @@ type FSModify struct {
 	ExpirationTimestamp        string        `json:"expiration_timestamp,omitempty"`
 }
 
+// ModifyNAS params for modifying 'modify nas' request
+type NASModify struct {
+	Description        string `json:"description,omitempty"`
+	Name               string `json:"name,omitempty"`
+	ProtectionPolicyID string `json:"protection_policy_id,omitempty"`
+}
+
 // NASCreate params for creating 'create nas' request
 type NASCreate struct {
 	Description string `json:"description,omitempty"`

@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2020-2024 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2020-2025 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"encoding/json"
+	"encoding/pem"
 	"errors"
 	"fmt"
 	"io"
@@ -34,6 +35,7 @@ import (
 	"net/url"
 	"os"
 	"path"
+	"path/filepath"
 	"reflect"
 	"regexp"
 	"strconv"
@@ -87,6 +89,9 @@ type PaginationInfo struct {
 	First int
 	// last element index in response
 	Last int
+	// Next is the starting index for the next page of results.
+	// Next is 0 if there are no more results to be read.
+	Next int
 	// total elements count
 	Total int
 	// indicate that response is paginated
@@ -163,7 +168,7 @@ type ClientIMPL struct {
 
 // New creates and initialize API client
 func New(apiURL string, username string,
-	password string, insecure bool, defaultTimeout time.Duration, rateLimit int, requestIDKey ContextKey,
+	password string, insecure bool, caFilePath string, defaultTimeout time.Duration, rateLimit int, requestIDKey ContextKey,
 ) (*ClientIMPL, error) {
 	debug, _ = strconv.ParseBool(os.Getenv("GOPOWERSTORE_DEBUG"))
 	if apiURL == "" || username == "" || password == "" {
@@ -185,6 +190,48 @@ func New(apiURL string, username string,
 		if err != nil {
 			log.Fatalf("failed to get system cert pool: %v", err)
 			return nil, fmt.Errorf("failed to get system cert pool: %w", err)
+		}
+
+		if caFilePath != "" {
+			// Open a restricted view rooted at the file's directory, then open the file by its base name.
+			dir := filepath.Dir(caFilePath)
+			base := filepath.Base(caFilePath)
+
+			root, err := os.OpenRoot(dir)
+			if err != nil {
+				return nil, fmt.Errorf("unable to read rootCA file %q: %v", caFilePath, err)
+			}
+
+			file, err := root.Open(base)
+			if err != nil {
+				return nil, fmt.Errorf("unable to read rootCA file %q: %v", caFilePath, err)
+			}
+			defer file.Close()
+
+			data, err := io.ReadAll(file)
+			if err != nil {
+				return nil, fmt.Errorf("unable to read rootCA file %q: %v", caFilePath, err)
+			}
+
+			block, _ := pem.Decode(data)
+			if block == nil || block.Type != "CERTIFICATE" {
+				return nil, fmt.Errorf("failed to decode PEM block containing certificate")
+			}
+
+			cert, err := x509.ParseCertificate(block.Bytes)
+			if err != nil {
+				return nil, fmt.Errorf("failed to parse certificate: %v", err)
+			}
+
+			if !cert.IsCA {
+				return nil, fmt.Errorf("%s is not a CA", caFilePath)
+			}
+
+			ok := pool.AppendCertsFromPEM(data)
+			if !ok {
+				log.Fatalf("failed to append CA certificate from file: %s", caFilePath)
+				return nil, fmt.Errorf("failed to append CA certificate from file: %s", caFilePath)
+			}
 		}
 		client = &http.Client{
 			Transport: &http.Transport{
@@ -535,7 +582,13 @@ func (c *ClientIMPL) updatePaginationInfoInMeta(meta *RespMeta, r *http.Response
 		if err != nil {
 			return
 		}
-		meta.Pagination = PaginationInfo{First: first, Last: last, Total: total, IsPaginate: true}
+
+		// set the next index if there are more results to be read
+		next := 0
+		if last+1 < total {
+			next = last + 1
+		}
+		meta.Pagination = PaginationInfo{First: first, Last: last, Next: next, Total: total, IsPaginate: true}
 	}
 }
 

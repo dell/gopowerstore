@@ -65,7 +65,7 @@ func (myc *MyClient) GetMyFavoriteVolume(ctx context.Context) (resp gopowerstore
 			QueryParams: qp,
 		},
 		&resp)
-	return
+	return resp, err
 }
 
 // GetVolumesByNamePrefix returns list of volumes witch names start from prefix
@@ -84,7 +84,7 @@ func (myc *MyClient) GetVolumesByNamePrefix(ctx context.Context,
 			QueryParams: qp,
 		},
 		&resp)
-	return
+	return resp, err
 }
 
 func main() {

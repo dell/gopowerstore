@@ -226,6 +226,30 @@ func TestClientIMPL_GetNAS(t *testing.T) {
 	assert.Equal(t, nasID, nas.ID)
 }
 
+func TestClientIMPL_ModifyNASByName(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
+	nasName := "test-nas"
+	nasID := "1234abcd-5678-efgh-9012-ijklmnopqrst"
+
+	httpmock.RegisterResponder("GET",
+		`=~^nas_server\?name=eq\.test-nas.*`,
+		httpmock.NewStringResponder(200, `[{"id": "1234abcd-5678-efgh-9012-ijklmnopqrst"}]`))
+
+	httpmock.RegisterResponder("PATCH",
+		fmt.Sprintf("%s/%s", nasMockURL, nasID),
+		httpmock.NewStringResponder(200, ""))
+
+	modifyReq := NASModify{
+		ProtectionPolicyID: "new-policy-id",
+	}
+
+	err := C.ModifyNASByName(context.Background(), &modifyReq, nasName)
+
+	assert.NoError(t, err)
+}
+
 func TestClientIMPL_DeleteNAS(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
