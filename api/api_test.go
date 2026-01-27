@@ -76,18 +76,33 @@ func TestNew(t *testing.T) {
 	limit := int(1000)
 	var err error
 	var c *ClientIMPL
-	c, err = New(url, user, password, false, timeout, limit, key)
+	c, err = New(url, user, password, false, "test_data/ca.pem", timeout, limit, key)
 	assert.NotNil(t, c)
 	assert.Nil(t, err)
-	_, err = New(url, "", "", false, timeout, limit, key)
+	_, err = New(url, "", "", false, "test_data/ca.pem", timeout, limit, key)
 	assert.NotNil(t, err)
-	c, err = New(url, user, password, true, timeout, limit, key)
+	c, err = New(url, user, password, true, "", timeout, limit, key)
 	assert.Nil(t, err)
 	assert.NotNil(t, c.httpClient.Transport)
+	c, err = New(url, user, password, false, "/bad/path/ca.pem", timeout, limit, key)
+	assert.NotNil(t, err)
+	c, err = New(url, user, password, false, "test_data/bad_ca.pem", timeout, limit, key)
+	assert.NotNil(t, err)
+
+	orig := systemCertPoolFunc
+	t.Cleanup(func() { systemCertPoolFunc = orig })
+
+	// Simulate the variable being nil
+	systemCertPoolFunc = nil
+
+	_, err = New(url, "", "", false, "test_data/ca.pem", timeout, limit, key)
+	if err == nil {
+		t.Fatalf("expected error when systemCertPoolFunc is nil, got nil")
+	}
 }
 
 func testClient(t *testing.T, apiURL string) *ClientIMPL {
-	c, err := New(apiURL, "admin", "password", false, time.Duration(10*time.Second), int(1000), "key")
+	c, err := New(apiURL, "admin", "password", false, "test_data/ca.pem", time.Duration(10*time.Second), int(1000), "key")
 	if err != nil {
 		t.FailNow()
 	}

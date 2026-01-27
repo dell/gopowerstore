@@ -31,6 +31,15 @@ func TestClientOptions_Insecure(t *testing.T) {
 	assert.Equal(t, true, co.Insecure())
 }
 
+func TestClientOptions_CAFilePath(t *testing.T) {
+	co := NewClientOptions()
+	co.SetCAFilePath("/path/to/ca.pem")
+	assert.Equal(t, "/path/to/ca.pem", co.CAFilePath())
+
+	co = NewClientOptions()
+	assert.Equal(t, "", co.CAFilePath())
+}
+
 func TestClientOptions_DefaultTimeout(t *testing.T) {
 	co := NewClientOptions()
 	value := time.Duration(120)

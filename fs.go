@@ -43,14 +43,14 @@ func getFSDefaultQueryParams(c Client) api.QueryParamsEncoder {
 	return c.APIClient().QueryParamsWithFields(&fs)
 }
 
-func getNfsServerDefaultQueryParams(c Client) api.QueryParamsEncoder {
-	nfsServer := NFSServerInstance{}
-	return c.APIClient().QueryParamsWithFields(&nfsServer)
-}
-
 func getJobDefaultQueryParams(c Client) api.QueryParamsEncoder {
 	job := Job{}
 	return c.APIClient().QueryParamsWithFields(&job)
+}
+
+func getNfsServerDefaultQueryParams(c Client) api.QueryParamsEncoder {
+	nfsServer := NFSServerInstance{}
+	return c.APIClient().QueryParamsWithFields(&nfsServer)
 }
 
 // GetNASServers query and return all NAS servers
@@ -180,6 +180,29 @@ func (c *ClientIMPL) DeleteNAS(ctx context.Context, id string) (resp EmptyRespon
 		},
 		&resp)
 	return resp, WrapErr(err)
+}
+
+// ModifyNAS modifies existing NAS
+func (c *ClientIMPL) ModifyNASByName(ctx context.Context, modifyParams *NASModify, name string) (err error) {
+	nas, err := c.GetNASByName(ctx, name)
+	if err != nil {
+		return fmt.Errorf("failed to get NAS by name: %v", err)
+	}
+	var resp EmptyResponse
+
+	_, err = c.APIClient().Query(
+		ctx,
+		RequestConfig{
+			Method:   "PATCH",
+			Endpoint: nasURL,
+			ID:       nas.ID,
+			Body:     modifyParams,
+		},
+		&resp)
+	if err != nil {
+		return WrapErr(fmt.Errorf("failed to modify NAS parameters in array: %v", err))
+	}
+	return nil
 }
 
 // ListFS returns a list of Filesystems

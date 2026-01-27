@@ -31,7 +31,8 @@ import (
 
 const (
 	metricsMockURL        = metricsURL
-	metricsMockVolMirrURL = mirrorURL
+	metricsMockVolMirrURL = volumeMirrorURL
+	metricsMockFSURL      = filesystemMirrorURL
 	volumeID              = "4ffcd8e8-2a93-49ed-b9b3-2e68c8ddc5e4"
 )
 
@@ -150,6 +151,20 @@ func TestClientIMPL_VolumeMirrorTransferRate(t *testing.T) {
 	respData := fmt.Sprintf(`[{"id": "%s"}]`, volumeID)
 	setResponder(respData)
 	volMirr, err := C.VolumeMirrorTransferRate(context.Background(), volumeID)
+	assert.Nil(t, err)
+	assert.Equal(t, volumeID, volMirr[0].ID)
+}
+
+func TestClientIMPL_FileSystemMirrorTransferRate(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	setResponder := func(respData string) {
+		httpmock.RegisterResponder("GET", metricsMockFSURL,
+			httpmock.NewStringResponder(200, respData))
+	}
+	respData := fmt.Sprintf(`[{"id": "%s"}]`, volumeID)
+	setResponder(respData)
+	volMirr, err := C.FileSystemMirrorTransferRate(context.Background(), volumeID)
 	assert.Nil(t, err)
 	assert.Equal(t, volumeID, volMirr[0].ID)
 }

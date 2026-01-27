@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2021-2022 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2021-2025 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,18 +28,20 @@ import (
 const (
 	remoteSystemMockURL = remoteSystemURL
 	clusterMockURL      = clusterURL
+	globalID            = "PS11AA22BB33CC"
 )
 
 func TestClientIMPL_GetAllRemoteSystems(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
-	respData := fmt.Sprintf(`[{"id": "%s"}, {"id": "%s"}]`, volID, volID2)
+	respData := fmt.Sprintf(`[{"id": "%s", "iscsi_addresses": ["1.1.1.1"]}, {"id": "%s"}]`, volID, volID2)
 	httpmock.RegisterResponder("GET", remoteSystemMockURL,
 		httpmock.NewStringResponder(200, respData))
 	remoteSystems, err := C.GetAllRemoteSystems(context.Background())
 	assert.Nil(t, err)
 	assert.Len(t, remoteSystems, 2)
 	assert.Equal(t, volID, remoteSystems[0].ID)
+	assert.Equal(t, "1.1.1.1", remoteSystems[0].IscsiAddresses[0])
 }
 
 func TestClientIMPL_GetRemoteSystems(t *testing.T) {
@@ -57,12 +59,13 @@ func TestClientIMPL_GetRemoteSystems(t *testing.T) {
 func TestClientIMPL_GetCluster(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
-	respData := fmt.Sprintf(`[{"id": "%s"}]`, volID)
+	respData := fmt.Sprintf(`[{"id": "%s","global_id": "%s"}]`, volID, globalID)
 	httpmock.RegisterResponder("GET", clusterMockURL,
 		httpmock.NewStringResponder(200, respData))
 	cluster, err := C.GetCluster(context.Background())
 	assert.Nil(t, err)
 	assert.Equal(t, volID, cluster.ID)
+	assert.Equal(t, globalID, cluster.GlobalID)
 }
 
 func TestClientIMPL_GetRemoteSystem(t *testing.T) {

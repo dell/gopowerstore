@@ -14,46 +14,100 @@
  *
  */
 
+//nolint:revive
 package api
 
 import (
 	"context"
 	"testing"
 	"time"
-
-	"github.com/stretchr/testify/assert"
 )
 
 func TestSemaphore(t *testing.T) {
-	f := func(sec int, ctx context.Context, ts TimeoutSemaphoreInterface) error {
-		if err := ts.Acquire(ctx); err != nil {
-			return err
-		}
-		time.Sleep(time.Duration(sec) * time.Second)
-		ts.Release(ctx)
-
-		return nil
+	tests := []struct {
+		name     string
+		ctx      func() (context.Context, context.CancelFunc)
+		ts       func() TimeoutSemaphoreInterface
+		holdTime time.Duration
+		timeout  time.Duration
+		wantErr  bool
+	}{
+		{
+			name: "successfully rate limits",
+			ctx: func() (context.Context, context.CancelFunc) {
+				return context.WithTimeout(context.Background(), 200*time.Millisecond)
+			},
+			ts: func() TimeoutSemaphoreInterface {
+				return NewTimeoutSemaphore(300*time.Millisecond, 1, &defaultLogger{})
+			},
+			// should hold the semaphore for less than the ctx timeout
+			holdTime: 100 * time.Millisecond,
+			wantErr:  false,
+		},
+		{
+			name: "second call times out",
+			ctx: func() (context.Context, context.CancelFunc) {
+				return context.WithTimeout(context.Background(), 101*time.Millisecond)
+			},
+			ts: func() TimeoutSemaphoreInterface {
+				return NewTimeoutSemaphore(100*time.Millisecond, 1, &defaultLogger{})
+			},
+			// hold the semaphore for longer than the context timeout
+			holdTime: 200 * time.Millisecond,
+			wantErr:  true,
+		},
+		{
+			name: "context is canceled",
+			ctx: func() (context.Context, context.CancelFunc) {
+				// cancel the context to trigger <-ctx.Done() condition
+				ctx, cancel := context.WithTimeout(context.Background(), 200*time.Millisecond)
+				cancel()
+				// an empty cancel func since we've already called it
+				return ctx, func() {}
+			},
+			ts: func() TimeoutSemaphoreInterface {
+				return NewTimeoutSemaphore(100*time.Millisecond, 1, &defaultLogger{})
+			},
+			holdTime: 1 * time.Millisecond,
+			wantErr:  true,
+		},
+		{
+			name: "context timeout is shorter than default timeout",
+			ctx: func() (context.Context, context.CancelFunc) {
+				return context.WithTimeout(context.Background(), 100*time.Millisecond)
+			},
+			ts: func() TimeoutSemaphoreInterface {
+				return NewTimeoutSemaphore(200*time.Millisecond, 1, &defaultLogger{})
+			},
+			holdTime: 10 * time.Millisecond,
+			wantErr:  false,
+		},
 	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ts := tt.ts()
 
-	// long running function
-	ts := NewTimeoutSemaphore(1*time.Second, 1, &defaultLogger{})
-	go f(3, context.Background(), ts)
-	// wait for run long function
-	time.Sleep(1 * time.Second)
-	err := f(1, context.Background(), ts)
-	assert.NotNil(t, err)
+			// fill the semaphore
+			err := ts.Acquire(context.Background())
+			if err != nil {
+				t.Errorf("failed to acquire semaphore: %v", err)
+			}
 
-	// fast running function
-	ts = NewTimeoutSemaphore(2*time.Second, 1, &defaultLogger{})
-	go f(1, context.Background(), ts)
-	err = f(2, context.Background(), ts)
-	assert.Nil(t, err)
+			// hold the semaphore for some time before releasing it
+			// so that the next acquisition attempt is blocked
+			go func() {
+				defer ts.Release(context.Background())
+				time.Sleep(tt.holdTime)
+			}()
 
-	// main context timeout < default timeout function
-	ts = NewTimeoutSemaphore(3*time.Second, 1, &defaultLogger{})
-	testCtx, cancelFunc := context.WithDeadline(context.Background(), time.Now().Add(1*time.Second))
-	defer cancelFunc()
-	go f(1, testCtx, ts)
-	err = f(2, testCtx, ts)
-	assert.Nil(t, err)
+			ctx, cancel := tt.ctx()
+			defer cancel()
+
+			// try to acquire the semaphore
+			err = ts.Acquire(ctx)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Acquire() returned an unexpected error: %v", err)
+			}
+		})
+	}
 }

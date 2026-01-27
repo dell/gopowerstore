@@ -153,6 +153,18 @@ func TestClientIMPL_GetHostVolumeMappingByVolumeID(t *testing.T) {
 	assert.Equal(t, hostID, resp[0].ID)
 }
 
+func TestClientIMPL_GetHostVolumeMappingByHostID(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	respData := fmt.Sprintf(`[{"host_id": "%s"}]`, hostID)
+	httpmock.RegisterResponder("GET", hostMappingMockURL,
+		httpmock.NewStringResponder(200, respData))
+	resp, err := C.GetHostVolumeMappingByHostID(context.Background(), hostID)
+	assert.Nil(t, err)
+	assert.Len(t, resp, 1)
+	assert.Equal(t, hostID, resp[0].HostID)
+}
+
 func TestClientIMPL_AttachVolumeToHost(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()

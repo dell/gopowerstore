@@ -27,7 +27,7 @@ import (
 // ClientOptions defaults
 const (
 	clientOptionsDefaultInsecure     = false
-	clientOptionsDefaultTimeout      = 120
+	clientOptionsDefaultTimeout      = 120 * time.Second
 	clientOptionsDefaultRateLimit    = 60
 	clientOptionsDefaultRequestIDKey = "csi.requestid"
 )
@@ -44,6 +44,15 @@ type ClientOptions struct {
 	rateLimit      *int
 	// define field name in context which will be used for tracing
 	requestIDKey *api.ContextKey
+	caFilePath   *string
+}
+
+// CAFilePath adds the certificate authority to the http client
+func (co *ClientOptions) CAFilePath() string {
+	if co.caFilePath == nil {
+		return ""
+	}
+	return *co.caFilePath
 }
 
 // Insecure returns insecure client option
@@ -81,6 +90,12 @@ func (co *ClientOptions) RequestIDKey() api.ContextKey {
 // SetInsecure sets insecure value
 func (co *ClientOptions) SetInsecure(value bool) *ClientOptions {
 	co.insecure = &value
+	return co
+}
+
+// SetCAFilePath sets certificate authority file path value
+func (co *ClientOptions) SetCAFilePath(path string) *ClientOptions {
+	co.caFilePath = &path
 	return co
 }
 
