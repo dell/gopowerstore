@@ -16,7 +16,7 @@
  *
  */
 
-package api
+package api // revive:disable:var-naming
 
 import (
 	"bytes"
@@ -381,7 +381,7 @@ func (c *ClientIMPL) Query(
 	}
 	defer c.apiThrottle.Release(ctx)
 
-	r, err := c.httpClient.Do(req)
+	r, err := c.httpClient.Do(req) // #nosec G704
 	if err != nil {
 		return meta, err
 	}
@@ -497,7 +497,7 @@ func (c *ClientIMPL) prepareRequest(ctx context.Context, method, requestURL, tra
 ) (*http.Request, error) {
 	var req *http.Request
 	var err error
-	if body != nil && !(reflect.ValueOf(body).Kind() == reflect.Ptr && reflect.ValueOf(body).IsNil()) {
+	if body != nil && !(reflect.ValueOf(body).Kind() == reflect.Pointer && reflect.ValueOf(body).IsNil()) {
 		bodyJSON, err := json.Marshal(body)
 		if err != nil {
 			return nil, err

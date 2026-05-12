@@ -72,6 +72,50 @@ func (s *VolumeTestSuite) TestClientIMPL_GetVolumes() {
 	assert.Equal(s.T(), volID, vols[0].ID)
 }
 
+func (s *VolumeTestSuite) TestClientIMPL_GetVolumesWithFilter() {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
+	// Test with "in" filter for names
+	respData := fmt.Sprintf(`[{"id": "%s", "name": "vol1"}, {"id": "%s", "name": "vol2"}]`, volID, volID2)
+	httpmock.RegisterResponder("GET", volumeMockURL,
+		func(req *http.Request) (*http.Response, error) {
+			// Verify the filter parameters are in the query
+			assert.Contains(s.T(), req.URL.Query().Get("name"), "in.vol1,vol2,vol3")
+			return httpmock.NewStringResponder(200, respData)(req)
+		})
+
+	filters := map[string]string{
+		"name": "in.vol1,vol2,vol3",
+	}
+
+	volumes, err := C.GetVolumesWithFilter(context.Background(), filters)
+	assert.Nil(s.T(), err)
+	assert.Len(s.T(), volumes, 2)
+	assert.Equal(s.T(), volID, volumes[0].ID)
+
+	// Test with multiple filters
+	httpmock.Reset()
+	respData = fmt.Sprintf(`[{"id": "%s", "name": "vol1", "size": 100}]`, volID)
+	httpmock.RegisterResponder("GET", volumeMockURL,
+		func(req *http.Request) (*http.Response, error) {
+			// Verify multiple filter parameters
+			assert.Equal(s.T(), "in.vol1,vol2", req.URL.Query().Get("name"))
+			assert.Equal(s.T(), "gt.50", req.URL.Query().Get("size"))
+			return httpmock.NewStringResponder(200, respData)(req)
+		})
+
+	filters = map[string]string{
+		"name": "in.vol1,vol2",
+		"size": "gt.50",
+	}
+
+	volumes, err = C.GetVolumesWithFilter(context.Background(), filters)
+	assert.Nil(s.T(), err)
+	assert.Len(s.T(), volumes, 1)
+	assert.Equal(s.T(), volID, volumes[0].ID)
+}
+
 func (s *VolumeTestSuite) TestClientIMPL_GetVolume() {
 	respData := fmt.Sprintf(`{"id": "%s"}`, volID)
 	httpmock.RegisterResponder("GET", fmt.Sprintf("%s/%s", volumeMockURL, volID),
