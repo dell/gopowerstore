@@ -145,6 +145,25 @@ func TestClientIMPL_CreateFS(t *testing.T) {
 	assert.Equal(t, fsID, fs.ID)
 }
 
+func TestClientIMPL_CreateFS_WithPerformancePolicy(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	respData := fmt.Sprintf(`{"id": "%s"}`, fsID)
+	httpmock.RegisterResponder("POST", fsMockURL,
+		httpmock.NewStringResponder(201, respData))
+	createReq := FsCreate{
+		Description:         "fs with performance policy",
+		Name:                "new-fs-perf",
+		NASServerID:         "5e8d8e8e-671b-336f-db4e-cee0fbdc981e",
+		Size:                3221225472,
+		PerformancePolicyID: "perf-policy-123",
+	}
+
+	fs, err := C.CreateFS(context.Background(), &createReq)
+	assert.Nil(t, err)
+	assert.Equal(t, fsID, fs.ID)
+}
+
 func TestClientIMPL_CloneFS(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
@@ -346,8 +365,10 @@ func TestClientIMPL_GetFsByFilter(t *testing.T) {
 func Test_GetNASFields(t *testing.T) {
 	fields := GetNASFields(3.7)
 	assert.NotEmpty(t, fields)
+	assert.NotContains(t, fields, "health_details")
 	fields = GetNASFields(3.5)
 	assert.NotEmpty(t, fields)
+	assert.NotContains(t, fields, "health_details")
 }
 
 func Test_NASServersErr(t *testing.T) {

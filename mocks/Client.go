@@ -3685,6 +3685,36 @@ func (_m *Client) GetVolumes(ctx context.Context) ([]gopowerstore.Volume, error)
 	return r0, r1
 }
 
+// GetVolumesWithFilter provides a mock function with given fields: ctx, filters
+func (_m *Client) GetVolumesWithFilter(ctx context.Context, filters map[string]string) ([]gopowerstore.Volume, error) {
+	ret := _m.Called(ctx, filters)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetVolumesWithFilter")
+	}
+
+	var r0 []gopowerstore.Volume
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, map[string]string) ([]gopowerstore.Volume, error)); ok {
+		return rf(ctx, filters)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, map[string]string) []gopowerstore.Volume); ok {
+		r0 = rf(ctx, filters)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]gopowerstore.Volume)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, map[string]string) error); ok {
+		r1 = rf(ctx, filters)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // ListFS provides a mock function with given fields: ctx
 func (_m *Client) ListFS(ctx context.Context) ([]gopowerstore.FileSystem, error) {
 	ret := _m.Called(ctx)
@@ -3894,6 +3924,34 @@ func (_m *Client) ModifyReplicationRule(ctx context.Context, modifyParams *gopow
 
 	if rf, ok := ret.Get(1).(func(context.Context, *gopowerstore.ReplicationRuleModify, string) error); ok {
 		r1 = rf(ctx, modifyParams, id)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// ModifyReplicationSession provides a mock function with given fields: ctx, id, params
+func (_m *Client) ModifyReplicationSession(ctx context.Context, id string, params *gopowerstore.ReplicationSessionParams) (gopowerstore.EmptyResponse, error) {
+	ret := _m.Called(ctx, id, params)
+
+	if len(ret) == 0 {
+		panic("no return value specified for ModifyReplicationSession")
+	}
+
+	var r0 gopowerstore.EmptyResponse
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, string, *gopowerstore.ReplicationSessionParams) (gopowerstore.EmptyResponse, error)); ok {
+		return rf(ctx, id, params)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, string, *gopowerstore.ReplicationSessionParams) gopowerstore.EmptyResponse); ok {
+		r0 = rf(ctx, id, params)
+	} else {
+		r0 = ret.Get(0).(gopowerstore.EmptyResponse)
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, string, *gopowerstore.ReplicationSessionParams) error); ok {
+		r1 = rf(ctx, id, params)
 	} else {
 		r1 = ret.Error(1)
 	}

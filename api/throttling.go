@@ -15,7 +15,7 @@
  */
 
 //nolint:revive
-package api
+package api // revive:disable:var-naming
 
 import (
 	"context"
@@ -77,11 +77,11 @@ func (ts *TimeoutSemaphore) Acquire(ctx context.Context) error {
 			return nil
 		case <-ctx.Done():
 			msg := "failed to acquire lock (ctx) for API call, timeout expired"
-			ts.Logger.Error(ctx, msg)
+			ts.Logger.Error(ctx, "%s", msg)
 			return &TimeoutSemaphoreError{msg}
 		case <-acquireCtx.Done():
 			msg := "failed to acquire lock (acquireCtx) for API call, timeout expired"
-			ts.Logger.Error(ctx, msg)
+			ts.Logger.Error(ctx, "%s", msg)
 			return &TimeoutSemaphoreError{msg}
 		}
 	}

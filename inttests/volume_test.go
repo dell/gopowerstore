@@ -142,6 +142,63 @@ func TestGetVolumes(t *testing.T) {
 	checkAPIErr(t, err)
 }
 
+func TestGetVolumesWithFilter(t *testing.T) {
+	// Create additional volumes for testing filter
+	var testVols []gopowerstore.CreateResponse
+	volNames := []string{"filter_test_vol_1", "filter_test_vol_2", "other_test_vol"}
+
+	for _, name := range volNames {
+		size := DefaultVolSize
+		createParams := gopowerstore.VolumeCreate{
+			Name: &name,
+			Size: &size,
+		}
+		vol, err := C.CreateVolume(context.Background(), &createParams)
+		if assert.NoError(t, err) {
+			testVols = append(testVols, vol)
+		}
+	}
+
+	// Clean up created volumes after test
+	defer func() {
+		for _, vol := range testVols {
+			DeleteVol(t, vol.ID)
+		}
+	}()
+
+	// Test filter with "in" operator for specific names
+	filters := map[string]string{
+		"name": "in.(filter_test_vol_1,filter_test_vol_2)",
+	}
+
+	resp, err := C.GetVolumesWithFilter(context.Background(), filters)
+
+	if assert.NoError(t, err) {
+		// Should only return volumes with names filter_test_vol_1 or filter_test_vol_2
+		assert.True(t, len(resp) >= 2)
+
+		// Verify all returned volumes match the filter criteria
+		for _, vol := range resp {
+			assert.True(t, vol.Name == "filter_test_vol_1" || vol.Name == "filter_test_vol_2",
+				"Volume name %s does not match filter criteria", vol.Name)
+		}
+	}
+
+	// Test filter with single name using "eq" operator
+	filters = map[string]string{
+		"name": "eq.other_test_vol",
+	}
+
+	resp, err = C.GetVolumesWithFilter(context.Background(), filters)
+
+	if assert.NoError(t, err) {
+		// Should only return volumes with name other_test_vol
+		for _, vol := range resp {
+			assert.Equal(t, "other_test_vol", vol.Name)
+		}
+	}
+}
+
 func TestGetVolume(t *testing.T) {
 	volID, volName := CreateVol(t)
 	volume, err := C.GetVolume(context.Background(), volID)

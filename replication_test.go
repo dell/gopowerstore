@@ -32,10 +32,11 @@ const (
 )
 
 var (
-	protectionPolicyID  = "15c03067-c4f2-428b-b637-18b0266979f0"
-	protectionPolicyID2 = "3224ff5a-2e83-4a7f-a0c4-009df20e36db"
-	replicationRuleID   = "6b930711-46bc-4a4b-9d6a-22c77a7838c4"
-	replicationRuleID2  = "2d0780e3-2ce7-4d8b-b2ec-349c5e9e26a9"
+	protectionPolicyID   = "15c03067-c4f2-428b-b637-18b0266979f0"
+	protectionPolicyID2  = "3224ff5a-2e83-4a7f-a0c4-009df20e36db"
+	replicationRuleID    = "6b930711-46bc-4a4b-9d6a-22c77a7838c4"
+	replicationRuleID2   = "2d0780e3-2ce7-4d8b-b2ec-349c5e9e26a9"
+	replicationSessionID = "8a5c2b1f-3d7e-4a9f-b8c6-7d4e3f2a1b9c"
 )
 
 func TestClientIMPL_CreateProtectionPolicy(t *testing.T) {
@@ -104,6 +105,21 @@ func TestClientIMPL_ModifyReplicationRule(t *testing.T) {
 	}
 
 	resp, err := C.ModifyReplicationRule(context.Background(), &modifyParams, replicationRuleID)
+	assert.Nil(t, err)
+	assert.Equal(t, EmptyResponse(""), resp)
+}
+
+func TestClientIMPL_ModifyReplicationSession(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	httpmock.RegisterResponder("PATCH", fmt.Sprintf("%s/%s", replicationSessionMockURL, replicationSessionID),
+		httpmock.NewStringResponder(204, ""))
+
+	modifyParams := ReplicationSessionParams{
+		Role: ReplicationRoleMetroPreferred,
+	}
+
+	resp, err := C.ModifyReplicationSession(context.Background(), replicationSessionID, &modifyParams)
 	assert.Nil(t, err)
 	assert.Equal(t, EmptyResponse(""), resp)
 }

@@ -82,6 +82,55 @@ func TestSemaphore(t *testing.T) {
 			holdTime: 10 * time.Millisecond,
 			wantErr:  false,
 		},
+		{
+			name: "test TimeoutSemaphoreError",
+			ctx: func() (context.Context, context.CancelFunc) {
+				// Use a very short timeout to ensure error occurs
+				return context.WithTimeout(context.Background(), 1*time.Millisecond)
+			},
+			ts: func() TimeoutSemaphoreInterface {
+				return NewTimeoutSemaphore(100*time.Millisecond, 1, &defaultLogger{})
+			},
+			holdTime: 50 * time.Millisecond, // Hold longer than context timeout
+			wantErr:  true,
+		},
+		{
+			name: "test SetLogger",
+			ctx: func() (context.Context, context.CancelFunc) {
+				return context.WithTimeout(context.Background(), 100*time.Millisecond)
+			},
+			ts: func() TimeoutSemaphoreInterface {
+				ts := NewTimeoutSemaphore(100*time.Millisecond, 1, nil)
+				logger := &defaultLogger{}
+				result := ts.SetLogger(logger)
+				if result != ts {
+					panic("SetLogger() should return the same semaphore instance")
+				}
+				if ts.Logger != logger {
+					panic("SetLogger() should set the logger")
+				}
+				return ts
+			},
+			holdTime: 1 * time.Millisecond,
+			wantErr:  false,
+		},
+		{
+			name: "test defaultLogger methods",
+			ctx: func() (context.Context, context.CancelFunc) {
+				return context.WithTimeout(context.Background(), 100*time.Millisecond)
+			},
+			ts: func() TimeoutSemaphoreInterface {
+				logger := &defaultLogger{}
+				ctx := context.Background()
+				// Test logging methods to increase coverage
+				logger.Info(ctx, "test info message: %s", "test")
+				logger.Debug(ctx, "test debug message: %s", "test")
+				logger.Error(ctx, "test error message: %s", "test")
+				return NewTimeoutSemaphore(100*time.Millisecond, 1, logger)
+			},
+			holdTime: 1 * time.Millisecond,
+			wantErr:  false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
