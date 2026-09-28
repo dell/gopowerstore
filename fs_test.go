@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2020-2025 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2020-2026 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,9 @@ package gopowerstore
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"net/http"
 	"testing"
 
 	"github.com/jarcoal/httpmock"
@@ -198,12 +200,40 @@ func TestClientIMPL_ModifyFS(t *testing.T) {
 	defer httpmock.DeactivateAndReset()
 	httpmock.RegisterResponder("PATCH", fmt.Sprintf("%s/%s", fsMockURL, fsID),
 		httpmock.NewStringResponder(204, ""))
+	desc := "New Description"
 	resp, err := C.ModifyFS(context.Background(), &FSModify{
 		Size:        3221225472 * 2,
-		Description: "New Description",
+		Description: &desc,
 	}, fsID)
 	assert.Nil(t, err)
 	assert.Equal(t, EmptyResponse(""), resp)
+}
+
+func TestFSModify_PointerSemantics_OmitsNilFields(t *testing.T) {
+	desc := "test fs description"
+	mod := FSModify{
+		Description: &desc,
+	}
+	data, err := json.Marshal(mod)
+	assert.Nil(t, err)
+	jsonStr := string(data)
+	assert.Contains(t, jsonStr, `"description"`)
+	assert.NotContains(t, jsonStr, `"protection_policy_id"`)
+	assert.NotContains(t, jsonStr, `"performance_policy_id"`)
+}
+
+func TestFSModify_PointerSemantics_IncludesSetFields(t *testing.T) {
+	desc := "new fs desc"
+	protPolicy := "prot-policy-1"
+	mod := FSModify{
+		Description:        &desc,
+		ProtectionPolicyID: &protPolicy,
+	}
+	data, err := json.Marshal(mod)
+	assert.Nil(t, err)
+	jsonStr := string(data)
+	assert.Contains(t, jsonStr, `"description":"new fs desc"`)
+	assert.Contains(t, jsonStr, `"protection_policy_id":"prot-policy-1"`)
 }
 
 func TestClientIMPL_CreateNAS(t *testing.T) {
@@ -369,6 +399,50 @@ func Test_GetNASFields(t *testing.T) {
 	fields = GetNASFields(3.5)
 	assert.NotEmpty(t, fields)
 	assert.NotContains(t, fields, "health_details")
+}
+
+func Test_GetFSFields(t *testing.T) {
+	fields40 := GetFSFields(4.0)
+	assert.NotContains(t, fields40, "performance_policy_id")
+
+	fields41 := GetFSFields(4.1)
+	assert.Contains(t, fields41, "performance_policy_id")
+}
+
+func TestClientIMPL_GetFS_PerformancePolicySelect(t *testing.T) {
+	testCases := []struct {
+		name          string
+		buildVersion  string
+		shouldContain bool
+	}{
+		{"4.0 excludes performance_policy_id", "4.0.0.0", false},
+		{"4.1 includes performance_policy_id", "4.1.0.0", true},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			httpmock.Activate()
+			defer httpmock.DeactivateAndReset()
+
+			httpmock.RegisterResponder("GET", "=~^/?software_installed.*",
+				httpmock.NewStringResponder(200, fmt.Sprintf(`[{"id": "1", "is_cluster": true, "build_version": "%s"}]`, tc.buildVersion)))
+
+			var selectValue string
+			httpmock.RegisterResponder("GET", "=~^/?file_system/.*",
+				func(req *http.Request) (*http.Response, error) {
+					selectValue = req.URL.Query().Get("select")
+					return httpmock.NewStringResponse(200, fmt.Sprintf(`{"id": "%s"}`, fsID)), nil
+				})
+
+			_, err := C.GetFS(context.Background(), fsID)
+			assert.Nil(t, err)
+			if tc.shouldContain {
+				assert.Contains(t, selectValue, "performance_policy_id")
+			} else {
+				assert.NotContains(t, selectValue, "performance_policy_id")
+			}
+		})
+	}
 }
 
 func Test_NASServersErr(t *testing.T) {

@@ -24,6 +24,7 @@ import (
 	"net/http"
 	"os"
 	"reflect"
+	"sync"
 	"testing"
 	"time"
 
@@ -66,6 +67,40 @@ func Test_buildErrorUnknownFormat(t *testing.T) {
 	assert.Contains(t, apiErr.Message, "Message: File not found.")
 	assert.NoError(t, httpResp.Body.Close())
 	assert.NotEmpty(t, apiErr.Error())
+}
+
+func TestErrorMsg_Error_Format(t *testing.T) {
+	tests := []struct {
+		name     string
+		err      ErrorMsg
+		expected string
+	}{
+		{
+			name:     "non-zero status code includes HTTP prefix",
+			err:      ErrorMsg{StatusCode: 422, Message: "Could not find the resource"},
+			expected: "HTTP 422: Could not find the resource",
+		},
+		{
+			name:     "zero status code returns message only",
+			err:      ErrorMsg{StatusCode: 0, Message: "generic error"},
+			expected: "generic error",
+		},
+		{
+			name:     "401 unauthorized",
+			err:      ErrorMsg{StatusCode: 401, Message: "unauthorized"},
+			expected: "HTTP 401: unauthorized",
+		},
+		{
+			name:     "404 not found",
+			err:      ErrorMsg{StatusCode: 404, Message: "endpoint not found"},
+			expected: "HTTP 404: endpoint not found",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.expected, tt.err.Error())
+		})
+	}
 }
 
 func TestNew(t *testing.T) {
@@ -137,8 +172,6 @@ func TestClient_Query_NilResponse(t *testing.T) {
 }
 
 func TestClient_Query(t *testing.T) {
-	os.Setenv("GOPOWERSTORE_DEBUG", "true")
-	defer os.Unsetenv("GOPOWERSTORE_DEBUG")
 	apiURL := "https://foo"
 	testURL := "mock"
 	action := "attach"
@@ -168,8 +201,6 @@ func TestClient_Query(t *testing.T) {
 }
 
 func TestClient_Query_Forbidden(t *testing.T) {
-	os.Setenv("GOPOWERSTORE_DEBUG", "true")
-	defer os.Unsetenv("GOPOWERSTORE_DEBUG")
 	apiURL := "https://foo"
 	testURL := "mock"
 	action := "attach"
@@ -200,8 +231,6 @@ func TestClient_Query_Forbidden(t *testing.T) {
 }
 
 func TestClient_Query_Login_Error(t *testing.T) {
-	os.Setenv("GOPOWERSTORE_DEBUG", "true")
-	defer os.Unsetenv("GOPOWERSTORE_DEBUG")
 	apiURL := "https://foo"
 	testURL := "mock"
 	action := "attach"
@@ -277,8 +306,10 @@ func TestClientIMPL_updatePaginationInfoInMeta(t *testing.T) {
 func TestClientIMPL_SetLogger(t *testing.T) {
 	log := &defaultLogger{}
 	c := ClientIMPL{apiThrottle: NewTimeoutSemaphore(10*time.Second, 10, log)}
-	c.SetLogger(&defaultLogger{})
+	newLogger := &defaultLogger{}
+	c.SetLogger(newLogger)
 	assert.NotNil(t, c.logger)
+	assert.Equal(t, newLogger, c.logger)
 }
 
 func TestClientIMPL_GetCustomHTTPHeaders(t *testing.T) {
@@ -325,9 +356,16 @@ func Test_replaceSensitiveHeaderInfo(t *testing.T) {
 		{
 			name: "Token",
 			args: args{
-				[]byte("Dell-Emc-Token: ag2#45gsg135#2g35hxad!35632="),
+				[]byte("Dell-Emc-Token: TEST_TOKEN_VALUE"),
 			},
 			want: "Dell-Emc-Token: ******",
+		},
+		{
+			name: "Token uppercase",
+			args: args{
+				[]byte("DELL-EMC-TOKEN: TEST_TOKEN_VALUE"),
+			},
+			want: "DELL-EMC-TOKEN: ******",
 		},
 		{
 			name: "Authorization",
@@ -339,21 +377,28 @@ func Test_replaceSensitiveHeaderInfo(t *testing.T) {
 		{
 			name: "Cookie",
 			args: args{
-				[]byte("Set-Cookie: auth_cookie=ga53j123b52u136klh1; Path=/"),
+				[]byte("Set-Cookie: auth_cookie=TEST_COOKIE_VALUE; Path=/"),
 			},
-			want: "Set-Cookie: auth_cookie=******; Path=/",
+			want: "Set-Cookie: ******",
+		},
+		{
+			name: "Set-Cookie lowercase",
+			args: args{
+				[]byte("set-cookie: auth_cookie=TEST_COOKIE_VALUE; Path=/; Secure; HTTPOnly"),
+			},
+			want: "set-cookie: ******",
 		},
 		{
 			name: "Combined",
 			args: args{
 				[]byte(
 					`Content-Type: application/json; version=1.0
-				Dell-Emc-Token: gsk;2j151#!3has5kka=52623^
-				Set-Cookie: auth_cookie=p2ml4nask623smnasl412; Path=/`),
+				Dell-Emc-Token: TEST_TOKEN_VALUE
+				Set-Cookie: auth_cookie=TEST_COOKIE_VALUE; Path=/`),
 			},
 			want: `Content-Type: application/json; version=1.0
 				Dell-Emc-Token: ******
-				Set-Cookie: auth_cookie=******; Path=/`,
+				Set-Cookie: ******`,
 		},
 	}
 	for _, tt := range tests {
@@ -491,10 +536,6 @@ func TestClient_Query_Forbidden_LoginAndRetrySuccess(t *testing.T) {
 }
 
 func TestClient_Query_DebugBlock(t *testing.T) {
-	// Enable debug mode
-	os.Setenv("GOPOWERSTORE_DEBUG", "true")
-	defer os.Unsetenv("GOPOWERSTORE_DEBUG")
-
 	apiURL := "https://foo"
 	testURL := "mock"
 	action := "attach"
@@ -538,4 +579,430 @@ func TestMockClient(t *testing.T) {
 	assert.NotNil(t, client.apiThrottle)
 	assert.NotNil(t, client.httpClient)
 	assert.NotNil(t, client.logger)
+}
+
+func TestClient_Query_WithTraceID(t *testing.T) {
+	apiURL := "https://foo"
+	testURL := "mock"
+	action := "attach"
+	id := "5bfebae3-a278-4c50-af16-011a1dfc1b6f"
+	c := testClient(t, apiURL)
+	ctx := context.Background()
+	httpmock.ActivateNonDefault(c.httpClient)
+	defer httpmock.DeactivateAndReset()
+	respData := `{"name": "Foo"}`
+	qp := QueryParams{}
+	qp.RawArg("foo", "bar")
+
+	httpmock.RegisterResponder("POST", fmt.Sprintf("%s/%s/%s/%s?foo=bar", apiURL, testURL, id, action),
+		httpmock.NewStringResponder(200, respData))
+
+	type testResp struct {
+		Name string `json:"name"`
+	}
+	var resp testResp
+
+	ctx = c.SetTraceID(ctx, "test-trace-id")
+	_, err := c.Query(ctx, RequestConfig{
+		Method: "POST", Endpoint: testURL, ID: id, Action: action, QueryParams: &qp, Body: map[string]string{"foo": "bar"},
+	}, &resp)
+	assert.Nil(t, err)
+	assert.Equal(t, "Foo", resp.Name)
+}
+
+type recordingObserver struct {
+	mu           sync.Mutex
+	observations []RequestObservation
+}
+
+func (r *recordingObserver) ObservePowerStoreRequest(obs RequestObservation) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	r.observations = append(r.observations, obs)
+}
+
+func (r *recordingObserver) snapshot() []RequestObservation {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	out := make([]RequestObservation, len(r.observations))
+	copy(out, r.observations)
+	return out
+}
+
+func testClientWithObserver(t *testing.T, apiURL string, observer RequestObserver) *ClientIMPL {
+	t.Helper()
+	c, err := New(apiURL, "admin", "password", false, "test_data/ca.pem", time.Duration(10*time.Second), int(1000), "key", WithRequestObserver(observer))
+	if err != nil {
+		t.FailNow()
+	}
+	return c
+}
+
+func TestClient_Query_ObserverSuccess(t *testing.T) {
+	apiURL := "https://foo"
+	testURL := "mock"
+	action := "attach"
+	id := "id-123"
+	observer := &recordingObserver{}
+	c := testClientWithObserver(t, apiURL, observer)
+	observer.mu.Lock()
+	observer.observations = nil
+	observer.mu.Unlock()
+
+	ctx := context.Background()
+	httpmock.ActivateNonDefault(c.httpClient)
+	defer httpmock.DeactivateAndReset()
+
+	qp := QueryParams{}
+	qp.RawArg("foo", "bar")
+
+	httpmock.RegisterResponder("POST", fmt.Sprintf("%s/%s/%s/%s?foo=bar", apiURL, testURL, id, action),
+		httpmock.NewStringResponder(201, `{"name": "Foo"}`))
+
+	var resp struct {
+		Name string `json:"name"`
+	}
+	_, err := c.Query(ctx, RequestConfig{
+		Method: "POST", Endpoint: testURL, ID: id, Action: action, QueryParams: &qp, Body: map[string]string{"foo": "bar"},
+	}, &resp)
+	assert.NoError(t, err)
+	assert.Equal(t, "Foo", resp.Name)
+
+	observations := observer.snapshot()
+	if len(observations) != 1 {
+		t.Fatalf("expected 1 observation, got %d", len(observations))
+	}
+	got := observations[0]
+	assert.Equal(t, "POST", got.Method)
+	assert.Equal(t, testURL, got.Endpoint)
+	assert.Equal(t, action, got.Action)
+	assert.Equal(t, 201, got.StatusCode)
+	assert.NoError(t, got.Err)
+	assert.GreaterOrEqual(t, got.Duration, time.Duration(0))
+}
+
+func TestClient_Query_ObserverFailure(t *testing.T) {
+	apiURL := "https://foo"
+	testURL := "mock"
+	action := "attach"
+	id := "id-123"
+	observer := &recordingObserver{}
+	c := testClientWithObserver(t, apiURL, observer)
+	observer.mu.Lock()
+	observer.observations = nil
+	observer.mu.Unlock()
+
+	ctx := context.Background()
+	httpmock.ActivateNonDefault(c.httpClient)
+	defer httpmock.DeactivateAndReset()
+
+	qp := QueryParams{}
+	qp.RawArg("foo", "bar")
+
+	httpmock.RegisterResponder("POST", fmt.Sprintf("%s/%s/%s/%s?foo=bar", apiURL, testURL, id, action),
+		httpmock.NewStringResponder(http.StatusBadRequest, `{"messages":[{"message_l10n":"bad request","severity":"Error"}]}`))
+
+	resp := &testResp{}
+	_, err := c.Query(ctx, RequestConfig{
+		Method: "POST", Endpoint: testURL, ID: id, Action: action, QueryParams: &qp, Body: map[string]string{"foo": "bar"},
+	}, resp)
+	assert.Error(t, err)
+
+	observations := observer.snapshot()
+	if len(observations) != 1 {
+		t.Fatalf("expected 1 observation, got %d", len(observations))
+	}
+	got := observations[0]
+	assert.Equal(t, 400, got.StatusCode)
+	assert.Equal(t, "POST", got.Method)
+	assert.Equal(t, testURL, got.Endpoint)
+	assert.Equal(t, action, got.Action)
+	assert.Error(t, got.Err)
+}
+
+func TestClient_Query_ObserverTransportError(t *testing.T) {
+	apiURL := "https://foo"
+	testURL := "mock"
+	action := "attach"
+	id := "id-123"
+	observer := &recordingObserver{}
+	c := testClientWithObserver(t, apiURL, observer)
+	observer.mu.Lock()
+	observer.observations = nil
+	observer.mu.Unlock()
+
+	ctx := context.Background()
+	httpmock.ActivateNonDefault(c.httpClient)
+	defer httpmock.DeactivateAndReset()
+
+	qp := QueryParams{}
+	qp.RawArg("foo", "bar")
+
+	httpmock.RegisterResponder("POST", fmt.Sprintf("%s/%s/%s/%s?foo=bar", apiURL, testURL, id, action),
+		httpmock.NewStringResponder(500, `{"messages":[{"message_l10n":"internal error","severity":"Error"}]}`))
+
+	resp := &testResp{}
+	_, err := c.Query(ctx, RequestConfig{
+		Method: "POST", Endpoint: testURL, ID: id, Action: action, QueryParams: &qp, Body: map[string]string{"foo": "bar"},
+	}, resp)
+	assert.Error(t, err)
+
+	observations := observer.snapshot()
+	if len(observations) != 1 {
+		t.Fatalf("expected 1 observation, got %d", len(observations))
+	}
+	got := observations[0]
+	assert.Equal(t, 500, got.StatusCode)
+	assert.Error(t, got.Err)
+}
+
+func TestWithDebugHTTPDump(t *testing.T) {
+	apiURL := "https://foo"
+
+	// Test with debug HTTP dump enabled
+	c, err := New(apiURL, "test", "test", false, "", time.Second, 1, key, WithDebugHTTPDump(true))
+	assert.NoError(t, err)
+	assert.NotNil(t, c)
+	assert.True(t, c.debugHTTPDump, "debugHTTPDump should be enabled")
+
+	// Test with debug HTTP dump disabled
+	c2, err := New(apiURL, "test", "test", false, "", time.Second, 1, key, WithDebugHTTPDump(false))
+	assert.NoError(t, err)
+	assert.NotNil(t, c2)
+	assert.False(t, c2.debugHTTPDump, "debugHTTPDump should be disabled")
+
+	// Test default behavior (no option specified)
+	c3, err := New(apiURL, "test", "test", false, "", time.Second, 1, key)
+	assert.NoError(t, err)
+	assert.NotNil(t, c3)
+	// Default should be based on environment variable
+}
+
+func Test_prepareHTTPDump(t *testing.T) {
+	tests := []struct {
+		name     string
+		dump     []byte
+		notEmpty bool
+	}{
+		{
+			name:     "simple dump",
+			dump:     []byte("GET /api HTTP/1.1\r\nHost: example.com\r\n\r\n"),
+			notEmpty: true,
+		},
+		{
+			name:     "dump with newlines",
+			dump:     []byte("GET /api HTTP/1.1\nHost: example.com\n\n"),
+			notEmpty: true,
+		},
+		{
+			name:     "dump with sensitive info",
+			dump:     []byte("Authorization: Basic 12345\r\nDell-Emc-Token: TEST_TOKEN_VALUE\r\n"),
+			notEmpty: true,
+		},
+		{
+			name:     "empty dump",
+			dump:     []byte(""),
+			notEmpty: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := prepareHTTPDump(tt.dump)
+			if tt.notEmpty {
+				assert.NotEmpty(t, result)
+			}
+			// Should not contain newlines (they're replaced with spaces)
+			assert.NotContains(t, result, "\r")
+			assert.NotContains(t, result, "\n")
+		})
+	}
+}
+
+func TestClientIMPL_prepareTraceMsg(t *testing.T) {
+	c := testClient(t, "https://foo.com")
+	ctx := context.Background()
+
+	// Test without trace ID
+	msg := c.prepareTraceMsg(ctx)
+	assert.Equal(t, "", msg)
+
+	// Test with trace ID
+	ctx = c.SetTraceID(ctx, "test-trace-123")
+	msg = c.prepareTraceMsg(ctx)
+	assert.Equal(t, "[test-trace-123] ", msg)
+
+	// Test with empty trace ID
+	ctx = c.SetTraceID(ctx, "")
+	msg = c.prepareTraceMsg(ctx)
+	assert.Equal(t, "", msg)
+}
+
+func TestClientIMPL_prepareRequest(t *testing.T) {
+	c := testClient(t, "https://foo.com")
+	ctx := context.Background()
+
+	tests := []struct {
+		name        string
+		method      string
+		requestURL  string
+		traceMsg    string
+		body        interface{}
+		expectError bool
+	}{
+		{
+			name:        "POST with body",
+			method:      "POST",
+			requestURL:  "https://foo.com/api/endpoint",
+			traceMsg:    "[test] ",
+			body:        map[string]string{"key": "value"},
+			expectError: false,
+		},
+		{
+			name:        "GET without body",
+			method:      "GET",
+			requestURL:  "https://foo.com/api/endpoint",
+			traceMsg:    "",
+			body:        nil,
+			expectError: false,
+		},
+		{
+			name:        "POST with nil body",
+			method:      "POST",
+			requestURL:  "https://foo.com/api/endpoint",
+			traceMsg:    "",
+			body:        nil,
+			expectError: false,
+		},
+		{
+			name:        "PUT with body",
+			method:      "PUT",
+			requestURL:  "https://foo.com/api/endpoint",
+			traceMsg:    "[trace] ",
+			body:        struct{ Name string }{Name: "test"},
+			expectError: false,
+		},
+		{
+			name:        "DELETE without body",
+			method:      "DELETE",
+			requestURL:  "https://foo.com/api/endpoint",
+			traceMsg:    "",
+			body:        nil,
+			expectError: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			req, err := c.prepareRequest(ctx, tt.method, tt.requestURL, tt.traceMsg, tt.body)
+			if tt.expectError {
+				assert.Error(t, err)
+				assert.Nil(t, req)
+			} else {
+				assert.NoError(t, err)
+				assert.NotNil(t, req)
+				assert.Equal(t, tt.method, req.Method)
+				assert.Equal(t, tt.requestURL, req.URL.String())
+				// Check that basic auth is set
+				auth := req.Header.Get("Authorization")
+				assert.NotEmpty(t, auth)
+			}
+		})
+	}
+}
+
+func TestClientIMPL_setupContext(t *testing.T) {
+	c := testClient(t, "https://foo.com")
+
+	// Test with nil context
+	ctx, cancelFunc := c.setupContext(nil)
+	assert.NotNil(t, ctx)
+	assert.NotNil(t, cancelFunc)
+	if cancelFunc != nil {
+		(*cancelFunc)()
+	}
+
+	// Test with context without timeout
+	ctx = context.Background()
+	ctx, cancelFunc = c.setupContext(ctx)
+	assert.NotNil(t, ctx)
+	assert.NotNil(t, cancelFunc)
+	if cancelFunc != nil {
+		(*cancelFunc)()
+	}
+
+	// Test with context with timeout
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	ctx, cancelFunc = c.setupContext(ctx)
+	assert.NotNil(t, ctx)
+	assert.Nil(t, cancelFunc) // Should not add another cancel func
+
+	// Test with context with deadline
+	ctx, cancel = context.WithDeadline(context.Background(), time.Now().Add(5*time.Second))
+	defer cancel()
+	ctx, cancelFunc = c.setupContext(ctx)
+	assert.NotNil(t, ctx)
+	assert.Nil(t, cancelFunc) // Should not add another cancel func
+}
+
+func TestClientIMPL_prepareRequest_WithToken(t *testing.T) {
+	c := testClient(t, "https://foo.com")
+	ctx := context.Background()
+
+	// Set token on client
+	c.token = "test-token-12345"
+
+	req, err := c.prepareRequest(ctx, "GET", "https://foo.com/api/endpoint", "", nil)
+	assert.NoError(t, err)
+	assert.NotNil(t, req)
+
+	// Verify token header is set
+	tokenHeader := req.Header.Get("DELL-EMC-TOKEN")
+	assert.Equal(t, "test-token-12345", tokenHeader)
+}
+
+func TestClientIMPL_prepareRequest_WithCustomHeaders(t *testing.T) {
+	c := testClient(t, "https://foo.com")
+	ctx := context.Background()
+
+	// Set custom HTTP headers
+	customHeaders := http.Header{}
+	customHeaders.Add("X-Custom-Header", "custom-value-1")
+	customHeaders.Add("X-Custom-Header", "custom-value-2")
+	customHeaders.Add("X-Another-Header", "another-value")
+	c.customHTTPHeaders.SetHeader(customHeaders)
+
+	req, err := c.prepareRequest(ctx, "POST", "https://foo.com/api/endpoint", "", map[string]string{"key": "value"})
+	assert.NoError(t, err)
+	assert.NotNil(t, req)
+
+	// Verify custom headers are set
+	customHeader := req.Header.Values("X-Custom-Header")
+	assert.Contains(t, customHeader, "custom-value-1")
+	assert.Contains(t, customHeader, "custom-value-2")
+	anotherHeader := req.Header.Get("X-Another-Header")
+	assert.Equal(t, "another-value", anotherHeader)
+}
+
+func TestClientIMPL_prepareRequest_WithDebugHTTPDump(t *testing.T) {
+	c := testClient(t, "https://foo.com")
+	ctx := context.Background()
+
+	// Enable debug HTTP dump
+	c.debugHTTPDump = true
+
+	req, err := c.prepareRequest(ctx, "POST", "https://foo.com/api/endpoint", "[trace-123] ", map[string]string{"key": "value"})
+	assert.NoError(t, err)
+	assert.NotNil(t, req)
+}
+
+func TestClientIMPL_prepareRequest_WithNilPointerBody(t *testing.T) {
+	c := testClient(t, "https://foo.com")
+	ctx := context.Background()
+
+	// Test with a nil pointer (should be treated as no body)
+	var nilPtr *struct{ Name string }
+	req, err := c.prepareRequest(ctx, "POST", "https://foo.com/api/endpoint", "", nilPtr)
+	assert.NoError(t, err)
+	assert.NotNil(t, req)
+	assert.Nil(t, req.Body)
 }

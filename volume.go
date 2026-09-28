@@ -385,6 +385,29 @@ func (c *ClientIMPL) GetApplianceByName(ctx context.Context, name string) (resp 
 	return appList[0], err
 }
 
+// GetAppliances returns a list of all appliances with pagination
+func (c *ClientIMPL) GetAppliances(ctx context.Context) ([]ApplianceInstance, error) {
+	var result []ApplianceInstance
+	err := c.readPaginatedData(func(offset int) (api.RespMeta, error) {
+		var page []ApplianceInstance
+		qp := getApplianceDefaultQueryParams(c)
+		metadata, err := c.APIClient().Query(
+			ctx,
+			RequestConfig{
+				Method:      "GET",
+				Endpoint:    applianceURL,
+				QueryParams: qp.Limit(1000).Offset(offset),
+			},
+			&page)
+		if err != nil {
+			return metadata, err
+		}
+		result = append(result, page...)
+		return metadata, nil
+	})
+	return result, err
+}
+
 // ConfigureMetroVolume configures the given volume, id, for metro replication with
 // the remote PowerStore system and optional remote PowerStore appliance provided in config.
 // Returns the metro replication session ID and any errors.

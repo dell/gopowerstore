@@ -23,6 +23,13 @@ import (
 	"time"
 )
 
+func TestTimeoutSemaphoreError_Error(t *testing.T) {
+	e := &TimeoutSemaphoreError{msg: "test error message"}
+	if e.Error() != "test error message" {
+		t.Errorf("Error() = %q, want %q", e.Error(), "test error message")
+	}
+}
+
 func TestSemaphore(t *testing.T) {
 	tests := []struct {
 		name     string

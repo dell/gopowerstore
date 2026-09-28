@@ -203,10 +203,13 @@ type ReplicationSession struct {
 
 	// Should be one of "System_Defined", "Promoted", "Demoted", "System_Promoted", or "System_Demoted".
 	LocalResourceState string `json:"local_resource_state,omitempty"`
+
+	// LastSyncTimestamp is the time of the last successful synchronization (ISO 8601 format).
+	LastSyncTimestamp string `json:"last_sync_timestamp,omitempty"`
 }
 
 func (r *ReplicationSession) Fields() []string {
-	return []string{"id", "state", "data_transfer_state", "role", "resource_type", "local_resource_id", "remote_resource_id", "remote_system_id", "type", "storage_element_pairs", "local_resource_state"}
+	return []string{"id", "state", "data_transfer_state", "role", "resource_type", "local_resource_id", "remote_resource_id", "remote_system_id", "type", "storage_element_pairs", "local_resource_state", "last_sync_timestamp"}
 }
 
 // ReplicationRoleEnum - List of replication role types associated with a replication session

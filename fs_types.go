@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2020-2022 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2020-2026 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -112,7 +112,7 @@ type FSModify struct {
 	//
 	//Size, in bytes, presented to the host or end user. This can be used for both expand and shrink on a file system.
 	Size                       int           `json:"size_total,omitempty"`
-	Description                string        `json:"description"` // empty to unassign
+	Description                *string       `json:"description,omitempty"`
 	AccessPolicy               string        `json:"access_policy,omitempty"`
 	LockingPolicy              string        `json:"locking_policy,omitempty"`
 	FolderRenamePolicy         string        `json:"folder_rename_policy,omitempty"`
@@ -123,8 +123,8 @@ type FSModify struct {
 	SmbNotifyOnChangeDirDepth  int32         `json:"smb_notify_on_change_dir_depth,omitempty"`
 	IsSmbNoNotifyEnabled       *bool         `json:"is_smb_no_notify_enabled,omitempty"`
 	IsAsyncMtimeEnabled        *bool         `json:"is_async_MTime_enabled,omitempty"`
-	ProtectionPolicyID         string        `json:"protection_policy_id"` // empty to unassign
-	PerformancePolicyID        string        `json:"performance_policy_id,omitempty"`
+	ProtectionPolicyID         *string       `json:"protection_policy_id,omitempty"`
+	PerformancePolicyID        *string       `json:"performance_policy_id,omitempty"`
 	FileEventsPublishingMode   string        `json:"file_events_publishing_mode,omitempty"`
 	FlrCreate                  FlrAttributes `json:"flr_attributes,omitempty"`
 	ExpirationTimestamp        string        `json:"expiration_timestamp,omitempty"`
@@ -328,7 +328,7 @@ func (n *NAS) Fields() []string {
 
 // Fields returns fields which must be requested to fill struct
 func (n *FileSystem) Fields() []string {
-	return []string{"description", "id", "name", "nas_server_id", "filesystem_type", "size_total", "size_used", "parent_id", "expiration_timestamp", "access_type", "config_type", "access_policy", "locking_policy", "folder_rename_policy", "is_async_MTime_enabled", "protection_policy_id", "performance_policy_id", "file_events_publishing_mode", "host_io_size", "flr_attributes", "is_smb_sync_writes_enabled", "is_smb_no_notify_enabled", "is_smb_op_locks_enabled", "is_smb_notify_on_access_enabled", "is_smb_notify_on_write_enabled", "smb_notify_on_change_dir_depth", "is_quota_enabled", "grace_period", "default_hard_limit", "default_soft_limit", "creation_timestamp", "last_refresh_timestamp", "last_writable_timestamp", "is_modified", "creator_type"}
+	return []string{"description", "id", "name", "nas_server_id", "filesystem_type", "size_total", "size_used", "parent_id", "expiration_timestamp", "access_type", "config_type", "access_policy", "locking_policy", "folder_rename_policy", "is_async_MTime_enabled", "protection_policy_id", "file_events_publishing_mode", "host_io_size", "flr_attributes", "is_smb_sync_writes_enabled", "is_smb_no_notify_enabled", "is_smb_op_locks_enabled", "is_smb_notify_on_access_enabled", "is_smb_notify_on_write_enabled", "smb_notify_on_change_dir_depth", "is_quota_enabled", "grace_period", "default_hard_limit", "default_soft_limit", "creation_timestamp", "last_refresh_timestamp", "last_writable_timestamp", "is_modified", "creator_type"}
 }
 
 func (n *NFSServerInstance) Fields() []string {

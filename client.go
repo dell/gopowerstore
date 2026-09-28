@@ -35,7 +35,6 @@ const (
 	PasswordEnv               = "GOPOWERSTORE_PASSWORD"
 	InsecureEnv               = "GOPOWERSTORE_INSECURE"
 	HTTPTimeoutEnv            = "GOPOWERSTORE_HTTP_TIMEOUT"
-	DebugEnv                  = "GOPOWERSTORE_DEBUG"
 	paginationDefaultPageSize = 1000
 )
 
@@ -62,6 +61,7 @@ type Client interface {
 	DeleteVolumeGroup(ctx context.Context, id string) (resp EmptyResponse, err error)
 	GetAppliance(ctx context.Context, id string) (ApplianceInstance, error)
 	GetApplianceByName(ctx context.Context, name string) (ApplianceInstance, error)
+	GetAppliances(ctx context.Context) ([]ApplianceInstance, error)
 	GetHost(ctx context.Context, id string) (Host, error)
 	GetHostByName(ctx context.Context, name string) (Host, error)
 	GetHosts(ctx context.Context) ([]Host, error)
@@ -311,8 +311,16 @@ func NewClientWithArgs(
 	apiURL string,
 	username, password string, options *ClientOptions,
 ) (Client, error) {
+	var opts []api.ClientOption
+	if options.requestObserver != nil {
+		opts = append(opts, api.WithRequestObserver(options.requestObserver))
+	}
+	if options.debugHTTPDump != nil {
+		opts = append(opts, api.WithDebugHTTPDump(*options.debugHTTPDump))
+	}
+
 	client, err := api.New(apiURL, username, password,
-		options.Insecure(), options.CAFilePath(), options.DefaultTimeout(), options.RateLimit(), options.RequestIDKey())
+		options.Insecure(), options.CAFilePath(), options.DefaultTimeout(), options.RateLimit(), options.RequestIDKey(), opts...)
 	if err != nil {
 		return nil, err
 	}

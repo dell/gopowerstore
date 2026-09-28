@@ -22,9 +22,8 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/dell/csmlog"
 	"github.com/dell/gopowerstore/api"
-
-	log "github.com/sirupsen/logrus"
 )
 
 const apiEthPortURL = "eth_port"
@@ -42,7 +41,12 @@ func (c *ClientIMPL) GetEthPorts(ctx context.Context) (resp []EthPort, err error
 
 		majorMinorVersion, err := c.GetSoftwareMajorMinorVersion(ctx)
 		if err != nil {
-			log.Errorf("Couldn't find the array version %s", err.Error())
+			csmlog.WithFields(csmlog.Fields{
+				csmlog.FieldComponent: "gopowerstore",
+				csmlog.FieldOperation: "GetEthPorts",
+				csmlog.FieldProtocol:  "Ethernet",
+				csmlog.FieldError:     err.Error(),
+			}).Error("couldn't find the array version")
 		} else {
 			// Add version-specific fields
 			if majorMinorVersion >= 3.0 {
@@ -81,7 +85,12 @@ func (c *ClientIMPL) GetEthPort(ctx context.Context, id string) (resp EthPort, e
 
 	majorMinorVersion, err := c.GetSoftwareMajorMinorVersion(ctx)
 	if err != nil {
-		log.Errorf("Couldn't find the array version %s", err.Error())
+		csmlog.WithFields(csmlog.Fields{
+			csmlog.FieldComponent: "gopowerstore",
+			csmlog.FieldOperation: "GetEthPort",
+			csmlog.FieldProtocol:  "Ethernet",
+			csmlog.FieldError:     err.Error(),
+		}).Error("couldn't find the array version")
 	} else {
 		if majorMinorVersion >= 3.0 {
 			qp.Select("is_in_use,permanent_mac_address")
@@ -114,7 +123,12 @@ func (c *ClientIMPL) GetEthPortByName(ctx context.Context, name string) (resp Et
 
 	majorMinorVersion, err := c.GetSoftwareMajorMinorVersion(ctx)
 	if err != nil {
-		log.Errorf("Couldn't find the array version %s", err.Error())
+		csmlog.WithFields(csmlog.Fields{
+			csmlog.FieldComponent: "gopowerstore",
+			csmlog.FieldOperation: "GetEthPortByName",
+			csmlog.FieldProtocol:  "Ethernet",
+			csmlog.FieldError:     err.Error(),
+		}).Error("couldn't find the array version")
 	} else {
 		if majorMinorVersion >= 3.0 {
 			qp.Select("is_in_use,permanent_mac_address")
