@@ -153,6 +153,24 @@ func TestClientIMPL_GetHostVolumeMappingByVolumeID(t *testing.T) {
 	assert.Equal(t, hostID, resp[0].ID)
 }
 
+func TestClientIMPL_GetHostVolumeMappingByVolumeID_WithEmbeddedHost(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+	respData := fmt.Sprintf(
+		`[{"id": "%s", "host_id": "%s", "host": {"id": "%s", "name": "test-host", "host_initiators": [{"port_name": "iqn.1993-08.org.debian:01:client"}]}}]`,
+		hostID, hostID2, hostID)
+	httpmock.RegisterResponder("GET", hostMappingMockURL,
+		httpmock.NewStringResponder(200, respData))
+	resp, err := C.GetHostVolumeMappingByVolumeID(context.Background(), volID)
+	assert.Nil(t, err)
+	assert.Len(t, resp, 1)
+	assert.Equal(t, hostID, resp[0].ID)
+	assert.Equal(t, hostID2, resp[0].HostID)
+	assert.Equal(t, hostID, resp[0].Host.ID)
+	assert.Equal(t, "test-host", resp[0].Host.Name)
+	assert.Len(t, resp[0].Host.Initiators, 1)
+}
+
 func TestClientIMPL_GetHostVolumeMappingByHostID(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()

@@ -62,6 +62,6 @@ func (s *GetMaxVolumeSizeTestSuite) TestGetMaxVolumeSize() {
 func (s *GetMaxVolumeSizeTestSuite) TestGetMaxVolumeSizeEndpointNotFound() {
 	limit, err := s.C.GetMaxVolumeSize(context.Background())
 
-	assert.Equal(s.T(), "The REST endpoint [GET /api/rest/limit?select=id%2Climit] cannot be found.", err.Error())
+	assert.Contains(s.T(), err.Error(), "The REST endpoint [GET /api/rest/limit?select=id%2Climit] cannot be found.")
 	assert.Negative(s.T(), limit)
 }

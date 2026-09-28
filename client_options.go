@@ -43,8 +43,10 @@ type ClientOptions struct {
 	defaultTimeout *time.Duration
 	rateLimit      *int
 	// define field name in context which will be used for tracing
-	requestIDKey *api.ContextKey
-	caFilePath   *string
+	requestIDKey    *api.ContextKey
+	caFilePath      *string
+	requestObserver api.RequestObserver
+	debugHTTPDump   *bool
 }
 
 // CAFilePath adds the certificate authority to the http client
@@ -114,5 +116,17 @@ func (co *ClientOptions) SetRateLimit(value int) *ClientOptions {
 // SetRequestIDKey sets requestIdKey value
 func (co *ClientOptions) SetRequestIDKey(value api.ContextKey) *ClientOptions {
 	co.requestIDKey = &value
+	return co
+}
+
+// SetRequestObserver sets the request observer for API calls
+func (co *ClientOptions) SetRequestObserver(observer api.RequestObserver) *ClientOptions {
+	co.requestObserver = observer
+	return co
+}
+
+// SetDebugHTTPDump enables request and response HTTP dumps in debug logs
+func (co *ClientOptions) SetDebugHTTPDump(value bool) *ClientOptions {
+	co.debugHTTPDump = &value
 	return co
 }

@@ -21,16 +21,11 @@ package main
 import (
 	"context"
 	"fmt"
-	"os"
 
 	"github.com/dell/gopowerstore"
 )
 
 func initClient() gopowerstore.Client {
-	err := os.Setenv("GOPOWERSTORE_DEBUG", "true")
-	if err != nil {
-		panic(err)
-	}
 	clientOptions := gopowerstore.NewClientOptions()
 	clientOptions.SetInsecure(true)
 	c, err := gopowerstore.NewClientWithArgs(

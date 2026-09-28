@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2021-2024 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2021-2026 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,9 +22,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/dell/csmlog"
 	"github.com/dell/gopowerstore"
 	"github.com/joho/godotenv"
-	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
@@ -59,7 +59,7 @@ func (suite *ReplicationTestSuite) SetupSuite() {
 
 	clientOptions := &gopowerstore.ClientOptions{}
 	clientOptions.SetInsecure(true)
-	client, err := gopowerstore.NewClientWithArgs("https://"+suite.remoteSystemMIP+"/api/rest", user, pass, clientOptions)
+	client, err := gopowerstore.NewClientWithArgs(gopowerstore.BuildMIPURL(suite.remoteSystemMIP), user, pass, clientOptions)
 	if err != nil {
 		return
 	}
@@ -78,13 +78,14 @@ func (suite *ReplicationTestSuite) TearDownSuite() {
 	}
 	C.ModifyVolumeGroup(context.Background(), &gopowerstore.VolumeGroupModify{ProtectionPolicyID: ""}, suite.vg.ID)
 	C.RemoveMembersFromVolumeGroup(context.Background(), &gopowerstore.VolumeGroupMembers{VolumeIDs: []string{suite.vol.ID}}, suite.vg.ID)
-	C.ModifyVolume(context.Background(), &gopowerstore.VolumeModify{ProtectionPolicyID: ""}, suite.vol.ID)
+	emptyPolicy := ""
+	C.ModifyVolume(context.Background(), &gopowerstore.VolumeModify{ProtectionPolicyID: &emptyPolicy}, suite.vol.ID)
 	C.DeleteProtectionPolicy(context.Background(), suite.pp.ID)
 	C.DeleteReplicationRule(context.Background(), suite.rr.ID)
 	C.DeleteVolumeGroup(context.Background(), suite.vg.ID)
 	vgid, err := suite.remoteClient.GetVolumeGroupByName(context.Background(), "intcsi"+suite.randomString+"-vgtst")
 	if err != nil {
-		logrus.Info(err)
+		csmlog.Info(err.Error())
 	}
 	suite.remoteClient.DeleteVolumeGroup(context.Background(), vgid.ID)
 	C.DeleteVolume(context.Background(), nil, suite.vol.ID)

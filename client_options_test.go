@@ -22,6 +22,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/dell/gopowerstore/api"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -59,3 +60,16 @@ func TestClientOptions_RateLimit(t *testing.T) {
 	co.SetRateLimit(value)
 	assert.Equal(t, value, co.RateLimit())
 }
+
+func TestClientOptions_RequestObserver(t *testing.T) {
+	co := NewClientOptions()
+	assert.Nil(t, co.requestObserver)
+
+	observer := &testObserver{}
+	co.SetRequestObserver(observer)
+	assert.Same(t, observer, co.requestObserver)
+}
+
+type testObserver struct{}
+
+func (o *testObserver) ObservePowerStoreRequest(api.RequestObservation) {}

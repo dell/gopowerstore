@@ -1,20 +1,16 @@
-/*
- *
- * Copyright © 2020 Dell Inc. or its subsidiaries. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- */
+// Copyright (c) Dell Inc. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//	http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 package api
 
@@ -29,9 +25,9 @@ func TestQueryParams_Select(t *testing.T) {
 	qp.Select("foo", "bar")
 	qp.Select("spam")
 	assert.NotNil(t, qp.Select)
-	assert.Contains(t, *(qp.selectParam), "foo")
-	assert.Contains(t, *(qp.selectParam), "bar")
-	assert.Contains(t, *(qp.selectParam), "spam")
+	assert.Contains(t, *qp.selectParam, "foo")
+	assert.Contains(t, *qp.selectParam, "bar")
+	assert.Contains(t, *qp.selectParam, "spam")
 }
 
 func TestQueryParams_Order(t *testing.T) {
@@ -39,9 +35,9 @@ func TestQueryParams_Order(t *testing.T) {
 	qp.Order("foo", "bar")
 	qp.Order("spam")
 	assert.NotNil(t, qp.Order)
-	assert.Contains(t, *(qp.orderParam), "foo")
-	assert.Contains(t, *(qp.orderParam), "bar")
-	assert.Contains(t, *(qp.orderParam), "spam")
+	assert.Contains(t, *qp.orderParam, "foo")
+	assert.Contains(t, *qp.orderParam, "bar")
+	assert.Contains(t, *qp.orderParam, "spam")
 }
 
 func TestQueryParams_Encode_Empty(t *testing.T) {

@@ -28,7 +28,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"net/http/cookiejar"
 	"net/http/httputil"
@@ -42,10 +41,11 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/dell/csmlog"
 )
 
 var (
-	debug              = false
 	systemCertPoolFunc = x509.SystemCertPool
 	errSysCerts        = errors.New("unable to initialize certificate pool from system")
 )
@@ -54,6 +54,17 @@ const (
 	paginationHeader = "content-range"
 	dellEmcToken     = "DELL-EMC-TOKEN" // #nosec G101
 )
+
+var endpointProtocol = map[string]string{
+	"fc_port":        "FC",
+	"eth_port":       "Ethernet",
+	"nfs_export":     "NFS",
+	"nfs_server":     "NFS",
+	"nas_server":     "NFS",
+	"file_system":    "NFS",
+	"file_interface": "NFS",
+	"smb_share":      "SMB",
+}
 
 type ContextKey string
 
@@ -81,6 +92,41 @@ func (rc RequestConfig) RenderRequestConfig() RequestConfig {
 // RequestConfigRenderer provides methods for rendering request config
 type RequestConfigRenderer interface {
 	RenderRequestConfig() RequestConfig
+}
+
+// RequestObservation captures a single REST request outcome.
+type RequestObservation struct {
+	Method     string
+	Endpoint   string
+	Action     string
+	StatusCode int
+	Duration   time.Duration
+	Err        error
+}
+
+// RequestObserver receives request observations without importing metrics code.
+// Observations may be called concurrently from multiple goroutines.
+// Implementations must be thread-safe and should not panic, as observer panics
+// will be caught and logged to prevent crashing the client.
+type RequestObserver interface {
+	ObservePowerStoreRequest(RequestObservation)
+}
+
+// ClientOption configures ClientIMPL construction.
+type ClientOption func(*ClientIMPL)
+
+// WithRequestObserver attaches a request observer to the client.
+func WithRequestObserver(observer RequestObserver) ClientOption {
+	return func(c *ClientIMPL) {
+		c.requestObserver = observer
+	}
+}
+
+// WithDebugHTTPDump enables request and response HTTP dumps in debug logs.
+func WithDebugHTTPDump(enabled bool) ClientOption {
+	return func(c *ClientIMPL) {
+		c.debugHTTPDump = enabled
+	}
 }
 
 // PaginationInfo stores information about pagination
@@ -164,13 +210,14 @@ type ClientIMPL struct {
 	apiThrottle       TimeoutSemaphoreInterface
 	loginMutex        sync.Mutex
 	token             string
+	requestObserver   RequestObserver
+	debugHTTPDump     bool
 }
 
 // New creates and initialize API client
 func New(apiURL string, username string,
-	password string, insecure bool, caFilePath string, defaultTimeout time.Duration, rateLimit int, requestIDKey ContextKey,
+	password string, insecure bool, caFilePath string, defaultTimeout time.Duration, rateLimit int, requestIDKey ContextKey, opts ...ClientOption,
 ) (*ClientIMPL, error) {
-	debug, _ = strconv.ParseBool(os.Getenv("GOPOWERSTORE_DEBUG"))
 	if apiURL == "" || username == "" || password == "" {
 		return nil, errors.New("API ApiClient can't be initialized: " +
 			"Missing endpoint, username, or password param")
@@ -186,9 +233,20 @@ func New(apiURL string, username string,
 			},
 		}
 	} else {
+		if systemCertPoolFunc == nil {
+			csmlog.WithFields(csmlog.Fields{
+				csmlog.FieldComponent: "api",
+				csmlog.FieldOperation: "New",
+			}).Error("systemCertPoolFunc is nil")
+			return nil, errSysCerts
+		}
 		pool, err := systemCertPoolFunc()
 		if err != nil {
-			log.Fatalf("failed to get system cert pool: %v", err)
+			csmlog.WithFields(csmlog.Fields{
+				csmlog.FieldComponent: "api",
+				csmlog.FieldOperation: "New",
+				csmlog.FieldError:     err.Error(),
+			}).Fatal("failed to get system cert pool")
 			return nil, fmt.Errorf("failed to get system cert pool: %w", err)
 		}
 
@@ -229,7 +287,11 @@ func New(apiURL string, username string,
 
 			ok := pool.AppendCertsFromPEM(data)
 			if !ok {
-				log.Fatalf("failed to append CA certificate from file: %s", caFilePath)
+				csmlog.WithFields(csmlog.Fields{
+					csmlog.FieldComponent: "api",
+					csmlog.FieldOperation: "New",
+					csmlog.FieldError:     fmt.Sprintf("failed to append CA certificate from file: %s", caFilePath),
+				}).Fatal("failed to append CA certificate")
 				return nil, fmt.Errorf("failed to append CA certificate from file: %s", caFilePath)
 			}
 		}
@@ -248,11 +310,17 @@ func New(apiURL string, username string,
 	// Set cookie jar to enable session management via auth_cookie
 	jar, err := cookiejar.New(&cookiejar.Options{PublicSuffixList: nil})
 	if err != nil {
-		log.Printf("Failed to set cookie jar. error: %s", err)
-		log.Print("Session management is disabled.")
+		csmlog.WithFields(csmlog.Fields{
+			csmlog.FieldComponent: "api",
+			csmlog.FieldOperation: "New",
+			csmlog.FieldError:     err.Error(),
+		}).Error("failed to set cookie jar, session management is disabled")
 	} else {
 		client.Jar = jar
-		log.Print("Session management is enabled.")
+		csmlog.WithFields(csmlog.Fields{
+			csmlog.FieldComponent: "api",
+			csmlog.FieldOperation: "New",
+		}).Info("session management is enabled")
 	}
 
 	throttle := NewTimeoutSemaphore(defaultTimeout, rateLimit, &defaultLogger{})
@@ -268,6 +336,13 @@ func New(apiURL string, username string,
 		logger:            &defaultLogger{},
 		apiThrottle:       throttle,
 		customHTTPHeaders: NewSafeHeader(),
+		debugHTTPDump:     strings.EqualFold(os.Getenv("GOPOWERSTORE_DEBUG"), "true"),
+	}
+
+	for _, opt := range opts {
+		if opt != nil {
+			opt(clientImpl)
+		}
 	}
 
 	// Create a login session after the client is initialized
@@ -279,7 +354,6 @@ func New(apiURL string, username string,
 // MockClient returns default client for testing purposes
 func MockClient(defaultTimeout time.Duration, rateLimit int, requestIDKey ContextKey,
 ) *ClientIMPL {
-	debug, _ = strconv.ParseBool(os.Getenv("GOPOWERSTORE_DEBUG"))
 	client := &http.Client{}
 	throttle := NewTimeoutSemaphore(defaultTimeout, rateLimit, &defaultLogger{})
 	clientImpl := &ClientIMPL{
@@ -289,6 +363,7 @@ func MockClient(defaultTimeout time.Duration, rateLimit int, requestIDKey Contex
 		logger:            &defaultLogger{},
 		apiThrottle:       throttle,
 		customHTTPHeaders: NewSafeHeader(),
+		debugHTTPDump:     false,
 	}
 	return clientImpl
 }
@@ -304,24 +379,26 @@ type ErrorMsg struct {
 	StatusCode int `json:"-"`
 	Severity   string
 	Message    string `json:"message_l10n"`
-	Arguments  []string
+	Arguments  []interface{}
 }
 
 func (err *ErrorMsg) Error() string {
+	if err.StatusCode != 0 {
+		return fmt.Sprintf("HTTP %d: %s", err.StatusCode, err.Message)
+	}
 	return err.Message
 }
 
 func buildError(r *http.Response) *ErrorMsg {
 	apiErrorMsg := apiErrorMsg{}
 
-	dec := json.NewDecoder(r.Body)
-	err := dec.Decode(&apiErrorMsg)
+	bodyBytes, readErr := io.ReadAll(r.Body)
+	err := json.Unmarshal(bodyBytes, &apiErrorMsg)
+
 	if err != nil || apiErrorMsg.Messages == nil {
 		errMsg := "Unknown error"
-		buf := new(bytes.Buffer)
-		if _, err := buf.ReadFrom(dec.Buffered()); err == nil {
-			s := buf.String()
-			errMsg = fmt.Sprintf("%s: %s", errMsg, s)
+		if readErr == nil && len(bodyBytes) > 0 {
+			errMsg = fmt.Sprintf("%s: %s", errMsg, string(bodyBytes))
 		}
 		return &ErrorMsg{
 			StatusCode: r.StatusCode, Severity: errorSeverity,
@@ -354,9 +431,69 @@ func (c *ClientIMPL) Query(
 	ctx context.Context,
 	cfg RequestConfigRenderer,
 	resp interface{},
-) (RespMeta, error) {
+) (meta RespMeta, err error) {
 	config := cfg.RenderRequestConfig()
-	meta := RespMeta{}
+	obs := RequestObservation{
+		Method:   config.Method,
+		Endpoint: config.Endpoint,
+		Action:   config.Action,
+	}
+	start := time.Now()
+	defer func() {
+		obs.Duration = time.Since(start)
+		obs.StatusCode = meta.Status
+		obs.Err = err
+		if c.requestObserver != nil {
+			func() {
+				defer func() {
+					if r := recover(); r != nil {
+						// Log observer panic but don't crash client
+						c.logger.Error(ctx, "RequestObserver panic: %v", r)
+					}
+				}()
+				c.requestObserver.ObservePowerStoreRequest(obs)
+			}()
+		}
+	}()
+
+	retried := false
+	for {
+		meta, err = c.doQuery(ctx, config, resp)
+		if err == nil || meta.Status != http.StatusForbidden {
+			return meta, err
+		}
+		if retried {
+			return meta, err
+		}
+		loginResp, loginErr := c.login(ctx)
+		// Invalid credentials - No need to retry if response of login api was 401 Unauthorized.
+		if loginErr != nil || loginResp.Status == http.StatusUnauthorized {
+			return meta, err
+		}
+
+		// login successful - resend the failed request
+		retried = true
+	}
+}
+
+func (c *ClientIMPL) doQuery(
+	ctx context.Context,
+	cfg RequestConfig,
+	resp interface{},
+) (meta RespMeta, err error) {
+	opDesc := cfg.Method + " " + cfg.Endpoint
+	if cfg.Action != "" {
+		opDesc += "/" + cfg.Action
+	}
+	logFields := csmlog.Fields{
+		csmlog.FieldComponent: "api",
+		csmlog.FieldOperation: opDesc,
+	}
+	if proto, ok := endpointProtocol[cfg.Endpoint]; ok {
+		logFields[csmlog.FieldProtocol] = proto
+	}
+	csmlog.WithFields(logFields).Debug("API request initiated")
+
 	var cancelFuncPtr *func()
 	ctx, cancelFuncPtr = c.setupContext(ctx)
 	if cancelFuncPtr != nil {
@@ -365,17 +502,17 @@ func (c *ClientIMPL) Query(
 
 	traceMsg := c.prepareTraceMsg(ctx)
 
-	requestURL, err := c.prepareRequestURL(config.Endpoint, config.ID, config.Action, config.QueryParams)
+	requestURL, err := c.prepareRequestURL(cfg.Endpoint, cfg.ID, cfg.Action, cfg.QueryParams)
 	if err != nil {
 		return meta, err
 	}
 
-	req, err := c.prepareRequest(ctx, config.Method, requestURL, traceMsg, config.Body)
+	req, err := c.prepareRequest(ctx, cfg.Method, requestURL, traceMsg, cfg.Body)
 	if err != nil {
 		return meta, err
 	}
 
-	c.logger.Debug(ctx, "Requesting a lock for API : [%s %s]\n", config.Method, requestURL)
+	c.logger.Debug(ctx, "Requesting a lock for API : [%s %s]\n", cfg.Method, requestURL)
 	if err := c.apiThrottle.Acquire(ctx); err != nil {
 		return meta, err
 	}
@@ -387,10 +524,10 @@ func (c *ClientIMPL) Query(
 	}
 	defer r.Body.Close() // #nosec G307
 
-	if debug {
+	if c.debugHTTPDump {
 		dump, _ := httputil.DumpResponse(r, true)
-		replacedHeader := prepareHTTPDump(dump) // Replace sensitive parts of response headers
-		c.logger.Debug(ctx, "%sRESPONSE: %v\n", traceMsg, replacedHeader)
+		replacedDump := prepareHTTPDump(dump) // Replace sensitive parts of response dump
+		c.logger.Debug(ctx, "%sRESPONSE: %v\n", traceMsg, replacedDump)
 	}
 	meta.Status = r.StatusCode
 	switch {
@@ -410,16 +547,15 @@ func (c *ClientIMPL) Query(
 		}
 		return meta, err
 	case r.StatusCode == http.StatusForbidden:
-		loginResp, err := c.login(ctx)
-		// Invalid credentials - No need to retry if response of login api was 401 Unauthorized.
-		if err != nil || loginResp.Status == http.StatusUnauthorized {
-			return meta, buildError(r)
-		}
-
-		// login successful - resend the failed request
-		return c.Query(ctx, cfg, resp)
+		errMsg := buildError(r)
+		logFields[csmlog.FieldError] = errMsg.Message
+		csmlog.WithFields(logFields).Error("API authentication failed")
+		return meta, errMsg
 	default:
-		return meta, buildError(r)
+		errMsg := buildError(r)
+		logFields[csmlog.FieldError] = errMsg.Message
+		csmlog.WithFields(logFields).Error("API request failed")
+		return meta, errMsg
 	}
 }
 
@@ -432,7 +568,7 @@ func (c *ClientIMPL) login(ctx context.Context) (RespMeta, error) {
 	}
 	var login loginDetails
 
-	resp, err := c.Query(ctx,
+	resp, err := c.doQuery(ctx,
 		RequestConfig{
 			Method:   "GET",
 			Endpoint: "login_session",
@@ -523,10 +659,12 @@ func (c *ClientIMPL) prepareRequest(ctx context.Context, method, requestURL, tra
 		}
 	}
 	addMetaData(req, body)
-	if debug {
-		if requestData, err := httputil.DumpRequest(req, true); err == nil {
-			c.logger.Debug(ctx, "%sREQUEST: %s", traceMsg, prepareHTTPDump(requestData))
+	if c.debugHTTPDump {
+		requestData, err := httputil.DumpRequest(req, true)
+		if err != nil {
+			return req, nil
 		}
+		c.logger.Debug(ctx, "%sREQUEST: %s", traceMsg, prepareHTTPDump(requestData))
 	}
 	return req, nil
 }
@@ -600,10 +738,10 @@ func prepareHTTPDump(dump []byte) string {
 var newlineRegexp = regexp.MustCompile(`\r?\n`)
 
 var sensitiveDataRegexp = regexp.MustCompile(
-	`(?m)(Dell-Emc-Token: |Authorization: )([^\n]+)|(auth_cookie=)([^;]+)`)
+	`(?im)(Dell-Emc-Token: |Authorization: )([^\n]+)|(auth_cookie=)([^;]+)|(Set-Cookie: )([^\n]+)`)
 
 func replaceSensitiveHeaderInfo(dump []byte) string {
-	return sensitiveDataRegexp.ReplaceAllString(string(dump), "$1$3******")
+	return sensitiveDataRegexp.ReplaceAllString(string(dump), "$1$3$5******")
 }
 
 // GetSecuredCipherSuites returns a set of secure cipher suites.

@@ -20,6 +20,7 @@ package gopowerstore
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"testing"
@@ -254,6 +255,77 @@ func (s *VolumeTestSuite) TestClientIMPL_CreateVolume() {
 	assert.Equal(s.T(), volID, resp.ID)
 }
 
+func (s *VolumeTestSuite) TestClientIMPL_CreateVolumeWithCoLocateResourceID() {
+	sourceVolID := "source-vol-12345"
+	respData := fmt.Sprintf(`{"id": "%s"}`, volID)
+	httpmock.RegisterResponder("POST", volumeMockURL,
+		func(req *http.Request) (*http.Response, error) {
+			// Verify the request body contains co_locate_resource_id
+			var reqBody map[string]interface{}
+			err := json.NewDecoder(req.Body).Decode(&reqBody)
+			assert.Nil(s.T(), err)
+			assert.Equal(s.T(), sourceVolID, reqBody["co_locate_resource_id"])
+			return httpmock.NewStringResponder(201, respData)(req)
+		})
+	name := "test_vol_colocation"
+	size := int64(11111111)
+	createReq := VolumeCreate{}
+	createReq.Name = &name
+	createReq.Size = &size
+	createReq.CoLocateResourceID = sourceVolID
+
+	resp, err := C.CreateVolume(context.Background(), &createReq)
+	assert.Nil(s.T(), err)
+	assert.Equal(s.T(), volID, resp.ID)
+}
+
+func (s *VolumeTestSuite) TestClientIMPL_CreateVolumeWithoutCoLocateResourceID() {
+	respData := fmt.Sprintf(`{"id": "%s"}`, volID)
+	httpmock.RegisterResponder("POST", volumeMockURL,
+		func(req *http.Request) (*http.Response, error) {
+			// Verify the request body does NOT contain co_locate_resource_id
+			var reqBody map[string]interface{}
+			err := json.NewDecoder(req.Body).Decode(&reqBody)
+			assert.Nil(s.T(), err)
+			_, exists := reqBody["co_locate_resource_id"]
+			assert.False(s.T(), exists, "co_locate_resource_id should be omitted when empty")
+			return httpmock.NewStringResponder(201, respData)(req)
+		})
+	name := "test_vol_no_colocation"
+	size := int64(11111111)
+	createReq := VolumeCreate{}
+	createReq.Name = &name
+	createReq.Size = &size
+	// CoLocateResourceID is not set (empty string)
+
+	resp, err := C.CreateVolume(context.Background(), &createReq)
+	assert.Nil(s.T(), err)
+	assert.Equal(s.T(), volID, resp.ID)
+}
+
+func (s *VolumeTestSuite) TestVolumeCreate_CoLocateResourceID_JSONSerialization() {
+	// Test that CoLocateResourceID is correctly serialized when set
+	name := "test_vol"
+	size := int64(1000)
+	createReq := &VolumeCreate{
+		Name:               &name,
+		Size:               &size,
+		CoLocateResourceID: "source-vol-12345",
+	}
+	jsonBytes, err := json.Marshal(createReq)
+	assert.Nil(s.T(), err)
+	assert.Contains(s.T(), string(jsonBytes), `"co_locate_resource_id":"source-vol-12345"`)
+
+	// Test that CoLocateResourceID is omitted when empty
+	createReqEmpty := &VolumeCreate{
+		Name: &name,
+		Size: &size,
+	}
+	jsonBytesEmpty, err := json.Marshal(createReqEmpty)
+	assert.Nil(s.T(), err)
+	assert.NotContains(s.T(), string(jsonBytesEmpty), "co_locate_resource_id")
+}
+
 func (s *VolumeTestSuite) TestClientIMPL_CreateSnapshot() {
 	respData := fmt.Sprintf(`{"id": "%s"}`, volID2)
 	httpmock.RegisterResponder("POST", fmt.Sprintf("%s/%s/snapshot", volumeMockURL, volID),
@@ -307,7 +379,6 @@ func (s *VolumeTestSuite) TestClientIMPL_ModifyVolume() {
 	respData := ""
 	httpmock.RegisterResponder("PATCH", fmt.Sprintf("%s/%s", volumeMockURL, volID),
 		httpmock.NewStringResponder(201, respData))
-
 	modifyParams := VolumeModify{
 		Name: "newname",
 		Size: 8192 * 99,
@@ -316,6 +387,50 @@ func (s *VolumeTestSuite) TestClientIMPL_ModifyVolume() {
 	resp, err := C.ModifyVolume(context.Background(), &modifyParams, volID)
 	assert.Nil(s.T(), err)
 	assert.Equal(s.T(), EmptyResponse(""), resp)
+}
+
+func TestVolumeModify_PointerSemantics_OmitsNilFields(t *testing.T) {
+	// When only Description is set, nil pointer fields must be omitted from JSON
+	desc := "test description"
+	mod := VolumeModify{
+		Description: &desc,
+		// All other fields are nil — they must NOT appear in JSON
+	}
+	data, err := json.Marshal(mod)
+	assert.Nil(t, err)
+	jsonStr := string(data)
+	assert.Contains(t, jsonStr, `"description"`)
+	assert.NotContains(t, jsonStr, `"performance_policy_id"`)
+	assert.NotContains(t, jsonStr, `"protection_policy_id"`)
+	assert.NotContains(t, jsonStr, `"name"`)
+	assert.NotContains(t, jsonStr, `"size"`)
+	assert.NotContains(t, jsonStr, `"app_type"`)
+}
+
+func TestVolumeModify_PointerSemantics_IncludesSetFields(t *testing.T) {
+	desc := "new desc"
+	perfPolicy := "perf-policy-1"
+	mod := VolumeModify{
+		Description:         &desc,
+		PerformancePolicyID: &perfPolicy,
+	}
+	data, err := json.Marshal(mod)
+	assert.Nil(t, err)
+	jsonStr := string(data)
+	assert.Contains(t, jsonStr, `"description":"new desc"`)
+	assert.Contains(t, jsonStr, `"performance_policy_id":"perf-policy-1"`)
+}
+
+func TestVolumeModify_PointerSemantics_EmptyStringClearsField(t *testing.T) {
+	// Empty string pointer should be included in JSON to clear the field
+	empty := ""
+	mod := VolumeModify{
+		Description: &empty,
+	}
+	data, err := json.Marshal(mod)
+	assert.Nil(t, err)
+	jsonStr := string(data)
+	assert.Contains(t, jsonStr, `"description":""`)
 }
 
 func (s *VolumeTestSuite) TestClientIMPL_DeleteSnapshot() {
@@ -361,4 +476,25 @@ func (s *VolumeTestSuite) TestClientIMPL_EndMetroVolume() {
 	resp, err := C.EndMetroVolume(context.Background(), volID, &opts)
 	assert.Nil(s.T(), err)
 	assert.Empty(s.T(), resp)
+}
+
+func (s *VolumeTestSuite) TestClientIMPL_GetAppliances() {
+	// Test basic GetAppliances functionality
+	app1 := ApplianceInstance{ID: "A1", Name: "Appliance-1"}
+	app2 := ApplianceInstance{ID: "A2", Name: "Appliance-2"}
+
+	respData := fmt.Sprintf(`[%s,%s]`,
+		fmt.Sprintf(`{"id": "%s", "name": "%s"}`, app1.ID, app1.Name),
+		fmt.Sprintf(`{"id": "%s", "name": "%s"}`, app2.ID, app2.Name))
+
+	httpmock.RegisterResponder("GET", applianceMockURL,
+		httpmock.NewStringResponder(200, respData))
+
+	appliances, err := C.GetAppliances(context.Background())
+	assert.Nil(s.T(), err)
+	assert.Len(s.T(), appliances, 2, "Expected 2 appliances")
+	assert.Equal(s.T(), app1.ID, appliances[0].ID)
+	assert.Equal(s.T(), app1.Name, appliances[0].Name)
+	assert.Equal(s.T(), app2.ID, appliances[1].ID)
+	assert.Equal(s.T(), app2.Name, appliances[1].Name)
 }
