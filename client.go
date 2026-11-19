@@ -319,6 +319,10 @@ func NewClientWithArgs(
 		opts = append(opts, api.WithDebugHTTPDump(*options.debugHTTPDump))
 	}
 
+	if options.bearerToken != nil {
+		opts = append(opts, api.WithBearerToken(*options.bearerToken))
+	}
+
 	client, err := api.New(apiURL, username, password,
 		options.Insecure(), options.CAFilePath(), options.DefaultTimeout(), options.RateLimit(), options.RequestIDKey(), opts...)
 	if err != nil {

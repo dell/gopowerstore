@@ -3,7 +3,7 @@ module github.com/dell/gopowerstore
 go 1.27
 
 require (
-	github.com/dell/csmlog v1.2.0
+	github.com/dell/csmlog v1.2.1
 	github.com/go-openapi/strfmt v0.27.0
 	github.com/jarcoal/httpmock v1.4.0
 	github.com/joho/godotenv v1.5.1
