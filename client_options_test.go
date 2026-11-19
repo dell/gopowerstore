@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2020-2024 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2020-2026 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,3 +73,17 @@ func TestClientOptions_RequestObserver(t *testing.T) {
 type testObserver struct{}
 
 func (o *testObserver) ObservePowerStoreRequest(api.RequestObservation) {}
+
+func TestClientOptions_BearerToken(t *testing.T) {
+	co := NewClientOptions()
+	assert.Equal(t, "", co.BearerToken())
+	co.SetBearerToken("jwt-token")
+	assert.Equal(t, "jwt-token", co.BearerToken())
+}
+
+func TestNewClientWithArgs_BearerToken(t *testing.T) {
+	co := NewClientOptions().SetInsecure(true).SetBearerToken("jwt-token")
+	c, err := NewClientWithArgs("https://foo.com", "", "", co)
+	assert.NoError(t, err)
+	assert.NotNil(t, c)
+}

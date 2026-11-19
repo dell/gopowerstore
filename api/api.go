@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2020-2025 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2020-2026 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -129,6 +129,15 @@ func WithDebugHTTPDump(enabled bool) ClientOption {
 	}
 }
 
+// WithBearerToken configures the client to authenticate with an
+// "Authorization: Bearer <token>" header instead of HTTP Basic authentication.
+// When set, username and password are not required.
+func WithBearerToken(token string) ClientOption {
+	return func(c *ClientIMPL) {
+		c.bearerToken = token
+	}
+}
+
 // PaginationInfo stores information about pagination
 type PaginationInfo struct {
 	// first element index in response
@@ -210,6 +219,7 @@ type ClientIMPL struct {
 	apiThrottle       TimeoutSemaphoreInterface
 	loginMutex        sync.Mutex
 	token             string
+	bearerToken       string
 	requestObserver   RequestObserver
 	debugHTTPDump     bool
 }
@@ -218,9 +228,27 @@ type ClientIMPL struct {
 func New(apiURL string, username string,
 	password string, insecure bool, caFilePath string, defaultTimeout time.Duration, rateLimit int, requestIDKey ContextKey, opts ...ClientOption,
 ) (*ClientIMPL, error) {
-	if apiURL == "" || username == "" || password == "" {
+	clientImpl := &ClientIMPL{
+		apiURL:            apiURL,
+		insecure:          insecure,
+		username:          username,
+		password:          password,
+		defaultTimeout:    defaultTimeout,
+		requestIDKey:      requestIDKey,
+		logger:            &defaultLogger{},
+		customHTTPHeaders: NewSafeHeader(),
+		debugHTTPDump:     strings.EqualFold(os.Getenv("GOPOWERSTORE_DEBUG"), "true"),
+	}
+
+	for _, opt := range opts {
+		if opt != nil {
+			opt(clientImpl)
+		}
+	}
+
+	if apiURL == "" || (clientImpl.bearerToken == "" && (username == "" || password == "")) {
 		return nil, errors.New("API ApiClient can't be initialized: " +
-			"Missing endpoint, username, or password param")
+			"Missing endpoint, or credentials (bearer token or username/password)")
 	}
 
 	var client *http.Client
@@ -323,27 +351,8 @@ func New(apiURL string, username string,
 		}).Info("session management is enabled")
 	}
 
-	throttle := NewTimeoutSemaphore(defaultTimeout, rateLimit, &defaultLogger{})
-
-	clientImpl := &ClientIMPL{
-		apiURL:            apiURL,
-		insecure:          insecure,
-		username:          username,
-		password:          password,
-		httpClient:        client,
-		defaultTimeout:    defaultTimeout,
-		requestIDKey:      requestIDKey,
-		logger:            &defaultLogger{},
-		apiThrottle:       throttle,
-		customHTTPHeaders: NewSafeHeader(),
-		debugHTTPDump:     strings.EqualFold(os.Getenv("GOPOWERSTORE_DEBUG"), "true"),
-	}
-
-	for _, opt := range opts {
-		if opt != nil {
-			opt(clientImpl)
-		}
-	}
+	clientImpl.httpClient = client
+	clientImpl.apiThrottle = NewTimeoutSemaphore(defaultTimeout, rateLimit, &defaultLogger{})
 
 	// Create a login session after the client is initialized
 	clientImpl.login(context.Background()) // #nosec G104
@@ -649,7 +658,11 @@ func (c *ClientIMPL) prepareRequest(ctx context.Context, method, requestURL, tra
 		}
 	}
 	req = req.WithContext(ctx)
-	req.SetBasicAuth(c.username, c.password)
+	if c.bearerToken != "" {
+		req.Header.Set("Authorization", "Bearer "+c.bearerToken)
+	} else {
+		req.SetBasicAuth(c.username, c.password)
+	}
 	if len(c.token) != 0 {
 		req.Header.Add(dellEmcToken, c.token)
 	}

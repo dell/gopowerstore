@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2020-2024 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2020-2026 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,6 +47,7 @@ type ClientOptions struct {
 	caFilePath      *string
 	requestObserver api.RequestObserver
 	debugHTTPDump   *bool
+	bearerToken     *string
 }
 
 // CAFilePath adds the certificate authority to the http client
@@ -89,6 +90,14 @@ func (co *ClientOptions) RequestIDKey() api.ContextKey {
 	return *co.requestIDKey
 }
 
+// BearerToken returns the bearer token, or an empty string if unset
+func (co *ClientOptions) BearerToken() string {
+	if co.bearerToken == nil {
+		return ""
+	}
+	return *co.bearerToken
+}
+
 // SetInsecure sets insecure value
 func (co *ClientOptions) SetInsecure(value bool) *ClientOptions {
 	co.insecure = &value
@@ -128,5 +137,12 @@ func (co *ClientOptions) SetRequestObserver(observer api.RequestObserver) *Clien
 // SetDebugHTTPDump enables request and response HTTP dumps in debug logs
 func (co *ClientOptions) SetDebugHTTPDump(value bool) *ClientOptions {
 	co.debugHTTPDump = &value
+	return co
+}
+
+// SetBearerToken sets a bearer token; the client then authenticates with an
+// "Authorization: Bearer" header instead of HTTP Basic authentication
+func (co *ClientOptions) SetBearerToken(token string) *ClientOptions {
+	co.bearerToken = &token
 	return co
 }

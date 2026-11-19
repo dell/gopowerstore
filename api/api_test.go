@@ -1,6 +1,6 @@
 /*
  *
- * Copyright © 2020-2024 Dell Inc. or its subsidiaries. All Rights Reserved.
+ * Copyright © 2020-2026 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1005,4 +1005,33 @@ func TestClientIMPL_prepareRequest_WithNilPointerBody(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, req)
 	assert.Nil(t, req.Body)
+}
+
+func TestClientIMPL_prepareRequest_WithBearerToken(t *testing.T) {
+	c := testClient(t, "https://foo.com")
+	c.bearerToken = "jwt-token"
+
+	req, err := c.prepareRequest(context.Background(), "GET", "https://foo.com/api/endpoint", "", nil)
+	assert.NoError(t, err)
+	assert.Equal(t, "Bearer jwt-token", req.Header.Get("Authorization"))
+	_, _, hasBasic := req.BasicAuth()
+	assert.False(t, hasBasic)
+}
+
+func TestClientIMPL_prepareRequest_BasicWithoutBearerToken(t *testing.T) {
+	c := testClient(t, "https://foo.com")
+
+	req, err := c.prepareRequest(context.Background(), "GET", "https://foo.com/api/endpoint", "", nil)
+	assert.NoError(t, err)
+	_, _, hasBasic := req.BasicAuth()
+	assert.True(t, hasBasic)
+}
+
+func TestNew_WithBearerToken(t *testing.T) {
+	c, err := New("https://foo.com", "", "", true, "", time.Duration(120), 1000, key, WithBearerToken("jwt-token"))
+	assert.NoError(t, err)
+	assert.Equal(t, "jwt-token", c.bearerToken)
+
+	_, err = New("https://foo.com", "", "", true, "", time.Duration(120), 1000, key)
+	assert.Error(t, err)
 }

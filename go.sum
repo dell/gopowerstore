@@ -1,5 +1,5 @@
-github.com/dell/csmlog v1.2.0 h1:gQZ9eyuUzjBdbK8D8hNDrjRi4EsZ8Ny5Ksq+EpbOlbA=
-github.com/dell/csmlog v1.2.0/go.mod h1:0kTVQosDpXLRaFOsgDw8v9GTw1EyMvc7CZJnaDIfFbQ=
+github.com/dell/csmlog v1.2.1 h1:EvyaH3dhw2X1P5im8E1gntA6e0/WIqQ8ozyEptHEdds=
+github.com/dell/csmlog v1.2.1/go.mod h1:0kTVQosDpXLRaFOsgDw8v9GTw1EyMvc7CZJnaDIfFbQ=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/go-openapi/errors v0.22.8 h1:oP7sW7TWc3wFFjrzzj0nI83H2qMBkNjNfSd+XRejk/I=
